@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    
+    <!-- Standalone full-screen mobile indicators -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-transitional">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Clean, unescaped standalone manifest for Android Chrome -->
+    <link rel="manifest" href='data:application/json,{"name":"Viking Conquest","short_name":"Viking","start_url":".","display":"standalone","background_color":"#000000","theme_color":"#000000"}'>
+
+    <title>Viking Conquest v11</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Space+Grotesk:wght@400;700&display=swap');
+
+        :root {
+            --bg-primary: #000000;
+            --bg-card: #030305;
+            --border-metal: linear-gradient(135deg, #2e1065 0%, #020005 100%);
+            --accent-glow: #BC6CFF;
+            --accent-dim: #1f073d;
+            --success-glow: #10B981;
+            --danger-glow: #EF4444;
+            --cyan-neon: #00F0FF;
+            --bg-conquered: #010702; 
+            --text-main: #FAFAFA;
+            --text-muted: #4b5563;
+            --steel-dark: #09090b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            padding-bottom: 110px;
+            transition: background-color 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        body.conquered-state {
+            background-color: var(--bg-conquered) !important;
+        }
+
+        /* --- THE UNIFIED SHINE CARD ARCHITECTURE --- */
+        .shine-card {
+            background-color: var(--bg-card) !important;
+            position: relative;
+            border-radius: 14px;
+            padding: 20px 18px;
+            overflow: hidden;
+            background: linear-gradient(145deg, #020203 0%, #000000 100%);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.01);
+            transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease;
+            border: 1px solid #120e1a;
+        }
+
+        .shine-card:active {
+            transform: scale(0.98);
+        }
+
+        .shine-card::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(188,108,255,0.01) 50%, transparent 55%);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        /* --- EXTRUDED HEADER DECK & NEON GLOWS --- */
+        .target-wrapper { padding: 30px 20px 5px 20px; }
+        
+        .target-massive {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.9rem;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            color: var(--text-main);
+        }
+
+        @media (min-width: 480px) {
+            .target-massive { font-size: 2.1rem; }
+        }
+
+        .target-massive span {
+            color: var(--accent-glow);
+            text-shadow: 0 0 15px rgba(188, 108, 255, 0.4);
+            transition: text-shadow 0.4s ease, color 0.4s ease;
+        }
+
+        body.conquered-state #radar-target span {
+            color: var(--accent-glow) !important;
+            text-shadow: 0 0 15px rgba(188, 108, 255, 0.95), 
+                         0 0 30px rgba(188, 108, 255, 0.75), 
+                         0 0 45px rgba(188, 108, 255, 0.55);
+        }
+
+        .delta-subtext {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
+
+        /* --- NEON PROGRESSION TRACKER --- */
+        .progress-container {
+            height: 4px;
+            background-color: #000000;
+            margin: 0 20px 15px 20px;
+            border-radius: 2px;
+            overflow: hidden;
+            border: 1px solid #130a1c;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-glow);
+            box-shadow: 0 0 10px var(--accent-glow);
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- FLUID TAB TRANSITIONS --- */
+        .view-panel { 
+            display: none; 
+            padding: 0 20px; 
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .view-panel.visible { display: block; }
+        .view-panel.active { opacity: 1; transform: translateY(0); }
+        
+        .section-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #5c5c6d;
+            margin: 24px 0 12px 0;
+            font-weight: 900;
+        }
+
+        /* --- DASHBOARD ACTION STACKS (DYNAMIC GRID) --- */
+        .card-list { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 12px; 
+        }
+        .card-list .shine-card { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .card-list .shine-card:active { background: #010102; }
+
+        .card-title { font-size: 1.15rem; font-weight: 700; pointer-events: none; }
+        .card-right { display: flex; align-items: center; gap: 14px; pointer-events: auto; }
+        .card-badge { font-family: 'Orbitron', sans-serif; font-size: 1.25rem; font-weight: 900; color: #e4e4e7; }
+
+        /* --- CLOCK INTEGRATED TIMER COMPONENT --- */
+        .timer-interactive-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #08050e;
+            border: 1px solid #231233;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+            flex-shrink: 0; /* Anti-squash */
+        }
+        .timer-interactive-trigger:active {
+            background: #170b24;
+        }
+
+        .timer-status-icon-svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--accent-glow);
+        }
+
+        .timer-countdown {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+
+        @keyframes timer-countdown-pulse {
+            0% { text-shadow: 0 0 6px rgba(188, 108, 255, 0.4); opacity: 0.9; }
+            50% { text-shadow: 0 0 16px rgba(188, 108, 255, 0.8), 0 0 24px rgba(188, 108, 255, 0.5); opacity: 1; }
+            100% { text-shadow: 0 0 6px rgba(188, 108, 255, 0.4); opacity: 0.9; }
+        }
+
+        .timer-running .timer-countdown {
+            animation: timer-countdown-pulse 1.2s infinite alternate;
+            color: var(--accent-glow) !important;
+        }
+
+        /* --- MANUAL CHECKMARK COMPONENT --- */
+        .manual-check-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1.5px solid #1f1f2e;
+            background: transparent;
+            cursor: pointer;
+            transition: border-color 0.15s, background-color 0.15s;
+            flex-shrink: 0; /* Anti-squash */
+            pointer-events: none; /* Event-bubbling safety gate */
+        }
+        .timer-card .manual-check-trigger,
+        .maint-bar .manual-check-trigger {
+            pointer-events: auto; /* Independent click zones */
+        }
+        .manual-check-trigger.checked {
+            border-color: var(--accent-glow);
+            background: rgba(188, 108, 255, 0.15);
+        }
+        .manual-check-trigger.checked .check-svg {
+            fill: var(--accent-glow);
+        }
+        .check-svg {
+            width: 18px;
+            height: 18px;
+            fill: #4c4c59;
+            transition: fill 0.15s;
+        }
+
+        .completed-container .shine-card { opacity: 0.15; }
+        .completed-container .card-title { color: var(--text-muted); text-decoration: line-through; }
+
+        /* --- CENTERING SPLASH HUD --- */
+        #conquered-splash { 
+            display: none; 
+            text-align: center; 
+            padding: 80px 20px; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .conquered-headline { 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 2.3rem; 
+            font-weight: 900; 
+            color: var(--success-glow); 
+            letter-spacing: 0.08em; 
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.8);
+            margin-bottom: 16px; 
+        }
+        .conquered-sub { font-size: 1.05rem; color: #6EE7B7; opacity: 0.6; line-height: 1.6; max-width: 320px; margin: 0 auto; }
+
+        /* --- STAGING WAVE LAYOUT PANELS --- */
+        .week-container-box { background-color: var(--bg-card); border: 1px solid #0f0b14; border-radius: 16px; padding: 14px; margin-bottom: 20px; }
+        .week-box-title { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.05em; }
+        
+        .week-scroll-lane { display: flex; flex-direction: column; gap: 10px; height: auto; }
+        .week-row { background-color: var(--bg-primary); border: 1px solid #130a1c; border-radius: 12px; overflow: hidden; }
+        .week-row-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .week-day-status { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; text-align: right; }
+
+        .week-row.row-faded-done { opacity: 0.35; }
+        .week-row.row-faded-done .week-day-name, .week-row.row-faded-done .week-day-status { color: var(--text-muted) !important; }
+
+        .week-row-content { display: block; height: 0; overflow: hidden; padding: 0 14px; background-color: #020203; border-top: 0 solid #111827; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+        .week-row.open .week-row-content { height: auto; padding: 14px; border-top-width: 1px; }
+
+        /* --- HORIZONTAL SWIPE CONTAINER METRICS TRACKS --- */
+        .volume-swipe-track {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 4px 2px;
+            scrollbar-width: none;
+        }
+        .volume-swipe-track::-webkit-scrollbar { display: none; }
+
+        .swipe-element-card {
+            flex: 0 0 105px;
+            background: #030305;
+            border: 1px solid #130a1c;
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+        .swipe-lbl { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; color: var(--text-muted); font-weight: 900; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+        .swipe-val { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
+
+        /* --- TOGGLE CONSOLE ARRAYS --- */
+        .toggle-row { display: flex; background-color: var(--bg-card); padding: 5px; border-radius: 10px; border: 1px solid #130a1c; margin-bottom: 18px; align-items: center; }
+        .toggle-opt { flex: 1; text-align: center; padding: 11px; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; border-radius: 6px; color: var(--text-muted); cursor: pointer; }
+        .toggle-opt.active { background-color: #120e1a; color: var(--text-main); border: 1px solid #2e1065; }
+
+        /* --- LEDGER MONTH CALENDAR ALIGNMENTS --- */
+        .calendar-scroll-window { max-height: 400px; overflow-y: auto; padding-right: 2px; scroll-behavior: smooth; }
+        .month-block { background-color: var(--bg-card); border: 1px solid #130a1c; border-radius: 16px; padding: 16px; margin-bottom: 15px; }
+        
+        /* Active week neon cyan framing */
+        .month-block.active-week-frame {
+            border: 1.5px solid var(--cyan-neon) !important;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+        }
+
+        .month-title { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; margin-bottom: 14px; color: var(--text-muted); letter-spacing: 0.05em; }
+        .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        
+        .day-dot { aspect-ratio: 1; border-radius: 8px; background-color: #000000; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); border: 1px solid transparent; cursor: pointer; }
+        
+        .day-dot.dot-done { background-color: rgba(16, 185, 129, 0.03); color: var(--success-glow); border-color: rgba(16, 185, 129, 0.25); }
+        .day-dot.dot-skipped { background-color: rgba(239, 68, 68, 0.03); color: var(--danger-glow); border-color: rgba(239, 68, 68, 0.25); }
+        
+        /* Neon Cyan Sunday Peak Color */
+        .day-dot.dot-peak { 
+            background-color: rgba(0, 240, 255, 0.02); 
+            color: var(--cyan-neon); 
+            border-color: rgba(0, 240, 255, 0.25); 
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+        }
+
+        /* --- COOLDOWN DYNAMIC DROPDOWN PANEL ARCHITECTURE --- */
+        .maint-bar { border-radius: 14px; margin-top: 12px; }
+        .maint-flex { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        
+        .maint-checklist { 
+            height: 0; 
+            overflow: hidden; 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            line-height: 1.7; 
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .maint-bar.open-dropdown .maint-checklist {
+            height: auto;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #130a1c;
+        }
+
+        /* --- PERSISTENT FLOATING INSETS --- */
+        .tooltip-deck { position: fixed; bottom: 90px; left: 20px; right: 20px; background: #010102; border: 1px solid #1a1a2e; border-radius: 12px; padding: 16px; display: none; z-index: 2000; box-shadow: 0 10px 40px rgba(0,0,0,0.95); }
+        .tooltip-title { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; color: var(--accent-glow); margin-bottom: 6px; }
+        .tooltip-body { font-size: 0.85rem; color: var(--text-main); font-family: monospace; line-height: 1.5; }
+
+        /* --- INSET & GLOW COMPLETE SESSION BUTTON --- */
+        .action-btn { 
+            background: #050308; 
+            color: var(--accent-glow); 
+            border: 1.5px solid var(--accent-glow); 
+            width: calc(100% - 40px); 
+            margin: 20px; 
+            padding: 18px; 
+            border-radius: 12px; 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 1rem; 
+            font-weight: 900; 
+            letter-spacing: 0.08em; 
+            cursor: pointer; 
+            transition: transform 0.1s ease, box-shadow 0.2s ease, background-color 0.2s ease; 
+            box-shadow: inset 0 0 12px rgba(188, 108, 255, 0.15), 
+                        0 0 15px rgba(188, 108, 255, 0.1); 
+            text-shadow: 0 0 8px rgba(188, 108, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 52px;
+        }
+        .action-btn:active { 
+            transform: scale(0.98); 
+            background: #11051c;
+            box-shadow: inset 0 0 20px rgba(188, 108, 255, 0.35), 
+                        0 0 25px rgba(188, 108, 255, 0.2); 
+        }
+        
+        .action-btn-secondary { background: #08050e; color: #e4e4e7; border: 1px solid #231233; padding: 14px; border-radius: 10px; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; width: 100%; cursor: pointer; transition: transform 0.1s; min-height: 46px; }
+        .action-btn-secondary:active { transform: scale(0.97); }
+
+        .rollback-btn { background-color: transparent; border: 1px solid #2d142c; color: var(--danger-glow); padding: 14px; border-radius: 10px; width: 100%; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; margin: 15px 0; cursor: pointer; }
+
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background-color: rgba(0, 0, 0, 0.98); backdrop-filter: blur(20px); border-top: 1px solid #130a1c; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; color: var(--text-muted); font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; cursor: pointer; padding: 15px 0; min-height: 48px; display: flex; align-items: center; justify-content: center; }
+        .nav-item.active { color: var(--accent-glow); text-shadow: 0 0 10px rgba(188, 108, 255, 0.4); }
+
+        .sandbox-deck { background-color: #010102; border: 1px dashed #231233; border-radius: 12px; padding: 14px; margin-top: 10px; }
+        .sandbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+        .sandbox-btn { background: #030305; border: 1px solid #130a1c; color: var(--text-main); padding: 10px; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 900; cursor: pointer; min-height: 42px; }
+
+        /* --- TACTICAL BRIEFING CARD (NO INTRUSIVE ALERTS) --- */
+        .briefing-card {
+            border: 1.5px solid var(--cyan-neon) !important;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.15) !important;
+            margin-bottom: 20px;
+            display: none;
+            background: linear-gradient(145deg, #01080a 0%, #000000 100%) !important;
+        }
+        .briefing-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 900;
+            color: var(--cyan-neon);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .briefing-desc {
+            font-size: 0.85rem;
+            color: #a1a1aa;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        /* --- CONQUEST FLASH ANIMATION LAYER --- */
+        #conquest-flash-layer {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, rgba(188,108,255,0.4) 0%, transparent 70%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        #conquest-flash-layer.flash-active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- RADIAL FLASH FEEDBACK INTERACTION -->
+    <div id="conquest-flash-layer"></div>
+
+    <!-- TARGET RADAR STRIP -->
+    <div class="target-wrapper">
+        <div class="shine-card" style="padding: 24px;">
+            <div class="target-massive" id="radar-target"><span>0</span> REPS</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 8px;">
+                <div class="delta-subtext" id="radar-delta">SYNCING...</div>
+                <div class="delta-subtext" id="radar-stats" style="color: var(--accent-glow); font-weight: 900;">STREAK: 0 🔥 | SKIPS: 0 ❌</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEON PROGRESSION TRACKER BAR -->
+    <div class="progress-container">
+        <div class="progress-bar" id="completion-progress-bar"></div>
+    </div>
+
+    <!-- PANEL 1: LOADOUT (BATTLEGROUND) -->
+    <main id="panel-dashboard" class="view-panel visible active">
+        
+        <!-- TACTICAL INLINE BRIEFING GATE CARD -->
+        <div id="rollover-briefing-card" class="shine-card briefing-card">
+            <div class="briefing-title">🛰️ SYSTEM ROLLOVER BRIEFING</div>
+            <div class="briefing-desc" id="briefing-text">Detecting loadout progression targets...</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button class="action-btn-secondary" style="border-color:var(--success-glow); color:var(--success-glow); background:rgba(16,185,129,0.02);" onclick="acceptProgression()">ACCEPT PROGRESSION</button>
+                <button class="action-btn-secondary" style="border-color:var(--danger-glow); color:var(--danger-glow); background:rgba(239,68,68,0.02);" onclick="freezeProgression()">FREEZE BASELINES</button>
+            </div>
+        </div>
+
+        <div id="conquered-splash">
+            <div class="conquered-headline" id="lbl-conq-head">WAVE CONQUERED</div>
+            <div class="conquered-sub" id="lbl-conq-sub">Rest and adapt.</div>
+        </div>
+
+        <div id="combat-zone-loadout">
+            <div class="section-label" id="lbl-active-loadout">⚔️ Active Loadout</div>
+            <div id="active-workout-stack" class="card-list"></div>
+            
+            <!-- COOLDOWN STACK DROP-DOWN CONTAINER -->
+            <div id="maint-wrapper"></div>
+
+            <div class="section-label" id="lbl-secured-items" style="display:none;">🛡️ Secured Items</div>
+            <div id="completed-workout-stack" class="card-list completed-container"></div>
+
+            <!-- OUTLINED/INSET COMPLETE SESSION BUTTON -->
+            <button class="action-btn" onclick="commitDay(); triggerHapticPulse();">
+                <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor; vertical-align:middle; margin-right:8px;"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.44 1.72 4.48 4 4.92V17c0 1.1.9 2 2 2h2v2H9v2h6v-2h-3v-2h-2c-1.1 0-2-.9-2-2v-2.08c2.28-.44 4-2.48 4-4.92V7c0-1.1-.9-2-2-2zM5 10V7h2v3H5zm14 0h-2V7h2v3z"/></svg>Complete Session
+            </button>
+        </div>
+    </main>
+
+    <!-- PANEL 2: ARCHIVE LAYER -->
+    <main id="panel-analytics" class="view-panel">
+        <div style="padding-top: 15px;">
+            
+            <div class="section-label">🔧 Baseline Directives</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <div>
+                    <label id="lbl-cfg-reps" style="display:block; font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); margin-bottom:5px; font-weight:900;"></label>
+                    <input type="number" id="base-reps" style="width:100%; background:var(--bg-card); border:1px solid #130a1c; color:white; padding:12px; border-radius:8px; font-size:1.1rem; font-weight:700; font-family:'Orbitron';" onchange="updateBaselines()">
+                </div>
+                <div>
+                    <label id="lbl-cfg-plank" style="display:block; font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); margin-bottom:5px; font-weight:900;"></label>
+                    <input type="number" id="base-plank" style="width:100%; background:var(--bg-card); border:1px solid #130a1c; color:white; padding:12px; border-radius:8px; font-size:1.1rem; font-weight:700; font-family:'Orbitron';" onchange="updateBaselines()">
+                </div>
+            </div>
+
+            <div class="section-label">📊 Distribution Staging</div>
+            <div id="weekly-accordion-matrix"></div>
+            <button class="rollback-btn" style="color:#F59E0B; border-color:rgba(245,158,11,0.15);" onclick="resetCurrentWeek()">↩️ Abort Week & Reset Staging</button>
+
+            <div class="section-label">📈 Historical Ledger</div>
+            <div class="toggle-row">
+                <div class="toggle-opt active" id="toggle-wk" onclick="setCalendarZoomMode('week')">CURRENT WAVE</div>
+                <div class="toggle-opt" id="toggle-mo" onclick="setCalendarZoomMode('month')">LEDGER VIEW</div>
+            </div>
+            
+            <div id="monthly-scroll-container" class="calendar-scroll-window zoom-week"></div>
+
+            <!-- DEV TOGGLE SWITCH & LAB CONTAINER -->
+            <div class="toggle-row" style="margin-top: 25px;">
+                <div style="flex:1; padding:11px; font-family:'Orbitron'; font-size:0.75rem; font-weight:900; color:var(--text-muted); text-align:left; display:flex; align-items:center;">
+                    🛰️ Dev Console Link
+                </div>
+                <div class="toggle-opt" id="dev-toggle-btn" onclick="toggleDevPanel()" style="flex:0 0 80px;">OFF</div>
+            </div>
+
+            <div id="dev-sandbox-deck" class="sandbox-deck" style="display: none;">
+                <div style="font-family:'Orbitron'; font-size:0.7rem; font-weight:900; color:var(--accent-glow);">🛡️ TAC-LINK HARNESS OVERRIDES</div>
+                <div class="sandbox-grid">
+                    <button class="sandbox-btn" onclick="testInjectSkipDay()">Force Skip Yest</button>
+                    <button class="sandbox-btn" onclick="testFastForwardWeek()">Simulate Mon Rollover</button>
+                    <button class="sandbox-btn" onclick="testSimulateNextDayShift()">Warp Next Day</button>
+                    <button class="sandbox-btn" style="color:var(--danger-glow);" onclick="testResetTodaySession()">Reset Today Clear</button>
+                    <button class="sandbox-btn" style="background:#2d0606; color:#ef4444; border-color:#7f1d1d; grid-column: span 2;" onclick="factoryWipeDatabase()">Factory Wipe All</button>
+                </div>
+            </div>
+
+            <!-- DETACHED SYSTEM STORAGE SECTION (MOVED TO BOTTOM OF PANEL-ANALYTICS) -->
+            <div class="section-label" style="margin-top:25px;">💾 System Intel Storage</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button class="action-btn-secondary" onclick="exportBackupData()">📤 Backup Data</button>
+                <button class="action-btn-secondary" onclick="importBackupData()">📥 Restore Data</button>
+            </div>
+            <input type="file" id="import-file-input" style="display:none;" onchange="handleImportFile(event)">
+
+        </div>
+    </main>
+
+    <!-- LONG-PRESS DATA TOOLTIP CARD -->
+    <div class="tooltip-deck" id="touch-tooltip">
+        <div class="tooltip-title" id="tt-title">NODE</div>
+        <div class="tooltip-body" id="tt-body">Reading registry...</div>
+    </div>
+
+    <!-- PERSISTENT FOOTER DECK -->
+    <nav class="nav-bar">
+        <div class="nav-item active" id="nav-dash" onclick="switchTab('dashboard', this)">LOADOUT</div>
+        <div class="nav-item" id="nav-arch" onclick="switchTab('analytics', this)">ARCHIVE</div>
+    </nav>
+
+    <script>
+        // ========================================================
+        // GLOBAL STRINGS MAP DICTIONARY
+        // ========================================================
+        const CONFIG_STRINGS = {
+            radarDefaultDelta: "CONQUEST RADAR ENGINE PINNED...",
+            radarDoneText: "CONQUERED",
+            
+            panelLabels: {
+                activeLoadout: "Active Loadout",
+                securedItems: "Secured Items",
+                cooldownHeader: "Cooldown Procedures"
+            },
+            cfgInputs: {
+                repsFloor: "REP FLOOR",
+                plankFloor: "PLANK FLOOR (s)"
+            },
+            waveMatrixTitle: "CURRENT CYCLE: CONQUEST WAVE NO.",
+            exercises: {
+                burb: "Burpees",
+                crunch: "Crunches",
+                push: "Pushups",
+                rows: "Rows",
+                curls: "Curls",
+                plank: "Plank Hold"
+            },
+            timerLabels: {
+                start: "START",
+                pause: "PAUSE",
+                resume: "RESUME"
+            },
+            celebration: {
+                headline: "THE WAVE IS CONQUERED",
+                subtext: "Floor targets sealed in archive partitions. Rest and adapt for tomorrow's loading wave."
+            },
+            navTabs: {
+                loadout: "🏋️ LOADOUT",
+                archive: "📊 ARCHIVE"
+            }
+        };
+
+        const TIMER_PLAY_SVG = `<svg viewBox="0 0 24 24" class="timer-status-icon-svg"><path d="M8 5v14l11-7z"/></svg>`;
+        const TIMER_PAUSE_SVG = `<svg viewBox="0 0 24 24" class="timer-status-icon-svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+
+        // --- INTERNAL SYSTEM TIME MATRIX OFFSETS ---
+        let testTimeOffsetDays = 0; 
+        let pendingRolloverWeekIdx = null;
+
+        function getSimulatedDateObject() {
+            let realNow = new Date();
+            if (testTimeOffsetDays !== 0) {
+                realNow.setDate(realNow.getDate() + testTimeOffsetDays);
+            }
+            return realNow;
+        }
+
+        function getWeekIndex(dateObj) {
+            const date = new Date(dateObj.getTime());
+            date.setHours(0, 0, 0, 0);
+            const day = date.getDay();
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Get Monday date
+            const monday = new Date(date.setDate(diff));
+            return Math.floor(monday.getTime() / (1000 * 60 * 60 * 24 * 7));
+        }
+
+        let appState = {
+            mondayRepBase: 20,
+            mondayPlankBase: 100,
+            appInitTimestamp: null,
+            lastWorkoutTimestamp: null,
+            completedExercisesToday: {},
+            lastRolloverCheck: null,
+            lastActiveDateString: null,
+            currentWeekData: {},  
+            monthlyArchive: {}    
+        };
+
+        const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const PLANNED_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        function initApp() {
+            const saved = localStorage.getItem('viking_conquest_v11');
+            if (saved) {
+                appState = JSON.parse(saved);
+                if (!appState.currentWeekData) appState.currentWeekData = {};
+                if (!appState.monthlyArchive) appState.monthlyArchive = {};
+                if (!appState.appInitTimestamp) appState.appInitTimestamp = Date.now();
+                if (!appState.completedExercisesToday) appState.completedExercisesToday = {};
+            } else {
+                appState.appInitTimestamp = Date.now();
+                saveToStorage();
+            }
+            
+            document.getElementById('lbl-active-loadout').innerText = "⚔️ Active Loadout";
+            document.getElementById('lbl-secured-items').innerText = "🛡️ Secured Items";
+            document.getElementById('lbl-cfg-reps').innerText = CONFIG_STRINGS.cfgInputs.repsFloor;
+            document.getElementById('lbl-cfg-plank').innerText = CONFIG_STRINGS.cfgInputs.plankFloor;
+            document.getElementById('lbl-conq-head').innerText = CONFIG_STRINGS.celebration.headline;
+            document.getElementById('lbl-conq-sub').innerText = CONFIG_STRINGS.celebration.subtext;
+            document.getElementById('nav-dash').innerText = CONFIG_STRINGS.navTabs.loadout;
+            document.getElementById('nav-arch').innerText = CONFIG_STRINGS.navTabs.archive;
+
+            document.getElementById('base-reps').value = appState.mondayRepBase;
+            document.getElementById('base-plank').value = appState.mondayPlankBase;
+
+            // Load dev panel settings (defaulting ON for current testing phases)
+            let devPanelVal = localStorage.getItem('viking_dev_panel');
+            if (devPanelVal === null) {
+                devPanelVal = 'true'; // Default ON until configured otherwise
+                localStorage.setItem('viking_dev_panel', 'true');
+            }
+            
+            const panel = document.getElementById('dev-sandbox-deck');
+            const btn = document.getElementById('dev-toggle-btn');
+            if (devPanelVal === 'true') {
+                panel.style.display = 'block';
+                btn.innerText = "ON";
+                btn.classList.add('active');
+            } else {
+                panel.style.display = 'none';
+                btn.innerText = "OFF";
+                btn.classList.remove('active');
+            }
+
+            processBackgroundSkips();
+            verifyWeeklyRolloverGate();
+            refreshRadarHeader();
+            renderDashboard();
+            startLiveDeltas();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('viking_conquest_v11', JSON.stringify(appState));
+        }
+
+        // --- DEV PANEL DYNAMIC TOGGLE INTERACTION ---
+        function toggleDevPanel() {
+            triggerHapticPulse();
+            const panel = document.getElementById('dev-sandbox-deck');
+            const btn = document.getElementById('dev-toggle-btn');
+            const isVisible = panel.style.display === 'block';
+            if (isVisible) {
+                panel.style.display = 'none';
+                btn.innerText = "OFF";
+                btn.classList.remove('active');
+                localStorage.setItem('viking_dev_panel', 'false');
+            } else {
+                panel.style.display = 'block';
+                btn.innerText = "ON";
+                btn.classList.add('active');
+                localStorage.setItem('viking_dev_panel', 'true');
+            }
+        }
+
+        // --- FLUID VIEWPANEL TRANSITIONS ---
+        function switchTab(tabName, el) {
+            const target = document.getElementById(`panel-${tabName}`);
+            document.querySelectorAll('.view-panel').forEach(p => {
+                p.classList.remove('active');
+                p.classList.remove('visible');
+                p.style.display = 'none';
+            });
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            target.style.display = 'block';
+            target.offsetHeight; // Forces repaint
+            target.classList.add('visible');
+            target.classList.add('active');
+            
+            el.classList.add('active');
+            if(tabName === 'analytics') {
+                renderWeeklyAccordionPanel();
+                renderMonthlyCalendarStack();
+            }
+        }
+
+        // --- STREAK & SKIP TRACKER METRIC LOGIC ---
+        function calculateCurrentStreak() {
+            let streak = 0;
+            let checkDate = getSimulatedDateObject();
+            let visited = new Set();
+            
+            // If today's workout has not been marked 'done' yet, check if yesterday was done to preserve the active streak calculation
+            let todayStr = checkDate.toDateString();
+            if (appState.monthlyArchive[todayStr] !== 'done') {
+                checkDate.setDate(checkDate.getDate() - 1);
+            }
+            
+            while (true) {
+                let dateStr = checkDate.toDateString();
+                if (visited.has(dateStr)) break;
+                visited.add(dateStr);
+                
+                if (appState.monthlyArchive[dateStr] === 'done') {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            return streak;
+        }
+
+        function calculateTotalSkips() {
+            let skips = 0;
+            for (let key in appState.monthlyArchive) {
+                if (appState.monthlyArchive[key] === 'skipped' || appState.monthlyArchive[key] === 'reset') {
+                    skips++;
+                }
+            }
+            return skips;
+        }
+
+        function refreshRadarHeader() {
+            const targets = getComputedTargets();
+            const todayStr = getSimulatedDateObject().toDateString();
+            
+            if (appState.monthlyArchive[todayStr] === 'done') {
+                document.getElementById('radar-target').innerHTML = `<span>${CONFIG_STRINGS.radarDoneText}</span>`;
+            } else {
+                document.getElementById('radar-target').innerHTML = `<span>${targets.reps}</span> REPS / <span>${targets.plank}s</span>`;
+            }
+            updateLiveClockDisplay();
+            
+            const currentStreak = calculateCurrentStreak();
+            const totalSkips = calculateTotalSkips();
+            document.getElementById('radar-stats').innerHTML = `STREAK: ${currentStreak} 🔥 | SKIPS: ${totalSkips} ❌`;
+        }
+
+        function getComputedTargets() {
+            const today = getSimulatedDateObject();
+            let dayIndex = today.getDay(); 
+            let offset = dayIndex === 0 ? 6 : dayIndex - 1;
+
+            let dynamicReps = parseInt(appState.mondayRepBase) + offset;
+            let dynamicPlank = parseInt(appState.mondayPlankBase) + (offset * 5);
+
+            if (dynamicPlank > 120) dynamicPlank = 120; 
+
+            return { reps: dynamicReps, plank: dynamicPlank };
+        }
+
+        function getTargetBoundsForDay(dayName) {
+            let dayIdx = DAYS_OF_WEEK.indexOf(dayName);
+            let offset = dayIdx === 0 ? 6 : dayIdx - 1;
+            let targetReps = parseInt(appState.mondayRepBase) + offset;
+            let targetPlank = parseInt(appState.mondayPlankBase) + (offset * 5);
+            if (targetPlank > 120) targetPlank = 120;
+            return { reps: targetReps, plank: targetPlank };
+        }
+
+        function triggerHapticPulse() {
+            if (window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(25);
+            }
+        }
+
+        // --- RENDER RE-DESIGN WITH NO CARD ICONS, ONLY TEXT + CONSOLE ---
+        function renderDashboard() {
+            const todayStr = getSimulatedDateObject().toDateString();
+            
+            if (appState.monthlyArchive[todayStr] === 'done') {
+                document.body.classList.add('conquered-state');
+                document.getElementById('combat-zone-loadout').style.display = 'none';
+                document.getElementById('conquered-splash').style.display = 'flex';
+                const progressBar = document.getElementById('completion-progress-bar');
+                if (progressBar) progressBar.style.width = '100%';
+                return;
+            }
+
+            document.body.classList.remove('conquered-state');
+            document.getElementById('combat-zone-loadout').style.display = 'block';
+            document.getElementById('conquered-splash').style.display = 'none';
+
+            const targets = getComputedTargets();
+            // Strength cards display uniform target reps on loadout screen (all Strength targets represent base targets.reps)
+            const masterExercises = [
+                { id: 'burb', title: CONFIG_STRINGS.exercises.burb, type: 'reps', val: targets.reps },
+                { id: 'crunch', title: CONFIG_STRINGS.exercises.crunch, type: 'reps', val: targets.reps },
+                { id: 'push', title: CONFIG_STRINGS.exercises.push, type: 'reps', val: targets.reps }, 
+                { id: 'rows', title: CONFIG_STRINGS.exercises.rows, type: 'reps', val: targets.reps },
+                { id: 'curls', title: CONFIG_STRINGS.exercises.curls, type: 'reps', val: targets.reps },
+                { id: 'plank', title: CONFIG_STRINGS.exercises.plank, type: 'timer', val: targets.plank }
+            ];
+
+            let activeHtml = '';
+            let completedHtml = '';
+            let activeCount = 0;
+            let completedCount = 0;
+
+            masterExercises.forEach(ex => {
+                const isCompleted = !!appState.completedExercisesToday[ex.id];
+                let cardHtml = '';
+                
+                if (ex.type === 'timer') {
+                    const timerStateClass = timerInterval ? 'timer-running' : '';
+                    const statusIcon = (timerInterval && !timerPaused) ? TIMER_PAUSE_SVG : TIMER_PLAY_SVG;
+                    const checkStateClass = isCompleted ? 'checked' : '';
+                    
+                    cardHtml = `
+                    <div class="shine-card" style="cursor: default;" id="card-${ex.id}">
+                        <div style="display: flex; align-items: center; gap: 12px; pointer-events: none;">
+                            <div class="card-title">${ex.title}</div>
+                        </div>
+                        <div class="card-right">
+                            <!-- CLOCK-INTEGRATED CONSOLE -->
+                            <div class="timer-interactive-trigger ${timerStateClass}" onclick="executeTimerSequence(event, ${ex.val})">
+                                <span id="timer-status-icon" style="display:flex; align-items:center;">${statusIcon}</span>
+                                <span id="timer-display" class="timer-countdown">${timerInterval ? timerRunningRemainingValue : ex.val}s</span>
+                            </div>
+                            <!-- QUICK MANUAL OVERRIDE -->
+                            <div class="manual-check-trigger ${checkStateClass}" onclick="toggleExerciseManualCheck(event, '${ex.id}')">
+                                <svg viewBox="0 0 24 24" class="check-svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                    </div>`;
+                } else {
+                    cardHtml = `
+                    <div class="shine-card" onclick="toggleExerciseManualCheck(event, '${ex.id}')">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="card-title">${ex.title}</div>
+                        </div>
+                        <div class="card-right">
+                            <span class="card-badge" style="margin-right: 14px;">${ex.val}</span>
+                            <div class="manual-check-trigger ${isCompleted ? 'checked' : ''}">
+                                <svg viewBox="0 0 24 24" class="check-svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+
+                if (isCompleted) {
+                    completedHtml += cardHtml;
+                    completedCount++;
+                } else {
+                    activeHtml += cardHtml;
+                    activeCount++;
+                }
+            });
+
+            document.getElementById('active-workout-stack').innerHTML = activeHtml;
+            document.getElementById('completed-workout-stack').innerHTML = completedHtml;
+            
+            const securedLabel = document.getElementById('lbl-secured-items');
+            if (securedLabel) {
+                securedLabel.style.display = completedCount > 0 ? 'block' : 'none';
+            }
+
+            // Cooldown Dropdown Allocation Matrix
+            const maintDone = !!appState.completedExercisesToday['maint'];
+            const accOpen = sessionStorage.getItem('viking_v11_acc') === 'true' ? 'open-dropdown' : '';
+            
+            document.getElementById('maint-wrapper').innerHTML = `
+            <div class="maint-bar shine-card ${accOpen} ${maintDone ? 'completed-container' : ''}">
+                <div class="maint-flex" onclick="toggleMaintAccordionUI()">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="font-size:1.15rem; font-weight:700;">⚙️ ${CONFIG_STRINGS.panelLabels.cooldownHeader}</div>
+                    </div>
+                    <button class="manual-check-trigger ${maintDone ? 'checked' : ''}" style="pointer-events: auto;" onclick="toggleMaintCompletion(event)">
+                        <svg viewBox="0 0 24 24" class="check-svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </button>
+                </div>
+                <div class="maint-checklist">
+                    <p style="margin: 4px 0; color:#a1a1aa;">• Cat Cow (10 Cycles)</p>
+                    <p style="margin: 4px 0; color:#a1a1aa;">• Glute Bridge (10 Cycles)</p>
+                    <p style="margin: 4px 0; color:#a1a1aa;">• Passive Lie Down (2 Min)</p>
+                    <p style="margin: 4px 0; color:#a1a1aa;">• Wall Elbow Stretch</p>
+                </div>
+            </div>`;
+
+            // Neon Progress Calculation Update (6 master exercises + 1 cooldown)
+            let totalCheckedCount = completedCount + (maintDone ? 1 : 0);
+            let percentDone = Math.round((totalCheckedCount / 7) * 100);
+            const progressBar = document.getElementById('completion-progress-bar');
+            if (progressBar) progressBar.style.width = `${percentDone}%`;
+
+            // DYNAMIC AUTOMATED PROGRESS GATE
+            if (activeCount === 0 && maintDone) {
+                setTimeout(() => {
+                    const finalCheckActive = masterExercises.filter(ex => !appState.completedExercisesToday[ex.id]).length;
+                    if (finalCheckActive === 0 && !!appState.completedExercisesToday['maint']) {
+                        commitDay();
+                    }
+                }, 450); 
+            }
+        }
+
+        function toggleExerciseManualCheck(event, id) {
+            event.stopPropagation();
+            triggerHapticPulse();
+            if (id === 'plank' && timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timerPaused = false;
+            }
+            appState.completedExercisesToday[id] = !appState.completedExercisesToday[id];
+            saveToStorage();
+            renderDashboard();
+        }
+
+        function toggleMaintAccordionUI() {
+            triggerHapticPulse();
+            const open = sessionStorage.getItem('viking_v11_acc') === 'true';
+            sessionStorage.setItem('viking_v11_acc', !open);
+            renderDashboard();
+        }
+
+        // --- MANUALLY CHECKING COOLDOWN COMPLETION ---
+        function toggleMaintCompletion(event) {
+            event.stopPropagation(); 
+            triggerHapticPulse();
+            appState.completedExercisesToday['maint'] = !appState.completedExercisesToday['maint'];
+            saveToStorage();
+            renderDashboard();
+        }
+
+        function renderWeeklyAccordionPanel() {
+            const deltaMs = Date.now() - appState.appInitTimestamp;
+            const weekNo = Math.floor(deltaMs / (1000 * 60 * 60 * 24 * 7)) + 1;
+            
+            let html = `
+            <div class="week-container-box">
+                <div class="week-box-title">${CONFIG_STRINGS.waveMatrixTitle} ${weekNo}</div>
+                <div class="week-scroll-lane">`;
+
+            PLANNED_ORDER.forEach(dayName => {
+                let logData = appState.currentWeekData[dayName];
+                let targets = getTargetBoundsForDay(dayName);
+                
+                // Completed days display locked-in historical targets, incomplete days display dynamic calculated targets
+                let displayReps = logData ? (logData.burpees) : targets.reps;
+                let displayPlank = logData ? logData.plank : targets.plank;
+
+                let statusText = `${displayReps} Reps / ${displayPlank}s`;
+                let statusClass = 'status-locked';
+                let actionAttr = '';
+                let fadedClass = '';
+
+                if (logData) {
+                    if (logData.type === 'reset') {
+                        statusText = 'Reset';
+                        statusClass = 'status-skipped';
+                    } else {
+                        statusText = '✓ View Vol';
+                        statusClass = dayName === 'Sunday' ? 'status-peak' : 'status-done';
+                        fadedClass = 'row-faded-done'; 
+                        actionAttr = `onclick="toggleDayAccordionElement('${dayName}')"`;
+                    }
+                } else {
+                    const todayIdx = getSimulatedDateObject().getDay();
+                    const targetIdx = DAYS_OF_WEEK.indexOf(dayName);
+                    let todayOffset = todayIdx === 0 ? 6 : todayIdx - 1;
+                    let targetOffset = targetIdx === 0 ? 6 : targetIdx - 1;
+                    
+                    if (targetOffset < todayOffset) {
+                        statusText = 'Skipped';
+                        statusClass = 'status-skipped';
+                    } else if (dayName === 'Sunday') {
+                        statusClass = 'status-peak';
+                    }
+                }
+
+                let isOpen = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true' ? 'open' : '';
+
+                html += `
+                <div class="week-row ${isOpen} ${fadedClass}" id="week-row-${dayName}">
+                    <div class="week-row-header" ${actionAttr}>
+                        <div class="week-day-name" style="font-size:0.95rem; font-weight:700;">${dayName} <span style="font-size:0.75rem; font-weight:400; opacity:0.5;">[${displayReps}R/${displayPlank}s]</span></div>
+                        <div class="week-day-status ${statusClass}">${statusText} ${logData && logData.type !== 'reset' ? '▼':''}</div>
+                    </div>`;
+
+                if (logData && logData.type !== 'reset') {
+                    html += `
+                    <div class="week-row-content">
+                        <div class="volume-swipe-track">
+                            <div class="swipe-element-card"><div class="swipe-lbl">Pushups</div><div class="swipe-val">${logData.pushups} mv</div></div>
+                            <div class="swipe-element-card"><div class="swipe-lbl">Burpees</div><div class="swipe-val">${logData.burpees}</div></div>
+                            <div class="swipe-element-card"><div class="swipe-lbl">Crunches</div><div class="swipe-val">${logData.crunchReps} (${logData.crunchMoves})</div></div>
+                            <div class="swipe-element-card"><div class="swipe-lbl">Rows</div><div class="swipe-val">${logData.rows}</div></div>
+                            <div class="swipe-element-card"><div class="swipe-lbl">Curls</div><div class="swipe-val">${logData.curls}</div></div>
+                            <div class="swipe-element-card"><div class="swipe-lbl">Plank</div><div class="swipe-val">${logData.plank}s</div></div>
+                        </div>
+                    </div>`;
+                }
+                html += `</div>`;
+            });
+
+            html += `</div></div>`;
+            document.getElementById('weekly-accordion-matrix').innerHTML = html;
+        }
+
+        function toggleDayAccordionElement(dayName) {
+            const open = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true';
+            sessionStorage.setItem(`open_week_day_${dayName}`, !open);
+            renderWeeklyAccordionPanel();
+        }
+
+        function setCalendarZoomMode(mode) {
+            const el = document.getElementById('monthly-scroll-container');
+            document.getElementById('toggle-wk').classList.remove('active');
+            document.getElementById('toggle-mo').classList.remove('active');
+            
+            if (mode === 'week') {
+                el.className = "calendar-scroll-window zoom-week";
+                document.getElementById('toggle-wk').classList.add('active');
+            } else {
+                el.className = "calendar-scroll-window full-month";
+                document.getElementById('toggle-mo').classList.add('active');
+            }
+            renderMonthlyCalendarStack();
+        }
+
+        // --- RELIABLE LEDGER SCROLL FOCUSING ---
+        function renderMonthlyCalendarStack() {
+            const container = document.getElementById('monthly-scroll-container');
+            const isZoomedWeek = container.classList.contains('zoom-week');
+            const today = getSimulatedDateObject(); 
+            
+            let html = '';
+
+            if (isZoomedWeek) {
+                let distanceToMonday = today.getDay() - 1;
+                if (distanceToMonday < 0) distanceToMonday = 6;
+                let currentMonday = new Date(today);
+                currentMonday.setDate(today.getDate() - distanceToMonday);
+
+                html += `
+                <div class="month-block active-week-frame">
+                    <div class="month-title">Active Segment Track</div>
+                    <div class="month-grid" style="grid-template-columns: repeat(7, 1fr);">`;
+
+                for(let i = 0; i < 7; i++) {
+                    let d = new Date(currentMonday);
+                    d.setDate(currentMonday.getDate() + i);
+                    html += buildTileNodeHTML(d, d.getDate());
+                }
+                html += `</div></div>`;
+            } else {
+                const currentWeekIdx = getWeekIndex(today);
+                for (let m = -1; m <= 1; m++) {
+                    let targetMonth = today.getMonth() + m;
+                    let targetYear = today.getFullYear();
+                    if (targetMonth < 0) { targetMonth += 12; targetYear -= 1; }
+                    else if (targetMonth > 11) { targetMonth -= 12; targetYear += 1; }
+                    
+                    let isCurrentMonth = (targetMonth === today.getMonth() && targetYear === today.getFullYear());
+                    // Highlight month blocks enclosing the current week indices
+                    html += buildFullMonthGridHTML(targetYear, targetMonth, isCurrentMonth ? "active-week-frame" : "");
+                }
+            }
+
+            container.innerHTML = html;
+            attachTouchInteractions();
+            
+            // Focus scroll directly to the block/node representing today
+            setTimeout(() => {
+                const todayStr = today.toDateString();
+                const todayDot = container.querySelector(`[data-date="${todayStr}"]`);
+                if (todayDot) {
+                    todayDot.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                } else if (!isZoomedWeek) {
+                    const targetBox = container.querySelectorAll('.month-block')[1]; 
+                    if(targetBox) container.scrollTop = targetBox.offsetTop - (container.clientHeight / 4);
+                }
+            }, 150);
+        }
+
+        function buildFullMonthGridHTML(year, monthIdx, customClass = "") {
+            let firstDay = new Date(year, monthIdx, 1);
+            let lastDay = new Date(year, monthIdx + 1, 0);
+            let totalDays = lastDay.getDate();
+            
+            let startOffset = firstDay.getDay() - 1;
+            if (startOffset < 0) startOffset = 6;
+
+            let html = `
+            <div class="month-block ${customClass}">
+                <div class="month-title">${MONTHS[monthIdx]} ${year}</div>
+                <div class="month-grid">`;
+
+            for (let p = 0; p < startOffset; p++) html += `<div></div>`;
+
+            for (let d = 1; d <= totalDays; d++) {
+                let lookupDate = new Date(year, monthIdx, d);
+                html += buildTileNodeHTML(lookupDate, d);
+            }
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        function buildTileNodeHTML(dateObject, displayNum) {
+            let lookupStr = dateObject.toDateString();
+            let archiveStatus = appState.monthlyArchive[lookupStr];
+            let dayName = DAYS_OF_WEEK[dateObject.getDay()];
+
+            let classDot = '';
+            if (archiveStatus === 'done') classDot = 'dot-done';
+            else if (archiveStatus === 'skipped' || archiveStatus === 'reset') classDot = 'dot-skipped';
+            else if (dayName === 'Sunday') classDot = 'dot-peak'; 
+
+            return `<div class="day-dot ${classDot}" data-date="${lookupStr}">${displayNum}</div>`;
+        }
+
+        function attachTouchInteractions() {
+            const dots = document.querySelectorAll('.day-dot');
+            dots.forEach(dot => {
+                let pressTimer = null;
+
+                const startPress = (e) => {
+                    const dateStr = dot.getAttribute('data-date');
+                    if(!dateStr) return;
+                    pressTimer = setTimeout(() => { triggerTooltipDisplay(dateStr); }, 400); 
+                };
+
+                const endPress = () => {
+                    clearTimeout(pressTimer);
+                    document.getElementById('touch-tooltip').style.display = 'none';
+                };
+
+                dot.addEventListener('touchstart', startPress, {passive: true});
+                dot.addEventListener('touchend', endPress);
+                dot.addEventListener('touchmove', endPress);
+                dot.addEventListener('mousedown', startPress);
+                dot.addEventListener('mouseup', endPress);
+                dot.addEventListener('mouseleave', endPress);
+            });
+        }
+
+        // --- MASTER LEDGER VOLUME COMPUTATION EXCLUDES SKIPPED NODES (0 ADDED) ---
+        function triggerTooltipDisplay(dateStr) {
+            const tt = document.getElementById('touch-tooltip');
+            const ttTitle = document.getElementById('tt-title');
+            const ttBody = document.getElementById('tt-body');
+            
+            const targetDate = new Date(dateStr);
+            const dayName = DAYS_OF_WEEK[targetDate.getDay()];
+            let archiveStatus = appState.monthlyArchive[dateStr] || 'Locked';
+            
+            ttTitle.innerText = `${dayName.toUpperCase()} - ${targetDate.toLocaleDateString()}`;
+            
+            let dayIndex = targetDate.getDay();
+            let offset = dayIndex === 0 ? 6 : dayIndex - 1;
+            let targetsCalculated = getTargetBoundsForDay(dayName);
+
+            let detailedMetricsString = '[TARGET UNREACHED]';
+            
+            // Compute cumulative sum using Master Ledger rules (unlogged/skipped days contribute exactly 0)
+            let accPushups = 0, accBurpees = 0, accCrunchReps = 0, accCrunchMoves = 0, accRows = 0, accCurls = 0, accPlank = 0;
+            let hasSomeData = false;
+            
+            for (let i = 0; i <= offset; i++) {
+                let loopDayName = PLANNED_ORDER[i];
+                let loopDayData = appState.currentWeekData[loopDayName];
+                
+                if (loopDayData && loopDayData.type !== 'reset') {
+                    accPushups += loopDayData.pushups || 0;
+                    accBurpees += loopDayData.burpees || 0;
+                    accCrunchReps += loopDayData.crunchReps || 0;
+                    accCrunchMoves += loopDayData.crunchMoves || 0;
+                    accRows += loopDayData.rows || 0;
+                    accCurls += loopDayData.curls || 0;
+                    accPlank += loopDayData.plank || 0;
+                    hasSomeData = true;
+                }
+            }
+
+            if (hasSomeData) {
+                detailedMetricsString = `
+                    Pushups: ${accPushups} total mv<br>
+                    Burpees: ${accBurpees} total reps<br>
+                    Crunches: ${accCrunchReps} R (${accCrunchMoves} mv)<br>
+                    Rows: ${accRows} R | Curls: ${accCurls} R<br>
+                    Plank Time Hold: ${accPlank}s
+                `;
+            } else if (archiveStatus === 'done') {
+                detailedMetricsString = '[VOLUME LEDGER SYNC PENDING]';
+            }
+            
+            ttBody.innerHTML = `
+                <b>TARGET FOR THIS NODE:</b><br>
+                ${targetsCalculated.reps} Reps / ${targetsCalculated.plank}s Plank<br><br>
+                <b>ACCUMULATED WEEK VOLUME UP TO DAY:</b><br>
+                ${detailedMetricsString}<br><br>
+                REGISTRY ID: [${archiveStatus.toUpperCase()}]
+            `;
+            tt.style.display = 'block';
+        }
+
+        // --- PASSED WEEKDAYS CHRONOLOGICAL AUTO-SKIP SYSTEM ---
+        function processBackgroundSkips() {
+            const today = getSimulatedDateObject();
+            const todayStr = today.toDateString();
+            
+            let currentDayIdx = today.getDay();
+            let currentOffset = currentDayIdx === 0 ? 6 : currentDayIdx - 1;
+            
+            let monday = new Date(today);
+            monday.setDate(today.getDate() - currentOffset);
+            
+            for (let i = 0; i < currentOffset; i++) {
+                let loopDate = new Date(monday);
+                loopDate.setDate(monday.getDate() + i);
+                let loopStr = loopDate.toDateString();
+                
+                if (!appState.monthlyArchive[loopStr]) {
+                    appState.monthlyArchive[loopStr] = 'skipped';
+                }
+            }
+            saveToStorage();
+        }
+
+        // --- WEEK-INDEX ROLLOVER BRIEFING SYSTEM ---
+        function verifyWeeklyRolloverGate() {
+            const today = getSimulatedDateObject();
+            const currentWeekIdx = getWeekIndex(today);
+            
+            if (appState.lastRolloverCheck !== undefined && appState.lastRolloverCheck !== null) {
+                const lastWeekIdx = appState.lastRolloverCheck;
+                if (currentWeekIdx > lastWeekIdx) {
+                    pendingRolloverWeekIdx = currentWeekIdx;
+                    showInlineRolloverBriefing();
+                }
+            } else {
+                appState.lastRolloverCheck = currentWeekIdx;
+                saveToStorage();
+            }
+        }
+
+        function showInlineRolloverBriefing() {
+            const briefing = document.getElementById('rollover-briefing-card');
+            const briefingText = document.getElementById('briefing-text');
+            if (!briefing) return;
+
+            const nextRepBase = parseInt(appState.mondayRepBase) + 1;
+            const nextPlankBase = parseInt(appState.mondayPlankBase) + 5;
+            const cappedPlank = nextPlankBase > 120 ? 120 : nextPlankBase;
+
+            briefingText.innerHTML = `Cycle transition detected. Standard progression protocols recommend lifting targets to: <b>${nextRepBase} Base Reps / ${cappedPlank}s Base Plank</b>. Choose directive:`;
+            briefing.style.display = 'block';
+        }
+
+        function acceptProgression() {
+            triggerHapticPulse();
+            if (pendingRolloverWeekIdx !== null) {
+                appState.mondayRepBase = parseInt(appState.mondayRepBase) + 1;
+                appState.mondayPlankBase = parseInt(appState.mondayPlankBase) + 5;
+                if (appState.mondayPlankBase > 120) appState.mondayPlankBase = 120;
+                
+                appState.lastRolloverCheck = pendingRolloverWeekIdx;
+                flushCycleStaging(getSimulatedDateObject().toDateString());
+                pendingRolloverWeekIdx = null;
+                
+                document.getElementById('base-reps').value = appState.mondayRepBase;
+                document.getElementById('base-plank').value = appState.mondayPlankBase;
+            }
+            document.getElementById('rollover-briefing-card').style.display = 'none';
+            refreshRadarHeader();
+            renderDashboard();
+        }
+
+        function freezeProgression() {
+            triggerHapticPulse();
+            if (pendingRolloverWeekIdx !== null) {
+                appState.lastRolloverCheck = pendingRolloverWeekIdx;
+                flushCycleStaging(getSimulatedDateObject().toDateString());
+                pendingRolloverWeekIdx = null;
+            }
+            document.getElementById('rollover-briefing-card').style.display = 'none';
+            refreshRadarHeader();
+            renderDashboard();
+        }
+
+        function flushCycleStaging(dateStr) {
+            appState.currentWeekData = {};
+            appState.lastActiveDateString = dateStr;
+            appState.completedExercisesToday = {};
+            saveToStorage();
+        }
+
+        function resetCurrentWeek() {
+            if (confirm("Wipe active week staging data? The Monthly Ledger will permanently log these slots as 'Reset' blocks.")) {
+                const today = getSimulatedDateObject();
+                let distanceToMonday = today.getDay() - 1;
+                if (distanceToMonday < 0) distanceToMonday = 6;
+                
+                for (let i = 0; i <= distanceToMonday; i++) {
+                    let targetDay = new Date(today);
+                    targetDay.setDate(today.getDate() - i);
+                    let targetStr = targetDay.toDateString();
+                    if (appState.monthlyArchive[targetStr] !== 'done') {
+                        appState.monthlyArchive[targetStr] = 'reset';
+                    }
+                }
+
+                appState.currentWeekData = {};
+                appState.completedExercisesToday = {};
+                appState.lastActiveDateString = today.toDateString();
+                
+                saveToStorage();
+                refreshRadarHeader();
+                renderDashboard();
+                alert("Staging aborted.");
+            }
+        }
+
+        function commitDay() {
+            const targets = getComputedTargets();
+            const today = getSimulatedDateObject();
+            const todayStr = today.toDateString();
+            const dayName = DAYS_OF_WEEK[today.getDay()];
+
+            if (appState.monthlyArchive[todayStr] === 'done') return;
+
+            // Save math metrics to master database, keeping UI loadout clean
+            appState.currentWeekData[dayName] = {
+                burpees: targets.reps,
+                crunchReps: targets.reps,
+                crunchMoves: targets.reps * 3,
+                pushups: targets.reps * 2,
+                rows: targets.reps,
+                curls: targets.reps,
+                plank: targets.plank
+            };
+
+            appState.monthlyArchive[todayStr] = 'done';
+            appState.lastWorkoutTimestamp = Date.now();
+            appState.lastActiveDateString = todayStr;
+            appState.completedExercisesToday = {}; 
+
+            // Trigger neon flash transition
+            const flash = document.getElementById('conquest-flash-layer');
+            if (flash) {
+                flash.classList.add('flash-active');
+                setTimeout(() => {
+                    flash.classList.remove('flash-active');
+                }, 500);
+            }
+
+            saveToStorage();
+            refreshRadarHeader();
+            renderDashboard();
+        }
+
+        function updateBaselines() {
+            appState.mondayRepBase = parseInt(document.getElementById('base-reps').value) || 20;
+            appState.mondayPlankBase = parseInt(document.getElementById('base-plank').value) || 100;
+            saveToStorage();
+            refreshRadarHeader();
+            renderDashboard();
+        }
+
+        let timerInterval = null;
+        let timerPaused = false;
+        let timerDurationBackup = 0;
+        let timerRunningRemainingValue = 0;
+        let wakeLock = null;
+
+        async function executeTimerSequence(event, duration) {
+            event.stopPropagation(); 
+            triggerHapticPulse();
+            const triggerArea = event.currentTarget;
+            const display = triggerArea.querySelector('#timer-display');
+            const statusIconContainer = triggerArea.querySelector('#timer-status-icon');
+            
+            if (!timerInterval) {
+                try {
+                    if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+                } catch (err) {}
+
+                timerDurationBackup = duration;
+                timerRunningRemainingValue = duration;
+                timerPaused = false;
+                statusIconContainer.innerHTML = TIMER_PAUSE_SVG;
+                triggerArea.classList.add('timer-running');
+
+                startCountingIntervalLoop(display, statusIconContainer, triggerArea);
+                return;
+            }
+
+            if (timerInterval && !timerPaused) {
+                timerPaused = true;
+                clearInterval(timerInterval);
+                statusIconContainer.innerHTML = TIMER_PLAY_SVG;
+                releaseWakeLock();
+                return;
+            }
+
+            if (timerInterval && timerPaused) {
+                timerPaused = false;
+                statusIconContainer.innerHTML = TIMER_PAUSE_SVG;
+                try {
+                    if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+                } catch (err) {}
+                
+                startCountingIntervalLoop(display, statusIconContainer, triggerArea);
+            }
+        }
+
+        function startCountingIntervalLoop(display, statusIconContainer, triggerArea) {
+            timerInterval = setInterval(() => {
+                timerRunningRemainingValue--;
+                display.innerText = timerRunningRemainingValue + 's';
+                
+                if (timerRunningRemainingValue <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    timerPaused = false;
+                    statusIconContainer.innerHTML = TIMER_PLAY_SVG;
+                    triggerArea.classList.remove('timer-running');
+                    display.innerText = timerDurationBackup + 's';
+                    
+                    appState.completedExercisesToday['plank'] = true;
+                    saveToStorage();
+                    renderDashboard();
+                    
+                    releaseWakeLock();
+                    if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
+                }
+            }, 1000);
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock) { wakeLock.release().then(() => wakeLock = null); }
+        }
+
+        function startLiveDeltas() {
+            setInterval(updateLiveClockDisplay, 60000);
+            updateLiveClockDisplay();
+        }
+
+        function updateLiveClockDisplay() {
+            const display = document.getElementById('radar-delta');
+            if (!appState.lastWorkoutTimestamp) {
+                display.innerText = CONFIG_STRINGS.radarDefaultDelta;
+                return;
+            }
+            const diffHours = ((Date.now() - appState.lastWorkoutTimestamp) / (1000 * 60 * 60)).toFixed(1);
+            display.innerText = `LAST ENGAGEMENT: ${diffHours} HRS AGO`;
+        }
+
+        // --- JSON BACKUP UTILITY METHODS ---
+        function exportBackupData() {
+            triggerHapticPulse();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href",     dataStr);
+            downloadAnchorNode.setAttribute("download", `viking_conquest_backup_${getSimulatedDateObject().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importBackupData() {
+            triggerHapticPulse();
+            document.getElementById('import-file-input').click();
+        }
+
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed && typeof parsed === 'object' && parsed.mondayRepBase) {
+                        appState = parsed;
+                        saveToStorage();
+                        alert("Database restored successfully.");
+                        location.reload();
+                    } else {
+                        alert("Invalid data file format.");
+                    }
+                } catch (err) {
+                    alert("Error parsing backup data: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- DEV UTILITY TESTING HARNESSES ---
+        function testInjectSkipDay() {
+            let yesterday = getSimulatedDateObject();
+            yesterday.setDate(yesterday.getDate() - 1);
+            appState.monthlyArchive[yesterday.toDateString()] = 'skipped';
+            saveToStorage();
+            if(document.getElementById('panel-analytics').classList.contains('active')) {
+                renderWeeklyAccordionPanel();
+                renderMonthlyCalendarStack();
+            }
+            alert(`Skip injected on node: [${yesterday.toDateString()}]`);
+        }
+
+        function testFastForwardWeek() {
+            // Force manual rollover test
+            const currentWeekIdx = getWeekIndex(getSimulatedDateObject());
+            pendingRolloverWeekIdx = currentWeekIdx + 1;
+            showInlineRolloverBriefing();
+        }
+
+        function testSimulateNextDayShift() {
+            testTimeOffsetDays += 1;
+            processBackgroundSkips();
+            verifyWeeklyRolloverGate();
+            refreshRadarHeader();
+            renderDashboard();
+            if(document.getElementById('panel-analytics').classList.contains('active')) {
+                renderWeeklyAccordionPanel();
+                renderMonthlyCalendarStack();
+            }
+            alert(`Warp Complete. Current clock offset: +${testTimeOffsetDays} Days.`);
+        }
+
+        function testResetTodaySession() {
+            const todayStr = getSimulatedDateObject().toDateString();
+            const dayName = DAYS_OF_WEEK[getSimulatedDateObject().getDay()];
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            timerPaused = false;
+            
+            delete appState.monthlyArchive[todayStr];
+            delete appState.currentWeekData[dayName];
+            appState.completedExercisesToday = {};
+            
+            saveToStorage();
+            refreshRadarHeader();
+            renderDashboard();
+            
+            if(document.getElementById('panel-analytics').classList.contains('active')) {
+                renderWeeklyAccordionPanel();
+                renderMonthlyCalendarStack();
+            }
+            alert("Today's calendar node unlocked.");
+        }
+
+        function factoryWipeDatabase() {
+            if (confirm("Execute destructive wipe? All histories drop to zero baseline targets.")) {
+                localStorage.removeItem('viking_conquest_v11');
+                location.reload();
+            }
+        }
+
+        // --- DEPLOY FLUSH GATEWAY ---
+        // Clears legacy development versions of V11 to guarantee a pristine first-use state this week
+        (function safetyFlushTestRemnants() {
+            const deployKey = "viking_v11_deploy_pristine_final";
+            if (!localStorage.getItem(deployKey)) {
+                localStorage.removeItem('viking_conquest_v11');
+                localStorage.setItem(deployKey, "true");
+            }
+        })();
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
