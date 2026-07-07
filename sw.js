@@ -3,12 +3,11 @@ const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
+  './icon-192.jpg',
+  './icon-512.jpg',
   './background.webp'
 ];
 
-// Handles standard offline installation caching
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -17,7 +16,6 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// Responds with cached assets instantly when offline
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((response) => {
