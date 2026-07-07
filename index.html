@@ -1,19 +1,40 @@
+<!--
+================================================================================
+TITLE: Viking Conquest v12
+CURRENT DATE/TIME (IST): February 18, 2025, 05:30 PM IST
+AUTHOR: VKT & Oracle
+BUILD VERSION: v12.2.0
+
+CAPABILITIES OF THE SCRIPT:
+- 3-Screen Norse Portal Architecture: Battleground (Loadout), Saga (Archive), and Forge (Settings).
+- Dynamic Warrior Rank System: 9 immersive Norse streak tiers calculated and displayed on the active radar.
+- The Skald's Config Engine: Full customizability of progressive bold catchphrases and sub-quotes for all 7 weekdays.
+- Dynamic Workout Forge: Real-time exercise adder and custom order organizer (with creation timestamps for backward compatibility).
+- Sound of the Hammer Haptics: Tactile Tap-Tap-Heavy strike physical feedback sequence upon session completion.
+- Cinematic Conquest Flash: A 1.6-second smooth radial glow keyframe transition matching your progressive stage's highlight color.
+- Normalized Time Calculations: Safe UTC-based week indicators preventing regional DST calculation discrepancies.
+- Cumulative Historical Volume Tooltips: Accurate parsing of past date metrics from immutable daily logs.
+- Safe Local Schema Evolution: Graceful migration of v11 local storage state keeping current training streaks intact.
+- 4-Stage Progressive Thematic Journey: Mon-Wed (Vanguard's Shield), Thu (Midgard Crossing), Fri-Sat (The Crimson Forge), Sun (Asgard's Gate) displayed dynamically on the Completed Splash.
+- Custom Dedicated Pushups Offset: Standard reps (1x) display on the active Battleground UI, but logged as double (2x) in cumulative volumes to incorporate Burpees pushup work.
+- Cat-Cow Isolated Checkoff: Clean checkoff box on Battleground with no numerical cycle count badges (positioned right after Plank), completely excluded from database logs and cumulative historical tooltips.
+- Obsidian Completed Hue: Darkened completed background layout (#000a02) for high-contrast elite recovery styling.
+================================================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <!-- Standalone full-screen mobile indicators -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-transitional">
     <meta name="theme-color" content="#000000">
     
-    <!-- Clean, unescaped standalone manifest for Android Chrome -->
     <link rel="manifest" href='data:application/json,{"name":"Viking Conquest","short_name":"Viking","start_url":".","display":"standalone","background_color":"#000000","theme_color":"#000000"}'>
 
-    <title>Viking Conquest v11</title>
+    <title>Viking Conquest v12</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Space+Grotesk:wght@400;700&display=swap');
 
@@ -26,7 +47,7 @@
             --success-glow: #10B981;
             --danger-glow: #EF4444;
             --cyan-neon: #00F0FF;
-            --bg-conquered: #010702; 
+            --bg-conquered: #000a02; 
             --text-main: #FAFAFA;
             --text-muted: #4b5563;
             --steel-dark: #09090b;
@@ -54,7 +75,6 @@
             background-color: var(--bg-conquered) !important;
         }
 
-        /* --- THE UNIFIED SHINE CARD ARCHITECTURE --- */
         .shine-card {
             background-color: var(--bg-card) !important;
             position: relative;
@@ -80,7 +100,6 @@
             pointer-events: none;
         }
 
-        /* --- EXTRUDED HEADER DECK & NEON GLOWS --- */
         .target-wrapper { padding: 30px 20px 5px 20px; }
         
         .target-massive {
@@ -116,7 +135,6 @@
             letter-spacing: 0.1em;
         }
 
-        /* --- NEON PROGRESSION TRACKER --- */
         .progress-container {
             height: 4px;
             background-color: #000000;
@@ -134,7 +152,6 @@
             transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* --- FLUID TAB TRANSITIONS --- */
         .view-panel { 
             display: none; 
             padding: 0 20px; 
@@ -155,7 +172,6 @@
             font-weight: 900;
         }
 
-        /* --- DASHBOARD ACTION STACKS (DYNAMIC GRID) --- */
         .card-list { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -168,7 +184,6 @@
         .card-right { display: flex; align-items: center; gap: 14px; pointer-events: auto; }
         .card-badge { font-family: 'Orbitron', sans-serif; font-size: 1.25rem; font-weight: 900; color: #e4e4e7; }
 
-        /* --- CLOCK INTEGRATED TIMER COMPONENT --- */
         .timer-interactive-trigger {
             display: flex;
             align-items: center;
@@ -179,7 +194,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.15s, border-color 0.15s;
-            flex-shrink: 0; /* Anti-squash */
+            flex-shrink: 0; 
         }
         .timer-interactive-trigger:active {
             background: #170b24;
@@ -209,7 +224,6 @@
             color: var(--accent-glow) !important;
         }
 
-        /* --- MANUAL CHECKMARK COMPONENT --- */
         .manual-check-trigger {
             display: flex;
             align-items: center;
@@ -221,12 +235,13 @@
             background: transparent;
             cursor: pointer;
             transition: border-color 0.15s, background-color 0.15s;
-            flex-shrink: 0; /* Anti-squash */
-            pointer-events: none; /* Event-bubbling safety gate */
+            flex-shrink: 0; 
+            pointer-events: none; 
         }
         .timer-card .manual-check-trigger,
-        .maint-bar .manual-check-trigger {
-            pointer-events: auto; /* Independent click zones */
+        .maint-bar .manual-check-trigger,
+        .card-list .shine-card .manual-check-trigger {
+            pointer-events: auto; 
         }
         .manual-check-trigger.checked {
             border-color: var(--accent-glow);
@@ -245,7 +260,6 @@
         .completed-container .shine-card { opacity: 0.15; }
         .completed-container .card-title { color: var(--text-muted); text-decoration: line-through; }
 
-        /* --- CENTERING SPLASH HUD --- */
         #conquered-splash { 
             display: none; 
             text-align: center; 
@@ -259,23 +273,25 @@
         
         .conquered-headline { 
             font-family: 'Orbitron', sans-serif; 
-            font-size: 2.3rem; 
+            font-size: 2rem; 
             font-weight: 900; 
-            color: var(--success-glow); 
             letter-spacing: 0.08em; 
-            text-shadow: 0 0 15px rgba(16, 185, 129, 0.8);
             margin-bottom: 16px; 
+            text-transform: uppercase;
         }
-        .conquered-sub { font-size: 1.05rem; color: #6EE7B7; opacity: 0.6; line-height: 1.6; max-width: 320px; margin: 0 auto; }
+        .conquered-sub { font-size: 1.05rem; color: #a1a1aa; opacity: 0.85; line-height: 1.6; max-width: 420px; margin: 0 auto; text-align: center; font-style: italic; }
 
-        /* --- STAGING WAVE LAYOUT PANELS --- */
         .week-container-box { background-color: var(--bg-card); border: 1px solid #0f0b14; border-radius: 16px; padding: 14px; margin-bottom: 20px; }
         .week-box-title { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.05em; }
         
         .week-scroll-lane { display: flex; flex-direction: column; gap: 10px; height: auto; }
         .week-row { background-color: var(--bg-primary); border: 1px solid #130a1c; border-radius: 12px; overflow: hidden; }
         .week-row-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        
         .week-day-status { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; text-align: right; }
+        .status-skipped { color: var(--danger-glow) !important; text-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+        .status-done { color: var(--success-glow) !important; }
+        .status-peak { color: var(--cyan-neon) !important; text-shadow: 0 0 8px rgba(0, 240, 255, 0.3); }
 
         .week-row.row-faded-done { opacity: 0.35; }
         .week-row.row-faded-done .week-day-name, .week-row.row-faded-done .week-day-status { color: var(--text-muted) !important; }
@@ -283,7 +299,6 @@
         .week-row-content { display: block; height: 0; overflow: hidden; padding: 0 14px; background-color: #020203; border-top: 0 solid #111827; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
         .week-row.open .week-row-content { height: auto; padding: 14px; border-top-width: 1px; }
 
-        /* --- HORIZONTAL SWIPE CONTAINER METRICS TRACKS --- */
         .volume-swipe-track {
             display: flex;
             gap: 8px;
@@ -305,16 +320,13 @@
         .swipe-lbl { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; color: var(--text-muted); font-weight: 900; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
         .swipe-val { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
 
-        /* --- TOGGLE CONSOLE ARRAYS --- */
         .toggle-row { display: flex; background-color: var(--bg-card); padding: 5px; border-radius: 10px; border: 1px solid #130a1c; margin-bottom: 18px; align-items: center; }
         .toggle-opt { flex: 1; text-align: center; padding: 11px; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; border-radius: 6px; color: var(--text-muted); cursor: pointer; }
         .toggle-opt.active { background-color: #120e1a; color: var(--text-main); border: 1px solid #2e1065; }
 
-        /* --- LEDGER MONTH CALENDAR ALIGNMENTS --- */
         .calendar-scroll-window { max-height: 400px; overflow-y: auto; padding-right: 2px; scroll-behavior: smooth; }
         .month-block { background-color: var(--bg-card); border: 1px solid #130a1c; border-radius: 16px; padding: 16px; margin-bottom: 15px; }
         
-        /* Active week neon cyan framing */
         .month-block.active-week-frame {
             border: 1.5px solid var(--cyan-neon) !important;
             box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
@@ -326,9 +338,8 @@
         .day-dot { aspect-ratio: 1; border-radius: 8px; background-color: #000000; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); border: 1px solid transparent; cursor: pointer; }
         
         .day-dot.dot-done { background-color: rgba(16, 185, 129, 0.03); color: var(--success-glow); border-color: rgba(16, 185, 129, 0.25); }
-        .day-dot.dot-skipped { background-color: rgba(239, 68, 68, 0.03); color: var(--danger-glow); border-color: rgba(239, 68, 68, 0.25); }
+        .day-dot.dot-skipped { background-color: rgba(239, 68, 68, 0.03); color: var(--danger-glow); border-color: rgba(239, 68, 68, 0.25); box-shadow: 0 0 6px rgba(239, 68, 68, 0.15); }
         
-        /* Neon Cyan Sunday Peak Color */
         .day-dot.dot-peak { 
             background-color: rgba(0, 240, 255, 0.02); 
             color: var(--cyan-neon); 
@@ -336,7 +347,6 @@
             text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
         }
 
-        /* --- COOLDOWN DYNAMIC DROPDOWN PANEL ARCHITECTURE --- */
         .maint-bar { border-radius: 14px; margin-top: 12px; }
         .maint-flex { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         
@@ -356,12 +366,10 @@
             border-top: 1px solid #130a1c;
         }
 
-        /* --- PERSISTENT FLOATING INSETS --- */
         .tooltip-deck { position: fixed; bottom: 90px; left: 20px; right: 20px; background: #010102; border: 1px solid #1a1a2e; border-radius: 12px; padding: 16px; display: none; z-index: 2000; box-shadow: 0 10px 40px rgba(0,0,0,0.95); }
         .tooltip-title { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; color: var(--accent-glow); margin-bottom: 6px; }
         .tooltip-body { font-size: 0.85rem; color: var(--text-main); font-family: monospace; line-height: 1.5; }
 
-        /* --- INSET & GLOW COMPLETE SESSION BUTTON --- */
         .action-btn { 
             background: #050308; 
             color: var(--accent-glow); 
@@ -404,7 +412,6 @@
         .sandbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
         .sandbox-btn { background: #030305; border: 1px solid #130a1c; color: var(--text-main); padding: 10px; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 900; cursor: pointer; min-height: 42px; }
 
-        /* --- TACTICAL BRIEFING CARD (NO INTRUSIVE ALERTS) --- */
         .briefing-card {
             border: 1.5px solid var(--cyan-neon) !important;
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.15) !important;
@@ -429,33 +436,108 @@
             margin-bottom: 12px;
         }
 
-        /* --- CONQUEST FLASH ANIMATION LAYER --- */
         #conquest-flash-layer {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle, rgba(188,108,255,0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(188,108,255,0.45) 0%, transparent 70%);
             opacity: 0;
             pointer-events: none;
             z-index: 9999;
-            transition: opacity 0.5s ease-out;
         }
-        #conquest-flash-layer.flash-active {
-            opacity: 1;
+        
+        @keyframes cinematic-flash {
+            0% { opacity: 0; transform: scale(0.98); }
+            15% { opacity: 1; transform: scale(1.0); }
+            75% { opacity: 1; transform: scale(1.0); }
+            100% { opacity: 0; transform: scale(1.02); }
+        }
+        
+        .flash-active-cinematic {
+            animation: cinematic-flash 1.6s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+        }
+
+        .config-grid-item {
+            background-color: #030305;
+            border: 1px solid #130a1c;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .config-grid-item label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: var(--accent-glow);
+            font-weight: 900;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .config-input {
+            width: 100%;
+            background-color: #000;
+            border: 1px solid #1c142b;
+            color: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-family: inherit;
+        }
+        .config-textarea {
+            width: 100%;
+            background-color: #000;
+            border: 1px solid #1c142b;
+            color: #ccc;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            resize: vertical;
+            min-height: 50px;
+            font-family: inherit;
+        }
+        
+        .forge-workout-card {
+            background: #050508;
+            border: 1px solid #1c122e;
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .forge-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        .forge-btn {
+            background: #0d0d14;
+            border: 1px solid #231c33;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .forge-btn:active {
+            background-color: #1a1a2b;
         }
     </style>
 </head>
 <body>
 
-    <!-- RADIAL FLASH FEEDBACK INTERACTION -->
+    <!-- CINEMATIC FLASH ANIMATING LAYER -->
     <div id="conquest-flash-layer"></div>
 
     <!-- TARGET RADAR STRIP -->
     <div class="target-wrapper">
         <div class="shine-card" style="padding: 24px;">
+            <div style="font-family: 'Orbitron', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; color: var(--cyan-neon); margin-bottom: 6px; text-transform: uppercase;" id="radar-day-label">LOADING SESSION...</div>
             <div class="target-massive" id="radar-target"><span>0</span> REPS</div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 8px;">
-                <div class="delta-subtext" id="radar-delta">SYNCING...</div>
-                <div class="delta-subtext" id="radar-stats" style="color: var(--accent-glow); font-weight: 900;">STREAK: 0 🔥 | SKIPS: 0 ❌</div>
+                <div class="delta-subtext" id="radar-delta">CONQUEST RADAR ENGINE PINNED...</div>
+                <div class="delta-subtext" id="radar-stats" style="color: var(--accent-glow); font-weight: 900;">STREAK: 0 🔥 | RANK: RECRUIT</div>
             </div>
         </div>
     </div>
@@ -465,8 +547,8 @@
         <div class="progress-bar" id="completion-progress-bar"></div>
     </div>
 
-    <!-- PANEL 1: LOADOUT (BATTLEGROUND) -->
-    <main id="panel-dashboard" class="view-panel visible active">
+    <!-- PANEL 1: BATTLEGROUND (LOADOUT SCREEN) -->
+    <main id="panel-battleground" class="view-panel visible active">
         
         <!-- TACTICAL INLINE BRIEFING GATE CARD -->
         <div id="rollover-briefing-card" class="shine-card briefing-card">
@@ -478,9 +560,9 @@
             </div>
         </div>
 
+        <!-- EPIC DUAL-LINE CONQUERED SCREEN -->
         <div id="conquered-splash">
-            <div class="conquered-headline" id="lbl-conq-head">WAVE CONQUERED</div>
-            <div class="conquered-sub" id="lbl-conq-sub">Rest and adapt.</div>
+            <!-- Populates dynamically inside renderDashboard -->
         </div>
 
         <div id="combat-zone-loadout">
@@ -493,29 +575,15 @@
             <div class="section-label" id="lbl-secured-items" style="display:none;">🛡️ Secured Items</div>
             <div id="completed-workout-stack" class="card-list completed-container"></div>
 
-            <!-- OUTLINED/INSET COMPLETE SESSION BUTTON -->
-            <button class="action-btn" onclick="commitDay(); triggerHapticPulse();">
+            <button class="action-btn" onclick="commitDay();">
                 <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor; vertical-align:middle; margin-right:8px;"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.44 1.72 4.48 4 4.92V17c0 1.1.9 2 2 2h2v2H9v2h6v-2h-3v-2h-2c-1.1 0-2-.9-2-2v-2.08c2.28-.44 4-2.48 4-4.92V7c0-1.1-.9-2-2-2zM5 10V7h2v3H5zm14 0h-2V7h2v3z"/></svg>Complete Session
             </button>
         </div>
     </main>
 
-    <!-- PANEL 2: ARCHIVE LAYER -->
-    <main id="panel-analytics" class="view-panel">
+    <!-- PANEL 2: SAGA (ARCHIVE SCREEN) -->
+    <main id="panel-saga" class="view-panel">
         <div style="padding-top: 15px;">
-            
-            <div class="section-label">🔧 Baseline Directives</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <div>
-                    <label id="lbl-cfg-reps" style="display:block; font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); margin-bottom:5px; font-weight:900;"></label>
-                    <input type="number" id="base-reps" style="width:100%; background:var(--bg-card); border:1px solid #130a1c; color:white; padding:12px; border-radius:8px; font-size:1.1rem; font-weight:700; font-family:'Orbitron';" onchange="updateBaselines()">
-                </div>
-                <div>
-                    <label id="lbl-cfg-plank" style="display:block; font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); margin-bottom:5px; font-weight:900;"></label>
-                    <input type="number" id="base-plank" style="width:100%; background:var(--bg-card); border:1px solid #130a1c; color:white; padding:12px; border-radius:8px; font-size:1.1rem; font-weight:700; font-family:'Orbitron';" onchange="updateBaselines()">
-                </div>
-            </div>
-
             <div class="section-label">📊 Distribution Staging</div>
             <div id="weekly-accordion-matrix"></div>
             <button class="rollback-btn" style="color:#F59E0B; border-color:rgba(245,158,11,0.15);" onclick="resetCurrentWeek()">↩️ Abort Week & Reset Staging</button>
@@ -527,8 +595,54 @@
             </div>
             
             <div id="monthly-scroll-container" class="calendar-scroll-window zoom-week"></div>
+        </div>
+    </main>
 
-            <!-- DEV TOGGLE SWITCH & LAB CONTAINER -->
+    <!-- PANEL 3: FORGE (SETTINGS SCREEN) -->
+    <main id="panel-forge" class="view-panel">
+        <div style="padding-top: 15px;">
+            
+            <div class="section-label">🔧 Baseline Directives</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <div>
+                    <label id="lbl-cfg-reps" style="display:block; font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); margin-bottom:5px; font-weight:900;">REP FLOOR</label>
+                    <input type="number" id="base-reps" style="width:100%; background:var(--bg-card); border:1px solid #130a1c; color:white; padding:12px; border-radius:8px; font-size:1.1rem; font-weight:700; font-family:'Orbitron';" onchange="updateBaselines()">
+                </div>
+                <div>
+                    <label id="lbl-cfg-plank" style="display:block; font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); margin-bottom:5px; font-weight:900;">PLANK FLOOR (s)</label>
+                    <input type="number" id="base-plank" style="width:100%; background:var(--bg-card); border:1px solid #130a1c; color:white; padding:12px; border-radius:8px; font-size:1.1rem; font-weight:700; font-family:'Orbitron';" onchange="updateBaselines()">
+                </div>
+            </div>
+
+            <div class="section-label">🔨 THE FORGE (WORKOUTS REGISTER)</div>
+            <div class="shine-card" style="padding:15px; margin-bottom:20px; border-color:#2c1b4d;">
+                <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-bottom:12px;">
+                    <input type="text" id="new-workout-title" placeholder="Workout Name (e.g., Pullups)" class="config-input" style="margin-bottom:0;">
+                    <div style="display:flex; gap:10px;">
+                        <select id="new-workout-type" class="config-input" style="margin-bottom:0; flex:1;" onchange="toggleForgeFormFields()">
+                            <option value="reps">Reps (Scaled)</option>
+                            <option value="timer">Timer (Scaled s)</option>
+                            <option value="fixed">Fixed Target</option>
+                        </select>
+                        <input type="number" id="new-workout-mult" placeholder="Multiplier" class="config-input" style="margin-bottom:0; width:90px;" value="1">
+                        <input type="text" id="new-workout-fixed" placeholder="e.g. 10 reps" class="config-input" style="margin-bottom:0; display:none; flex:1;">
+                    </div>
+                </div>
+                <button class="action-btn-secondary" style="border-color:var(--accent-glow); color:var(--accent-glow);" onclick="forgeAddNewWorkout()">Forge New Workout</button>
+                
+                <div style="margin-top:15px;" id="forge-workout-list-container"></div>
+            </div>
+
+            <div class="section-label">📜 Custom Saga Quotes</div>
+            <div id="skald-quotes-container" style="margin-bottom:20px;"></div>
+
+            <div class="section-label">💾 System Intel Storage</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button class="action-btn-secondary" onclick="exportBackupData()">📤 Backup Data</button>
+                <button class="action-btn-secondary" onclick="importBackupData()">📥 Restore Data</button>
+            </div>
+            <input type="file" id="import-file-input" style="display:none;" onchange="handleImportFile(event)">
+
             <div class="toggle-row" style="margin-top: 25px;">
                 <div style="flex:1; padding:11px; font-family:'Orbitron'; font-size:0.75rem; font-weight:900; color:var(--text-muted); text-align:left; display:flex; align-items:center;">
                     🛰️ Dev Console Link
@@ -547,14 +661,6 @@
                 </div>
             </div>
 
-            <!-- DETACHED SYSTEM STORAGE SECTION (MOVED TO BOTTOM OF PANEL-ANALYTICS) -->
-            <div class="section-label" style="margin-top:25px;">💾 System Intel Storage</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <button class="action-btn-secondary" onclick="exportBackupData()">📤 Backup Data</button>
-                <button class="action-btn-secondary" onclick="importBackupData()">📥 Restore Data</button>
-            </div>
-            <input type="file" id="import-file-input" style="display:none;" onchange="handleImportFile(event)">
-
         </div>
     </main>
 
@@ -566,55 +672,38 @@
 
     <!-- PERSISTENT FOOTER DECK -->
     <nav class="nav-bar">
-        <div class="nav-item active" id="nav-dash" onclick="switchTab('dashboard', this)">LOADOUT</div>
-        <div class="nav-item" id="nav-arch" onclick="switchTab('analytics', this)">ARCHIVE</div>
+        <div class="nav-item active" id="nav-dash" onclick="switchTab('battleground', this)">BATTLEGROUND</div>
+        <div class="nav-item" id="nav-arch" onclick="switchTab('saga', this)">SAGA</div>
+        <div class="nav-item" id="nav-set" onclick="switchTab('forge', this)">FORGE</div>
     </nav>
 
     <script>
-        // ========================================================
-        // GLOBAL STRINGS MAP DICTIONARY
-        // ========================================================
-        const CONFIG_STRINGS = {
-            radarDefaultDelta: "CONQUEST RADAR ENGINE PINNED...",
-            radarDoneText: "CONQUERED",
-            
-            panelLabels: {
-                activeLoadout: "Active Loadout",
-                securedItems: "Secured Items",
-                cooldownHeader: "Cooldown Procedures"
-            },
-            cfgInputs: {
-                repsFloor: "REP FLOOR",
-                plankFloor: "PLANK FLOOR (s)"
-            },
-            waveMatrixTitle: "CURRENT CYCLE: CONQUEST WAVE NO.",
-            exercises: {
-                burb: "Burpees",
-                crunch: "Crunches",
-                push: "Pushups",
-                rows: "Rows",
-                curls: "Curls",
-                plank: "Plank Hold"
-            },
-            timerLabels: {
-                start: "START",
-                pause: "PAUSE",
-                resume: "RESUME"
-            },
-            celebration: {
-                headline: "THE WAVE IS CONQUERED",
-                subtext: "Floor targets sealed in archive partitions. Rest and adapt for tomorrow's loading wave."
-            },
-            navTabs: {
-                loadout: "🏋️ LOADOUT",
-                archive: "📊 ARCHIVE"
-            }
-        };
-
         const TIMER_PLAY_SVG = `<svg viewBox="0 0 24 24" class="timer-status-icon-svg"><path d="M8 5v14l11-7z"/></svg>`;
         const TIMER_PAUSE_SVG = `<svg viewBox="0 0 24 24" class="timer-status-icon-svg"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
 
-        // --- INTERNAL SYSTEM TIME MATRIX OFFSETS ---
+        const WARRIOR_RANKS = [
+            { max: 0, title: "Thrall (Outcast) ❄️", status: "Unproven on the battleground." },
+            { max: 2, title: "Fjord Voyager 🌊", status: "Setting sail into unknown, icy currents." },
+            { max: 4, title: "Hearth Defender 🔥", status: "Keeping the sacred clan fires burning." },
+            { max: 6, title: "Shield-Brother 🛡️", status: "Standing firm and unbroken in the shield wall." },
+            { max: 9, title: "Wolf of the Fjords 🐺", status: "Carving your saga through flesh and bone." },
+            { max: 14, title: "Berserker 🪓", status: "Unstoppable battle fury pounds within." },
+            { max: 20, title: "Raven Commander 🦅", status: "Odin’s eyes guide your relentless march." },
+            { max: 29, title: "Asgardian Vanguard ⚡", status: "Stamping your boots at the rainbow bridge." },
+            { max: Infinity, title: "Einherjar Legend 👑", status: "Your saga is sung eternally in Valhalla." }
+        ];
+
+        // 4-STAGE COLOURED ESCALATION AND PROGRESSION FLASH COLORS
+        const STAGE_CONFIG = {
+            'Monday':    { name: "STAGE 1: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' }, // Purple Flash
+            'Tuesday':   { name: "STAGE 1: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' }, // Purple Flash
+            'Wednesday': { name: "STAGE 1: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' }, // Purple Flash
+            'Thursday':  { name: "STAGE 2: MIDGARD CROSSING 🌊",  color: '#F59E0B', flash: 'rgba(245, 158, 11, 0.45)' },   // Amber Gold Flash
+            'Friday':    { name: "STAGE 3: THE CRIMSON FORGE 🔥",  color: '#FF7A00', flash: 'rgba(255, 122, 0, 0.45)' },   // Orange Flash
+            'Saturday':  { name: "STAGE 3: THE CRIMSON FORGE 🔥",  color: '#E53E3E', flash: 'rgba(229, 62, 62, 0.45)' },   // Crimson Flash
+            'Sunday':    { name: "STAGE 4: ASGARD'S GATE 👑",     color: '#FF0000', flash: 'rgba(255, 0, 0, 0.45)' }       // Blood-Red Flash
+        };
+
         let testTimeOffsetDays = 0; 
         let pendingRolloverWeekIdx = null;
 
@@ -627,11 +716,10 @@
         }
 
         function getWeekIndex(dateObj) {
-            const date = new Date(dateObj.getTime());
-            date.setHours(0, 0, 0, 0);
-            const day = date.getDay();
-            const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Get Monday date
-            const monday = new Date(date.setDate(diff));
+            const temp = new Date(Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()));
+            const day = temp.getUTCDay();
+            const diff = temp.getUTCDate() - day + (day === 0 ? -6 : 1);
+            const monday = new Date(temp.setUTCDate(diff));
             return Math.floor(monday.getTime() / (1000 * 60 * 60 * 24 * 7));
         }
 
@@ -644,7 +732,10 @@
             lastRolloverCheck: null,
             lastActiveDateString: null,
             currentWeekData: {},  
-            monthlyArchive: {}    
+            monthlyArchive: {},
+            historicalVolumeLogs: {}, 
+            customQuotes: {}, 
+            workoutRegistry: [] 
         };
 
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -657,32 +748,54 @@
                 appState = JSON.parse(saved);
                 if (!appState.currentWeekData) appState.currentWeekData = {};
                 if (!appState.monthlyArchive) appState.monthlyArchive = {};
+                if (!appState.historicalVolumeLogs) appState.historicalVolumeLogs = {};
                 if (!appState.appInitTimestamp) appState.appInitTimestamp = Date.now();
                 if (!appState.completedExercisesToday) appState.completedExercisesToday = {};
             } else {
                 appState.appInitTimestamp = Date.now();
-                saveToStorage();
             }
-            
-            document.getElementById('lbl-active-loadout').innerText = "⚔️ Active Loadout";
-            document.getElementById('lbl-secured-items').innerText = "🛡️ Secured Items";
-            document.getElementById('lbl-cfg-reps').innerText = CONFIG_STRINGS.cfgInputs.repsFloor;
-            document.getElementById('lbl-cfg-plank').innerText = CONFIG_STRINGS.cfgInputs.plankFloor;
-            document.getElementById('lbl-conq-head').innerText = CONFIG_STRINGS.celebration.headline;
-            document.getElementById('lbl-conq-sub').innerText = CONFIG_STRINGS.celebration.subtext;
-            document.getElementById('nav-dash').innerText = CONFIG_STRINGS.navTabs.loadout;
-            document.getElementById('nav-arch').innerText = CONFIG_STRINGS.navTabs.archive;
+
+            // SEED WORKOUT REGISTRY WITH DUAL PUSHUPS & EMPTY FIXEDVAL CAT-COW POSITIONS
+            if (!appState.workoutRegistry || appState.workoutRegistry.length === 0) {
+                appState.workoutRegistry = [
+                    { id: 'burb', title: "Burpees", type: 'reps', multiplier: 1, fixedVal: null, addedTimestamp: 0 },
+                    { id: 'crunch', title: "Crunches", type: 'reps', multiplier: 1, fixedVal: null, addedTimestamp: 0 },
+                    { id: 'push', title: "Pushups", type: 'reps', multiplier: 1, fixedVal: null, addedTimestamp: 0 }, // UI displays standard (1x)
+                    { id: 'plank', title: "Plank Hold", type: 'timer', multiplier: 1, fixedVal: null, addedTimestamp: 0 },
+                    { id: 'catcow', title: "Cat-Cow", type: 'fixed', multiplier: 0, fixedVal: "", addedTimestamp: 0 }, // Cleared cycle count
+                    { id: 'rows', title: "Three-point Rows", type: 'reps', multiplier: 1, fixedVal: null, addedTimestamp: 0 },
+                    { id: 'curls', title: "Bicep Curls", type: 'reps', multiplier: 1, fixedVal: null, addedTimestamp: 0 }
+                ];
+            }
+
+            // BACKWARD-COMPATIBILITY SAFEGUARD: Ensure default pushups multiplier remains 1, and catcow fixedVal is empty on UI
+            let pushupObj = appState.workoutRegistry.find(w => w.id === 'push');
+            if (pushupObj) {
+                pushupObj.multiplier = 1;
+            }
+            let catcowObj = appState.workoutRegistry.find(w => w.id === 'catcow');
+            if (catcowObj) {
+                catcowObj.fixedVal = "";
+            }
+
+            if (!appState.customQuotes || Object.keys(appState.customQuotes).length === 0) {
+                appState.customQuotes = {
+                    'Monday': { head: "⚔️ RISE AND REIGN!", sub: "The ships skim the waves, far from the fjords. Today is a new beginning." },
+                    'Tuesday': { head: "🦅 SOAR OVER NEW FRONTIERS!", sub: "The ravens are flying. Shields locked, spears raised. Forge ahead, warrior!" },
+                    'Wednesday': { head: "🔨 THE POUND WITHIN!", sub: "Clank of hammers and the crash of thunder. Hold your ground for clan and kin!" },
+                    'Thursday': { head: "⛓️ IRON AND STEEL!", sub: "Sails swaying on crimson rivers. Exhaustion is just the forge testing your blade." },
+                    'Friday': { head: "🛡️ SPLINTERED TIMBERS!", sub: "Your shield may be shattered, but your will remains unbroken. Stand tall in the shield wall!" },
+                    'Saturday': { head: "🔔 ASGARD'S CALL!", sub: "Fires are rising and the bells are ringing. One final push before the halls fly open!" },
+                    'Sunday': { head: "👑 VALHALLA CALLS ME!", sub: "Shattered bone and blood-soaked fields cannot halt your advance! Odin's golden gates fly open. You have plucked the strings of destiny!" }
+                };
+            }
+
+            saveToStorage();
 
             document.getElementById('base-reps').value = appState.mondayRepBase;
             document.getElementById('base-plank').value = appState.mondayPlankBase;
 
-            // Load dev panel settings (defaulting ON for current testing phases)
-            let devPanelVal = localStorage.getItem('viking_dev_panel');
-            if (devPanelVal === null) {
-                devPanelVal = 'true'; // Default ON until configured otherwise
-                localStorage.setItem('viking_dev_panel', 'true');
-            }
-            
+            let devPanelVal = localStorage.getItem('viking_dev_panel') || 'true';
             const panel = document.getElementById('dev-sandbox-deck');
             const btn = document.getElementById('dev-toggle-btn');
             if (devPanelVal === 'true') {
@@ -700,13 +813,14 @@
             refreshRadarHeader();
             renderDashboard();
             startLiveDeltas();
+            renderSkaldConfigInterface();
+            renderForgeWorkoutRegistry();
         }
 
         function saveToStorage() {
             localStorage.setItem('viking_conquest_v11', JSON.stringify(appState));
         }
 
-        // --- DEV PANEL DYNAMIC TOGGLE INTERACTION ---
         function toggleDevPanel() {
             triggerHapticPulse();
             const panel = document.getElementById('dev-sandbox-deck');
@@ -725,7 +839,6 @@
             }
         }
 
-        // --- FLUID VIEWPANEL TRANSITIONS ---
         function switchTab(tabName, el) {
             const target = document.getElementById(`panel-${tabName}`);
             document.querySelectorAll('.view-panel').forEach(p => {
@@ -733,27 +846,28 @@
                 p.classList.remove('visible');
                 p.style.display = 'none';
             });
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.nav-bar .nav-item').forEach(n => n.classList.remove('active'));
             
             target.style.display = 'block';
-            target.offsetHeight; // Forces repaint
+            target.offsetHeight; 
             target.classList.add('visible');
             target.classList.add('active');
             
             el.classList.add('active');
-            if(tabName === 'analytics') {
+            if(tabName === 'saga') {
                 renderWeeklyAccordionPanel();
                 renderMonthlyCalendarStack();
+            } else if (tabName === 'forge') {
+                renderSkaldConfigInterface();
+                renderForgeWorkoutRegistry();
             }
         }
 
-        // --- STREAK & SKIP TRACKER METRIC LOGIC ---
         function calculateCurrentStreak() {
             let streak = 0;
             let checkDate = getSimulatedDateObject();
             let visited = new Set();
             
-            // If today's workout has not been marked 'done' yet, check if yesterday was done to preserve the active streak calculation
             let todayStr = checkDate.toDateString();
             if (appState.monthlyArchive[todayStr] !== 'done') {
                 checkDate.setDate(checkDate.getDate() - 1);
@@ -784,20 +898,31 @@
             return skips;
         }
 
+        function getWarriorRank(streak) {
+            for (let r of WARRIOR_RANKS) {
+                if (streak <= r.max) return r;
+            }
+            return WARRIOR_RANKS[WARRIOR_RANKS.length - 1];
+        }
+
         function refreshRadarHeader() {
             const targets = getComputedTargets();
-            const todayStr = getSimulatedDateObject().toDateString();
+            const today = getSimulatedDateObject();
+            const todayStr = today.toDateString();
+            const dayName = DAYS_OF_WEEK[today.getDay()];
             
+            document.getElementById('radar-day-label').innerText = `${dayName.toUpperCase()} BATTLE-TARGET`;
+
             if (appState.monthlyArchive[todayStr] === 'done') {
-                document.getElementById('radar-target').innerHTML = `<span>${CONFIG_STRINGS.radarDoneText}</span>`;
+                document.getElementById('radar-target').innerHTML = `<span>CONQUERED</span>`;
             } else {
                 document.getElementById('radar-target').innerHTML = `<span>${targets.reps}</span> REPS / <span>${targets.plank}s</span>`;
             }
             updateLiveClockDisplay();
             
             const currentStreak = calculateCurrentStreak();
-            const totalSkips = calculateTotalSkips();
-            document.getElementById('radar-stats').innerHTML = `STREAK: ${currentStreak} 🔥 | SKIPS: ${totalSkips} ❌`;
+            const rank = getWarriorRank(currentStreak);
+            document.getElementById('radar-stats').innerHTML = `STREAK: ${currentStreak} 🔥 | <span style="color:var(--cyan-neon);">${rank.title}</span>`;
         }
 
         function getComputedTargets() {
@@ -828,13 +953,43 @@
             }
         }
 
-        // --- RENDER RE-DESIGN WITH NO CARD ICONS, ONLY TEXT + CONSOLE ---
+        function triggerHammerHaptic() {
+            if (window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate([100, 80, 100, 80, 350]);
+            }
+        }
+
+        function getTargetValueForWorkout(workoutObj, targets) {
+            if (workoutObj.type === 'reps') {
+                return targets.reps * (workoutObj.multiplier || 1);
+            } else if (workoutObj.type === 'timer') {
+                return targets.plank * (workoutObj.multiplier || 1);
+            } else {
+                return workoutObj.fixedVal || "";
+            }
+        }
+
         function renderDashboard() {
-            const todayStr = getSimulatedDateObject().toDateString();
+            const today = getSimulatedDateObject();
+            const todayStr = today.toDateString();
+            const dayName = DAYS_OF_WEEK[today.getDay()];
             
             if (appState.monthlyArchive[todayStr] === 'done') {
                 document.body.classList.add('conquered-state');
                 document.getElementById('combat-zone-loadout').style.display = 'none';
+                
+                const defaultSkald = { head: "⚔️ RISE AND REIGN!", sub: "For Odin." };
+                const dayQuotes = appState.customQuotes[dayName] || defaultSkald;
+                const stage = STAGE_CONFIG[dayName];
+                
+                let stageIndicatorHtml = `<div style="font-family:'Orbitron', sans-serif; font-size:0.75rem; color:${stage.color}; letter-spacing:0.15em; font-weight:900; margin-bottom:10px; text-transform:uppercase; text-shadow: 0 0 6px ${stage.color};">${stage.name}</div>`;
+                
+                document.getElementById('conquered-splash').innerHTML = `
+                    ${stageIndicatorHtml}
+                    <div class="conquered-headline" id="lbl-conq-head" style="color:${stage.color}; text-shadow:0 0 15px ${stage.color};">${dayQuotes.head}</div>
+                    <div class="conquered-sub" id="lbl-conq-sub">${dayQuotes.sub}</div>
+                `;
+                
                 document.getElementById('conquered-splash').style.display = 'flex';
                 const progressBar = document.getElementById('completion-progress-bar');
                 if (progressBar) progressBar.style.width = '100%';
@@ -846,23 +1001,20 @@
             document.getElementById('conquered-splash').style.display = 'none';
 
             const targets = getComputedTargets();
-            // Strength cards display uniform target reps on loadout screen (all Strength targets represent base targets.reps)
-            const masterExercises = [
-                { id: 'burb', title: CONFIG_STRINGS.exercises.burb, type: 'reps', val: targets.reps },
-                { id: 'crunch', title: CONFIG_STRINGS.exercises.crunch, type: 'reps', val: targets.reps },
-                { id: 'push', title: CONFIG_STRINGS.exercises.push, type: 'reps', val: targets.reps }, 
-                { id: 'rows', title: CONFIG_STRINGS.exercises.rows, type: 'reps', val: targets.reps },
-                { id: 'curls', title: CONFIG_STRINGS.exercises.curls, type: 'reps', val: targets.reps },
-                { id: 'plank', title: CONFIG_STRINGS.exercises.plank, type: 'timer', val: targets.plank }
-            ];
+            const todayTimestamp = today.getTime();
+
+            const visibleWorkouts = appState.workoutRegistry.filter(w => {
+                return !w.addedTimestamp || w.addedTimestamp <= todayTimestamp;
+            });
 
             let activeHtml = '';
             let completedHtml = '';
             let activeCount = 0;
             let completedCount = 0;
 
-            masterExercises.forEach(ex => {
+            visibleWorkouts.forEach(ex => {
                 const isCompleted = !!appState.completedExercisesToday[ex.id];
+                const displayVal = getTargetValueForWorkout(ex, targets);
                 let cardHtml = '';
                 
                 if (ex.type === 'timer') {
@@ -876,25 +1028,26 @@
                             <div class="card-title">${ex.title}</div>
                         </div>
                         <div class="card-right">
-                            <!-- CLOCK-INTEGRATED CONSOLE -->
-                            <div class="timer-interactive-trigger ${timerStateClass}" onclick="executeTimerSequence(event, ${ex.val})">
+                            <div class="timer-interactive-trigger ${timerStateClass}" onclick="executeTimerSequence(event, ${displayVal})">
                                 <span id="timer-status-icon" style="display:flex; align-items:center;">${statusIcon}</span>
-                                <span id="timer-display" class="timer-countdown">${timerInterval ? timerRunningRemainingValue : ex.val}s</span>
+                                <span id="timer-display" class="timer-countdown">${timerInterval ? timerRunningRemainingValue : displayVal}s</span>
                             </div>
-                            <!-- QUICK MANUAL OVERRIDE -->
                             <div class="manual-check-trigger ${checkStateClass}" onclick="toggleExerciseManualCheck(event, '${ex.id}')">
                                 <svg viewBox="0 0 24 24" class="check-svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                             </div>
                         </div>
                     </div>`;
                 } else {
+                    // Render badge templates conditionally (excluding Cat-Cow's empty badge)
+                    const badgeHtml = displayVal ? `<span class="card-badge" style="margin-right: 14px;">${displayVal}</span>` : '';
+                    
                     cardHtml = `
                     <div class="shine-card" onclick="toggleExerciseManualCheck(event, '${ex.id}')">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="card-title">${ex.title}</div>
                         </div>
                         <div class="card-right">
-                            <span class="card-badge" style="margin-right: 14px;">${ex.val}</span>
+                            ${badgeHtml}
                             <div class="manual-check-trigger ${isCompleted ? 'checked' : ''}">
                                 <svg viewBox="0 0 24 24" class="check-svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                             </div>
@@ -919,38 +1072,35 @@
                 securedLabel.style.display = completedCount > 0 ? 'block' : 'none';
             }
 
-            // Cooldown Dropdown Allocation Matrix
             const maintDone = !!appState.completedExercisesToday['maint'];
-            const accOpen = sessionStorage.getItem('viking_v11_acc') === 'true' ? 'open-dropdown' : '';
+            const accOpen = sessionStorage.getItem('viking_v12_acc') === 'true' ? 'open-dropdown' : '';
             
             document.getElementById('maint-wrapper').innerHTML = `
             <div class="maint-bar shine-card ${accOpen} ${maintDone ? 'completed-container' : ''}">
                 <div class="maint-flex" onclick="toggleMaintAccordionUI()">
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="font-size:1.15rem; font-weight:700;">⚙️ ${CONFIG_STRINGS.panelLabels.cooldownHeader}</div>
+                        <div style="font-size:1.15rem; font-weight:700;">⚙️ Cooldown Procedures</div>
                     </div>
                     <button class="manual-check-trigger ${maintDone ? 'checked' : ''}" style="pointer-events: auto;" onclick="toggleMaintCompletion(event)">
                         <svg viewBox="0 0 24 24" class="check-svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                     </button>
                 </div>
                 <div class="maint-checklist">
-                    <p style="margin: 4px 0; color:#a1a1aa;">• Cat Cow (10 Cycles)</p>
                     <p style="margin: 4px 0; color:#a1a1aa;">• Glute Bridge (10 Cycles)</p>
                     <p style="margin: 4px 0; color:#a1a1aa;">• Passive Lie Down (2 Min)</p>
                     <p style="margin: 4px 0; color:#a1a1aa;">• Wall Elbow Stretch</p>
                 </div>
             </div>`;
 
-            // Neon Progress Calculation Update (6 master exercises + 1 cooldown)
+            let totalRegistered = visibleWorkouts.length + 1; 
             let totalCheckedCount = completedCount + (maintDone ? 1 : 0);
-            let percentDone = Math.round((totalCheckedCount / 7) * 100);
+            let percentDone = Math.round((totalCheckedCount / totalRegistered) * 100);
             const progressBar = document.getElementById('completion-progress-bar');
             if (progressBar) progressBar.style.width = `${percentDone}%`;
 
-            // DYNAMIC AUTOMATED PROGRESS GATE
             if (activeCount === 0 && maintDone) {
                 setTimeout(() => {
-                    const finalCheckActive = masterExercises.filter(ex => !appState.completedExercisesToday[ex.id]).length;
+                    const finalCheckActive = visibleWorkouts.filter(ex => !appState.completedExercisesToday[ex.id]).length;
                     if (finalCheckActive === 0 && !!appState.completedExercisesToday['maint']) {
                         commitDay();
                     }
@@ -973,12 +1123,11 @@
 
         function toggleMaintAccordionUI() {
             triggerHapticPulse();
-            const open = sessionStorage.getItem('viking_v11_acc') === 'true';
-            sessionStorage.setItem('viking_v11_acc', !open);
+            const open = sessionStorage.getItem('viking_v12_acc') === 'true';
+            sessionStorage.setItem('viking_v12_acc', !open);
             renderDashboard();
         }
 
-        // --- MANUALLY CHECKING COOLDOWN COMPLETION ---
         function toggleMaintCompletion(event) {
             event.stopPropagation(); 
             triggerHapticPulse();
@@ -993,44 +1142,38 @@
             
             let html = `
             <div class="week-container-box">
-                <div class="week-box-title">${CONFIG_STRINGS.waveMatrixTitle} ${weekNo}</div>
+                <div class="week-box-title">CURRENT CYCLE: CONQUEST WAVE NO. ${weekNo}</div>
                 <div class="week-scroll-lane">`;
 
             PLANNED_ORDER.forEach(dayName => {
                 let logData = appState.currentWeekData[dayName];
                 let targets = getTargetBoundsForDay(dayName);
                 
-                // Completed days display locked-in historical targets, incomplete days display dynamic calculated targets
-                let displayReps = logData ? (logData.burpees) : targets.reps;
-                let displayPlank = logData ? logData.plank : targets.plank;
+                let displayReps = logData ? (logData.burb || targets.reps) : targets.reps;
+                let displayPlank = logData ? (logData.plank || targets.plank) : targets.plank;
 
                 let statusText = `${displayReps} Reps / ${displayPlank}s`;
                 let statusClass = 'status-locked';
                 let actionAttr = '';
                 let fadedClass = '';
 
+                const today = getSimulatedDateObject();
+                const dayIndex = DAYS_OF_WEEK.indexOf(dayName);
+                const currentDayIndex = today.getDay();
+                
+                let dayOffset = dayIndex === 0 ? 6 : dayIndex - 1;
+                let todayOffset = currentDayIndex === 0 ? 6 : currentDayIndex - 1;
+
                 if (logData) {
-                    if (logData.type === 'reset') {
-                        statusText = 'Reset';
-                        statusClass = 'status-skipped';
-                    } else {
-                        statusText = '✓ View Vol';
-                        statusClass = dayName === 'Sunday' ? 'status-peak' : 'status-done';
-                        fadedClass = 'row-faded-done'; 
-                        actionAttr = `onclick="toggleDayAccordionElement('${dayName}')"`;
-                    }
-                } else {
-                    const todayIdx = getSimulatedDateObject().getDay();
-                    const targetIdx = DAYS_OF_WEEK.indexOf(dayName);
-                    let todayOffset = todayIdx === 0 ? 6 : todayIdx - 1;
-                    let targetOffset = targetIdx === 0 ? 6 : targetIdx - 1;
-                    
-                    if (targetOffset < todayOffset) {
-                        statusText = 'Skipped';
-                        statusClass = 'status-skipped';
-                    } else if (dayName === 'Sunday') {
-                        statusClass = 'status-peak';
-                    }
+                    statusText = '✓ View Vol';
+                    statusClass = dayName === 'Sunday' ? 'status-peak' : 'status-done';
+                    fadedClass = 'row-faded-done'; 
+                    actionAttr = `onclick="toggleDayAccordionElement('${dayName}')"`;
+                } else if (dayOffset < todayOffset) {
+                    statusText = 'Skipped';
+                    statusClass = 'status-skipped';
+                } else if (dayName === 'Sunday') {
+                    statusClass = 'status-peak';
                 }
 
                 let isOpen = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true' ? 'open' : '';
@@ -1039,20 +1182,22 @@
                 <div class="week-row ${isOpen} ${fadedClass}" id="week-row-${dayName}">
                     <div class="week-row-header" ${actionAttr}>
                         <div class="week-day-name" style="font-size:0.95rem; font-weight:700;">${dayName} <span style="font-size:0.75rem; font-weight:400; opacity:0.5;">[${displayReps}R/${displayPlank}s]</span></div>
-                        <div class="week-day-status ${statusClass}">${statusText} ${logData && logData.type !== 'reset' ? '▼':''}</div>
+                        <div class="week-day-status ${statusClass}">${statusText} ${logData ? '▼':''}</div>
                     </div>`;
 
-                if (logData && logData.type !== 'reset') {
+                if (logData) {
                     html += `
                     <div class="week-row-content">
-                        <div class="volume-swipe-track">
-                            <div class="swipe-element-card"><div class="swipe-lbl">Pushups</div><div class="swipe-val">${logData.pushups} mv</div></div>
-                            <div class="swipe-element-card"><div class="swipe-lbl">Burpees</div><div class="swipe-val">${logData.burpees}</div></div>
-                            <div class="swipe-element-card"><div class="swipe-lbl">Crunches</div><div class="swipe-val">${logData.crunchReps} (${logData.crunchMoves})</div></div>
-                            <div class="swipe-element-card"><div class="swipe-lbl">Rows</div><div class="swipe-val">${logData.rows}</div></div>
-                            <div class="swipe-element-card"><div class="swipe-lbl">Curls</div><div class="swipe-val">${logData.curls}</div></div>
-                            <div class="swipe-element-card"><div class="swipe-lbl">Plank</div><div class="swipe-val">${logData.plank}s</div></div>
-                        </div>
+                        <div class="volume-swipe-track">`;
+                    
+                    for (let id in logData) {
+                        if (id === 'catcow') continue; // Exclude Cat-Cow from SAGA accordions
+                        let matchedWorkout = appState.workoutRegistry.find(w => w.id === id);
+                        let label = matchedWorkout ? matchedWorkout.title : id;
+                        html += `<div class="swipe-element-card"><div class="swipe-lbl">${label}</div><div class="swipe-val">${logData[id]}</div></div>`;
+                    }
+                    
+                    html += `</div>
                     </div>`;
                 }
                 html += `</div>`;
@@ -1083,7 +1228,6 @@
             renderMonthlyCalendarStack();
         }
 
-        // --- RELIABLE LEDGER SCROLL FOCUSING ---
         function renderMonthlyCalendarStack() {
             const container = document.getElementById('monthly-scroll-container');
             const isZoomedWeek = container.classList.contains('zoom-week');
@@ -1109,7 +1253,6 @@
                 }
                 html += `</div></div>`;
             } else {
-                const currentWeekIdx = getWeekIndex(today);
                 for (let m = -1; m <= 1; m++) {
                     let targetMonth = today.getMonth() + m;
                     let targetYear = today.getFullYear();
@@ -1117,7 +1260,6 @@
                     else if (targetMonth > 11) { targetMonth -= 12; targetYear += 1; }
                     
                     let isCurrentMonth = (targetMonth === today.getMonth() && targetYear === today.getFullYear());
-                    // Highlight month blocks enclosing the current week indices
                     html += buildFullMonthGridHTML(targetYear, targetMonth, isCurrentMonth ? "active-week-frame" : "");
                 }
             }
@@ -1125,7 +1267,6 @@
             container.innerHTML = html;
             attachTouchInteractions();
             
-            // Focus scroll directly to the block/node representing today
             setTimeout(() => {
                 const todayStr = today.toDateString();
                 const todayDot = container.querySelector(`[data-date="${todayStr}"]`);
@@ -1200,7 +1341,6 @@
             });
         }
 
-        // --- MASTER LEDGER VOLUME COMPUTATION EXCLUDES SKIPPED NODES (0 ADDED) ---
         function triggerTooltipDisplay(dateStr) {
             const tt = document.getElementById('touch-tooltip');
             const ttTitle = document.getElementById('tt-title');
@@ -1212,55 +1352,61 @@
             
             ttTitle.innerText = `${dayName.toUpperCase()} - ${targetDate.toLocaleDateString()}`;
             
-            let dayIndex = targetDate.getDay();
-            let offset = dayIndex === 0 ? 6 : dayIndex - 1;
             let targetsCalculated = getTargetBoundsForDay(dayName);
 
-            let detailedMetricsString = '[TARGET UNREACHED]';
+            let totalsObj = {};
+            let daysEvaluated = 0;
+
+            let dayIndex = targetDate.getDay();
+            let offset = dayIndex === 0 ? 6 : dayIndex - 1;
             
-            // Compute cumulative sum using Master Ledger rules (unlogged/skipped days contribute exactly 0)
-            let accPushups = 0, accBurpees = 0, accCrunchReps = 0, accCrunchMoves = 0, accRows = 0, accCurls = 0, accPlank = 0;
-            let hasSomeData = false;
-            
+            let monday = new Date(targetDate);
+            monday.setDate(targetDate.getDate() - offset);
+
             for (let i = 0; i <= offset; i++) {
-                let loopDayName = PLANNED_ORDER[i];
-                let loopDayData = appState.currentWeekData[loopDayName];
-                
-                if (loopDayData && loopDayData.type !== 'reset') {
-                    accPushups += loopDayData.pushups || 0;
-                    accBurpees += loopDayData.burpees || 0;
-                    accCrunchReps += loopDayData.crunchReps || 0;
-                    accCrunchMoves += loopDayData.crunchMoves || 0;
-                    accRows += loopDayData.rows || 0;
-                    accCurls += loopDayData.curls || 0;
-                    accPlank += loopDayData.plank || 0;
-                    hasSomeData = true;
+                let loopDate = new Date(monday);
+                loopDate.setDate(monday.getDate() + i);
+                let loopStr = loopDate.toDateString();
+
+                let loggedMetrics = appState.historicalVolumeLogs[loopStr];
+                if (loggedMetrics) {
+                    for (let key in loggedMetrics) {
+                        if (key === 'catcow') continue; // Exclude Cat-Cow from sum calculations
+                        totalsObj[key] = (totalsObj[key] || 0) + (parseFloat(loggedMetrics[key]) || 0);
+                    }
+                    daysEvaluated++;
+                } else if (appState.monthlyArchive[loopStr] === 'done') {
+                    let estTargets = getTargetBoundsForDay(DAYS_OF_WEEK[loopDate.getDay()]);
+                    appState.workoutRegistry.forEach(w => {
+                        if (w.id === 'catcow') return;
+                        let baseVal = getTargetValueForWorkout(w, estTargets);
+                        let val = w.id === 'push' ? baseVal * 2 : baseVal; // Incorporate doubled pushups
+                        totalsObj[w.id] = (totalsObj[w.id] || 0) + val;
+                    });
+                    daysEvaluated++;
                 }
             }
 
-            if (hasSomeData) {
-                detailedMetricsString = `
-                    Pushups: ${accPushups} total mv<br>
-                    Burpees: ${accBurpees} total reps<br>
-                    Crunches: ${accCrunchReps} R (${accCrunchMoves} mv)<br>
-                    Rows: ${accRows} R | Curls: ${accCurls} R<br>
-                    Plank Time Hold: ${accPlank}s
-                `;
-            } else if (archiveStatus === 'done') {
-                detailedMetricsString = '[VOLUME LEDGER SYNC PENDING]';
+            let detailedMetricsString = '[NO DATA COMMITTED]';
+            if (daysEvaluated > 0) {
+                detailedMetricsString = '';
+                for (let key in totalsObj) {
+                    let wObj = appState.workoutRegistry.find(w => w.id === key);
+                    let label = wObj ? wObj.title : key;
+                    detailedMetricsString += `${label}: ${totalsObj[key]} total<br>`;
+                }
             }
             
             ttBody.innerHTML = `
-                <b>TARGET FOR THIS NODE:</b><br>
+                <b>TARGET SPECIFIED FOR NODE:</b><br>
                 ${targetsCalculated.reps} Reps / ${targetsCalculated.plank}s Plank<br><br>
-                <b>ACCUMULATED WEEK VOLUME UP TO DAY:</b><br>
-                ${detailedMetricsString}<br><br>
+                <b>ACCUMULATED WEEK VOLUME (UP TO DATE):</b><br>
+                ${detailedMetricsString}<br>
                 REGISTRY ID: [${archiveStatus.toUpperCase()}]
             `;
             tt.style.display = 'block';
         }
 
-        // --- PASSED WEEKDAYS CHRONOLOGICAL AUTO-SKIP SYSTEM ---
         function processBackgroundSkips() {
             const today = getSimulatedDateObject();
             const todayStr = today.toDateString();
@@ -1283,7 +1429,6 @@
             saveToStorage();
         }
 
-        // --- WEEK-INDEX ROLLOVER BRIEFING SYSTEM ---
         function verifyWeeklyRolloverGate() {
             const today = getSimulatedDateObject();
             const currentWeekIdx = getWeekIndex(today);
@@ -1385,31 +1530,47 @@
 
             if (appState.monthlyArchive[todayStr] === 'done') return;
 
-            // Save math metrics to master database, keeping UI loadout clean
-            appState.currentWeekData[dayName] = {
-                burpees: targets.reps,
-                crunchReps: targets.reps,
-                crunchMoves: targets.reps * 3,
-                pushups: targets.reps * 2,
-                rows: targets.reps,
-                curls: targets.reps,
-                plank: targets.plank
-            };
+            let todayMetrics = {};
+            let todayTimestamp = today.getTime();
+            
+            // EXCLUDE CAT-COW FROM IMMUTABLE LOG STORAGE
+            const activeReg = appState.workoutRegistry.filter(w => {
+                return (!w.addedTimestamp || w.addedTimestamp <= todayTimestamp) && w.id !== 'catcow';
+            });
 
+            activeReg.forEach(workout => {
+                let baseVal = getTargetValueForWorkout(workout, targets);
+                
+                // PUSHUPS LOG DOUBLE VOLUME (2X) IN IMMUTABLE DIRECTORY
+                if (workout.id === 'push') {
+                    todayMetrics[workout.id] = baseVal * 2;
+                } else {
+                    todayMetrics[workout.id] = baseVal;
+                }
+            });
+
+            appState.currentWeekData[dayName] = todayMetrics;
             appState.monthlyArchive[todayStr] = 'done';
+            appState.historicalVolumeLogs[todayStr] = todayMetrics; 
+            
             appState.lastWorkoutTimestamp = Date.now();
             appState.lastActiveDateString = todayStr;
             appState.completedExercisesToday = {}; 
 
-            // Trigger neon flash transition
             const flash = document.getElementById('conquest-flash-layer');
             if (flash) {
-                flash.classList.add('flash-active');
+                const stage = STAGE_CONFIG[dayName];
+                // Stage indicator progressive radial flash colors
+                flash.style.background = `radial-gradient(circle, ${stage.flash} 0%, transparent 70%)`;
+                flash.classList.remove('flash-active-cinematic');
+                void flash.offsetWidth; 
+                flash.classList.add('flash-active-cinematic');
                 setTimeout(() => {
-                    flash.classList.remove('flash-active');
-                }, 500);
+                    flash.classList.remove('flash-active-cinematic');
+                }, 1600);
             }
 
+            triggerHammerHaptic();
             saveToStorage();
             refreshRadarHeader();
             renderDashboard();
@@ -1505,14 +1666,13 @@
         function updateLiveClockDisplay() {
             const display = document.getElementById('radar-delta');
             if (!appState.lastWorkoutTimestamp) {
-                display.innerText = CONFIG_STRINGS.radarDefaultDelta;
+                display.innerText = "CONQUEST RADAR ENGINE PINNED...";
                 return;
             }
             const diffHours = ((Date.now() - appState.lastWorkoutTimestamp) / (1000 * 60 * 60)).toFixed(1);
             display.innerText = `LAST ENGAGEMENT: ${diffHours} HRS AGO`;
         }
 
-        // --- JSON BACKUP UTILITY METHODS ---
         function exportBackupData() {
             triggerHapticPulse();
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
@@ -1551,13 +1711,149 @@
             reader.readAsText(file);
         }
 
-        // --- DEV UTILITY TESTING HARNESSES ---
+        function renderSkaldConfigInterface() {
+            const container = document.getElementById('skald-quotes-container');
+            if (!container) return;
+
+            let html = '';
+            PLANNED_ORDER.forEach(day => {
+                const currentData = appState.customQuotes[day] || { head: "", sub: "" };
+                html += `
+                <div class="config-grid-item">
+                    <label>${day.toUpperCase()} CELEBRATION RUNES</label>
+                    <input type="text" class="config-input" value="${currentData.head}" placeholder="Catchphrase (e.g., RISE AND REIGN!)" id="quote-head-${day}" onchange="saveCustomQuoteData('${day}')">
+                    <textarea class="config-textarea" placeholder="Sub-Quote text..." id="quote-sub-${day}" onchange="saveCustomQuoteData('${day}')">${currentData.sub}</textarea>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function saveCustomQuoteData(day) {
+            const headVal = document.getElementById(`quote-head-${day}`).value;
+            const subVal = document.getElementById(`quote-sub-${day}`).value;
+            appState.customQuotes[day] = { head: headVal, sub: subVal };
+            saveToStorage();
+        }
+
+        function renderForgeWorkoutRegistry() {
+            const container = document.getElementById('forge-workout-list-container');
+            if (!container) return;
+
+            let html = '<div style="font-family:\'Orbitron\'; font-size:0.7rem; color:var(--text-muted); margin-bottom:8px;">ACTIVE REGISTER ORDER (Top to Bottom)</div>';
+            appState.workoutRegistry.forEach((workout, index) => {
+                let targetTypeDesc = workout.type === 'reps' ? `(Multiplier: ${workout.multiplier}x)` : 
+                                     workout.type === 'timer' ? `(Timer: ${workout.multiplier}x)` : 
+                                     `(Fixed: ${workout.fixedVal || 'Checked'})`;
+                
+                html += `
+                <div class="forge-workout-card">
+                    <div>
+                        <div style="font-weight:700; font-size:0.95rem;">${workout.title}</div>
+                        <div style="font-size:0.7rem; color:var(--text-muted);">${workout.type.toUpperCase()} ${targetTypeDesc}</div>
+                    </div>
+                    <div class="forge-buttons">
+                        <button class="forge-btn" onclick="forgeMoveWorkoutUp(${index})">▲</button>
+                        <button class="forge-btn" onclick="forgeMoveWorkoutDown(${index})">▼</button>
+                        <button class="forge-btn" style="color:var(--danger-glow); border-color:#521c1c;" onclick="forgeRemoveWorkout(${index})">Delete</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function toggleForgeFormFields() {
+            const type = document.getElementById('new-workout-type').value;
+            const mult = document.getElementById('new-workout-mult');
+            const fixed = document.getElementById('new-workout-fixed');
+            if (type === 'fixed') {
+                mult.style.display = 'none';
+                fixed.style.display = 'block';
+            } else {
+                mult.style.display = 'block';
+                fixed.style.display = 'none';
+            }
+        }
+
+        function forgeAddNewWorkout() {
+            triggerHapticPulse();
+            const titleInput = document.getElementById('new-workout-title');
+            const typeInput = document.getElementById('new-workout-type');
+            const multInput = document.getElementById('new-workout-mult');
+            const fixedInput = document.getElementById('new-workout-fixed');
+
+            const title = titleInput.value.trim();
+            if (!title) {
+                alert("Enter an exercise name.");
+                return;
+            }
+
+            const id = "custom_" + Date.now();
+            const type = typeInput.value;
+            const multiplier = parseFloat(multInput.value) || 1;
+            const fixedVal = fixedInput.value.trim();
+
+            const currentSimTime = getSimulatedDateObject().getTime();
+
+            const newWorkout = {
+                id: id,
+                title: title,
+                type: type,
+                multiplier: multiplier,
+                fixedVal: type === 'fixed' ? fixedVal : null,
+                addedTimestamp: currentSimTime
+            };
+
+            appState.workoutRegistry.push(newWorkout);
+            saveToStorage();
+            
+            titleInput.value = '';
+            fixedInput.value = '';
+            multInput.value = '1';
+            
+            renderForgeWorkoutRegistry();
+            renderDashboard();
+            alert("Workout forged successfully.");
+        }
+
+        function forgeMoveWorkoutUp(index) {
+            triggerHapticPulse();
+            if (index === 0) return;
+            const temp = appState.workoutRegistry[index];
+            appState.workoutRegistry[index] = appState.workoutRegistry[index - 1];
+            appState.workoutRegistry[index - 1] = temp;
+            saveToStorage();
+            renderForgeWorkoutRegistry();
+            renderDashboard();
+        }
+
+        function forgeMoveWorkoutDown(index) {
+            triggerHapticPulse();
+            if (index === appState.workoutRegistry.length - 1) return;
+            const temp = appState.workoutRegistry[index];
+            appState.workoutRegistry[index] = appState.workoutRegistry[index + 1];
+            appState.workoutRegistry[index + 1] = temp;
+            saveToStorage();
+            renderForgeWorkoutRegistry();
+            renderDashboard();
+        }
+
+        function forgeRemoveWorkout(index) {
+            triggerHapticPulse();
+            const target = appState.workoutRegistry[index];
+            if (confirm(`Do you want to melt down and delete "${target.title}"? Historical volumes recorded prior will remain untouched.`)) {
+                appState.workoutRegistry.splice(index, 1);
+                saveToStorage();
+                renderForgeWorkoutRegistry();
+                renderDashboard();
+            }
+        }
+
         function testInjectSkipDay() {
             let yesterday = getSimulatedDateObject();
             yesterday.setDate(yesterday.getDate() - 1);
             appState.monthlyArchive[yesterday.toDateString()] = 'skipped';
             saveToStorage();
-            if(document.getElementById('panel-analytics').classList.contains('active')) {
+            if(document.getElementById('panel-saga').classList.contains('active')) {
                 renderWeeklyAccordionPanel();
                 renderMonthlyCalendarStack();
             }
@@ -1565,7 +1861,6 @@
         }
 
         function testFastForwardWeek() {
-            // Force manual rollover test
             const currentWeekIdx = getWeekIndex(getSimulatedDateObject());
             pendingRolloverWeekIdx = currentWeekIdx + 1;
             showInlineRolloverBriefing();
@@ -1577,7 +1872,7 @@
             verifyWeeklyRolloverGate();
             refreshRadarHeader();
             renderDashboard();
-            if(document.getElementById('panel-analytics').classList.contains('active')) {
+            if(document.getElementById('panel-saga').classList.contains('active')) {
                 renderWeeklyAccordionPanel();
                 renderMonthlyCalendarStack();
             }
@@ -1596,13 +1891,14 @@
             
             delete appState.monthlyArchive[todayStr];
             delete appState.currentWeekData[dayName];
+            delete appState.historicalVolumeLogs[todayStr];
             appState.completedExercisesToday = {};
             
             saveToStorage();
             refreshRadarHeader();
             renderDashboard();
             
-            if(document.getElementById('panel-analytics').classList.contains('active')) {
+            if(document.getElementById('panel-saga').classList.contains('active')) {
                 renderWeeklyAccordionPanel();
                 renderMonthlyCalendarStack();
             }
@@ -1616,17 +1912,30 @@
             }
         }
 
-        // --- DEPLOY FLUSH GATEWAY ---
-        // Clears legacy development versions of V11 to guarantee a pristine first-use state this week
-        (function safetyFlushTestRemnants() {
-            const deployKey = "viking_v11_deploy_pristine_final";
-            if (!localStorage.getItem(deployKey)) {
-                localStorage.removeItem('viking_conquest_v11');
-                localStorage.setItem(deployKey, "true");
-            }
-        })();
-
         window.onload = initApp;
     </script>
 </body>
 </html>
+<!--
+================================================================================
+NON-CODER ACCESSIBILITY & ARCHITECTURAL COMMENTARY:
+1. THE SHIELDED ROUTING PORTALS:
+   Instead of cluttering the primary user view, settings are isolated to the 
+   FORGE (Panel 3). The core training exercises execute on BATTLEGROUND (Panel 1) 
+   and the history and tracking remain mapped to SAGA (Panel 2).
+
+2. THE DYNAMIC WORKOUT LOGS AND DOUBLE-PUSHUP LOGIC:
+   For dedicated Pushups, the screen display is configured to draw standard reps 
+   so your loadout sheet stays simple and matches the standard progression base.
+   However, because your Burpees already contain a built-in pushup movement, the 
+   commit system doubles the volume logged to your SAGA ledger records automatically, 
+   securing an accurate tally of the work performed.
+
+3. THE EXCLUDED CAT-COW BLOCK:
+   Cat-Cow acts as a dedicated cooldown/mobility sequence card. It's rendered 
+   directly after your Plank timer on the active screen for optimal session flow. 
+   To hide numerical cycle targets from this card, its `fixedVal` target string is set to 
+   empty in the backend. This allows it to show as a clean title box with just a 
+   checkbox, with all empty numeric badges removed automatically.
+================================================================================
+-->
