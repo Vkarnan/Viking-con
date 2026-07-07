@@ -1,4 +1,4 @@
-const CACHE_NAME = 'viking-cache-v12';
+const CACHE_NAME = 'viking-cache-v13';
 const ASSETS = [
   './',
   './index.html',
