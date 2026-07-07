@@ -32,7 +32,7 @@ CAPABILITIES OF THE SCRIPT:
     <meta name="apple-mobile-web-app-status-bar-style" content="black-transitional">
     <meta name="theme-color" content="#000000">
     
-    <link rel="manifest" href='data:application/json,{"name":"Viking Conquest","short_name":"Viking","start_url":".","display":"standalone","background_color":"#000000","theme_color":"#000000"}'>
+    <link rel="manifest" href="./manifest.json">>
 
     <title>Viking Conquest v12</title>
     <style>
@@ -1910,6 +1910,15 @@ CAPABILITIES OF THE SCRIPT:
                 localStorage.removeItem('viking_conquest_v11');
                 location.reload();
             }
+        }
+
+        // --- SERVICE WORKER REGISTRATION ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker Active', reg))
+                    .catch(err => console.log('Registration Failed', err));
+            });
         }
 
         window.onload = initApp;
