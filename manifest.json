@@ -1,6 +1,6 @@
 {
-  "name": "Viking Conquest",
-  "short_name": "Viking",
+  "name": "V_Forge",
+  "short_name": "V_Forge",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#000000",
