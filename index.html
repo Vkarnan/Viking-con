@@ -1,26 +1,3 @@
-<!--
-================================================================================
-TITLE: Viking Conquest v12
-CURRENT DATE/TIME (IST): February 18, 2025, 05:30 PM IST
-AUTHOR: VKT & Oracle
-BUILD VERSION: v12.2.0
-
-CAPABILITIES OF THE SCRIPT:
-- 3-Screen Norse Portal Architecture: Battleground (Loadout), Saga (Archive), and Forge (Settings).
-- Dynamic Warrior Rank System: 9 immersive Norse streak tiers calculated and displayed on the active radar.
-- The Skald's Config Engine: Full customizability of progressive bold catchphrases and sub-quotes for all 7 weekdays.
-- Dynamic Workout Forge: Real-time exercise adder and custom order organizer (with creation timestamps for backward compatibility).
-- Sound of the Hammer Haptics: Tactile Tap-Tap-Heavy strike physical feedback sequence upon session completion.
-- Cinematic Conquest Flash: A 1.6-second smooth radial glow keyframe transition matching your progressive stage's highlight color.
-- Normalized Time Calculations: Safe UTC-based week indicators preventing regional DST calculation discrepancies.
-- Cumulative Historical Volume Tooltips: Accurate parsing of past date metrics from immutable daily logs.
-- Safe Local Schema Evolution: Graceful migration of v11 local storage state keeping current training streaks intact.
-- 4-Stage Progressive Thematic Journey: Mon-Wed (Vanguard's Shield), Thu (Midgard Crossing), Fri-Sat (The Crimson Forge), Sun (Asgard's Gate) displayed dynamically on the Completed Splash.
-- Custom Dedicated Pushups Offset: Standard reps (1x) display on the active Battleground UI, but logged as double (2x) in cumulative volumes to incorporate Burpees pushup work.
-- Cat-Cow Isolated Checkoff: Clean checkoff box on Battleground with no numerical cycle count badges (positioned right after Plank), completely excluded from database logs and cumulative historical tooltips.
-- Obsidian Completed Hue: Darkened completed background layout (#000a02) for high-contrast elite recovery styling.
-================================================================================
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +9,7 @@ CAPABILITIES OF THE SCRIPT:
     <meta name="apple-mobile-web-app-status-bar-style" content="black-transitional">
     <meta name="theme-color" content="#000000">
     
-    <link rel="manifest" href="./manifest.json">>
+    <link rel="manifest" href="./manifest.json">
 
     <title>Viking Conquest v12</title>
     <style>
@@ -64,15 +41,21 @@ CAPABILITIES OF THE SCRIPT:
 
         body {
             font-family: 'Space Grotesk', -apple-system, sans-serif;
-            background-color: var(--bg-primary);
+            background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('./background.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--text-main);
             padding-bottom: 110px;
-            transition: background-color 0.4s ease;
+            transition: background 0.4s ease;
             overflow-x: hidden;
         }
 
         body.conquered-state {
-            background-color: var(--bg-conquered) !important;
+            background: linear-gradient(rgba(0, 10, 2, 0.9), rgba(0, 10, 2, 0.9)), url('./background.webp') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-attachment: fixed !important;
         }
 
         .shine-card {
@@ -1038,7 +1021,6 @@ CAPABILITIES OF THE SCRIPT:
                         </div>
                     </div>`;
                 } else {
-                    // Render badge templates conditionally (excluding Cat-Cow's empty badge)
                     const badgeHtml = displayVal ? `<span class="card-badge" style="margin-right: 14px;">${displayVal}</span>` : '';
                     
                     cardHtml = `
@@ -1158,10 +1140,11 @@ CAPABILITIES OF THE SCRIPT:
                 let fadedClass = '';
 
                 const today = getSimulatedDateObject();
-                const dayIndex = DAYS_OF_WEEK.indexOf(dayName);
+                const dayIndex = DAYS_OF_WEEK[dayName === 'Sunday' ? 0 : PLANNED_ORDER.indexOf(dayName) + 1];
                 const currentDayIndex = today.getDay();
                 
-                let dayOffset = dayIndex === 0 ? 6 : dayIndex - 1;
+                // Normalizes relative layout calculation safely for offset grids
+                let dayOffset = PLANNED_ORDER.indexOf(dayName);
                 let todayOffset = currentDayIndex === 0 ? 6 : currentDayIndex - 1;
 
                 if (logData) {
@@ -1191,7 +1174,7 @@ CAPABILITIES OF THE SCRIPT:
                         <div class="volume-swipe-track">`;
                     
                     for (let id in logData) {
-                        if (id === 'catcow') continue; // Exclude Cat-Cow from SAGA accordions
+                        if (id === 'catcow') continue; 
                         let matchedWorkout = appState.workoutRegistry.find(w => w.id === id);
                         let label = matchedWorkout ? matchedWorkout.title : id;
                         html += `<div class="swipe-element-card"><div class="swipe-lbl">${label}</div><div class="swipe-val">${logData[id]}</div></div>`;
@@ -1371,7 +1354,7 @@ CAPABILITIES OF THE SCRIPT:
                 let loggedMetrics = appState.historicalVolumeLogs[loopStr];
                 if (loggedMetrics) {
                     for (let key in loggedMetrics) {
-                        if (key === 'catcow') continue; // Exclude Cat-Cow from sum calculations
+                        if (key === 'catcow') continue; 
                         totalsObj[key] = (totalsObj[key] || 0) + (parseFloat(loggedMetrics[key]) || 0);
                     }
                     daysEvaluated++;
@@ -1380,7 +1363,7 @@ CAPABILITIES OF THE SCRIPT:
                     appState.workoutRegistry.forEach(w => {
                         if (w.id === 'catcow') return;
                         let baseVal = getTargetValueForWorkout(w, estTargets);
-                        let val = w.id === 'push' ? baseVal * 2 : baseVal; // Incorporate doubled pushups
+                        let val = w.id === 'push' ? baseVal * 2 : baseVal; 
                         totalsObj[w.id] = (totalsObj[w.id] || 0) + val;
                     });
                     daysEvaluated++;
@@ -1533,7 +1516,6 @@ CAPABILITIES OF THE SCRIPT:
             let todayMetrics = {};
             let todayTimestamp = today.getTime();
             
-            // EXCLUDE CAT-COW FROM IMMUTABLE LOG STORAGE
             const activeReg = appState.workoutRegistry.filter(w => {
                 return (!w.addedTimestamp || w.addedTimestamp <= todayTimestamp) && w.id !== 'catcow';
             });
@@ -1541,7 +1523,6 @@ CAPABILITIES OF THE SCRIPT:
             activeReg.forEach(workout => {
                 let baseVal = getTargetValueForWorkout(workout, targets);
                 
-                // PUSHUPS LOG DOUBLE VOLUME (2X) IN IMMUTABLE DIRECTORY
                 if (workout.id === 'push') {
                     todayMetrics[workout.id] = baseVal * 2;
                 } else {
@@ -1560,7 +1541,6 @@ CAPABILITIES OF THE SCRIPT:
             const flash = document.getElementById('conquest-flash-layer');
             if (flash) {
                 const stage = STAGE_CONFIG[dayName];
-                // Stage indicator progressive radial flash colors
                 flash.style.background = `radial-gradient(circle, ${stage.flash} 0%, transparent 70%)`;
                 flash.classList.remove('flash-active-cinematic');
                 void flash.offsetWidth; 
