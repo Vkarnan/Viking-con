@@ -680,11 +680,11 @@
         const STAGE_CONFIG = {
             'Monday':    { name: "STAGE 1: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' }, // Purple Flash
             'Tuesday':   { name: "STAGE 1: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' }, // Purple Flash
-            'Wednesday': { name: "STAGE 2: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' }, // Purple Flash
-            'Thursday':  { name: "STAGE 3: MIDGARD CROSSING 🌊",  color: '#F59E0B', flash: 'rgba(245, 158, 11, 0.45)' },   // Amber Gold Flash
-            'Friday':    { name: "STAGE 4: THE CRIMSON FORGE 🔥",  color: '#FF7A00', flash: 'rgba(255, 122, 0, 0.45)' },   // Orange Flash
-            'Saturday':  { name: "STAGE 5: THE CRIMSON FORGE 🔥",  color: '#E53E3E', flash: 'rgba(229, 62, 62, 0.45)' },   // Crimson Flash
-            'Sunday':    { name: "STAGE 6: ASGARD'S GATE 👑",     color: '#FF0000', flash: 'rgba(255, 0, 0, 0.45)' }       // Blood-Red Flash
+            'Wednesday': { name: "STAGE 1: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' }, // Purple Flash
+            'Thursday':  { name: "STAGE 2: MIDGARD CROSSING 🌊",  color: '#F59E0B', flash: 'rgba(245, 158, 11, 0.45)' },   // Amber Gold Flash
+            'Friday':    { name: "STAGE 2: THE CRIMSON FORGE 🔥",  color: '#FF7A00', flash: 'rgba(255, 122, 0, 0.45)' },   // Orange Flash
+            'Saturday':  { name: "STAGE 3: THE CRIMSON FORGE 🔥",  color: '#E53E3E', flash: 'rgba(229, 62, 62, 0.45)' },   // Crimson Flash
+            'Sunday':    { name: "STAGE 4: ASGARD'S GATE 👑",     color: '#FF0000', flash: 'rgba(255, 0, 0, 0.45)' }       // Blood-Red Flash
         };
 
         let testTimeOffsetDays = 0; 
@@ -763,13 +763,13 @@
 
             if (!appState.customQuotes || Object.keys(appState.customQuotes).length === 0) {
                 appState.customQuotes = {
-                    'Monday': { head: "⚔️ RISE AND REIGN!", sub: "The ships skim the waves, far from the fjords. Today is a new beginning." },
-                    'Tuesday': { head: "🦅 SOAR OVER NEW FRONTIERS!", sub: "The ravens are flying. Shields locked, spears raised. Forge ahead, warrior!" },
-                    'Wednesday': { head: "🔨 THE POUND WITHIN!", sub: "Clank of hammers and the crash of thunder. Hold your ground for clan and kin!" },
-                    'Thursday': { head: "⛓️ IRON AND STEEL!", sub: "Sails swaying on crimson rivers. Exhaustion is just the forge testing your blade." },
-                    'Friday': { head: "🛡️ SPLINTERED TIMBERS!", sub: "Your shield may be shattered, but your will remains unbroken. Stand tall in the shield wall!" },
-                    'Saturday': { head: "🔔 ASGARD'S CALL!", sub: "Fires are rising and the bells are ringing. One final push before the halls fly open!" },
-                    'Sunday': { head: "👑 VALHALLA CALLS ME!", sub: "Shattered bone and blood-soaked fields cannot halt your advance! Odin's golden gates fly open. You have plucked the strings of destiny!" }
+                    'Monday': { head: "🌊 RISE AND REIGN!⚔️", sub: "The oars strike the ice, the sea-wolves howl, and the sails tear open! You have pushed off from the shores of comfort. Day One belongs to the sea!" },
+                    'Tuesday': { head: "🦅 SOAR OVER NEW FRONTIERS!"🛡️, sub: "The wild winds are howling your name! You stood firm in the freezing spray, eyes locked on the horizon. The shield wall holds unbroken!" },
+                    'Wednesday': { head: "⚡ THE THUNDER WITHIN!🔨", sub: "Clank of hammers and the crash of thunder. Halfway through the storm, and your grip on the axe only tightens!" },
+                    'Thursday': { head: "⛓️ IRON AND STEEL!🔥", sub: "Sails swaying on crimson rivers. Exhaustion is just the forge testing your blade." },
+                    'Friday': { head: "🛡️ SPLINTERED TIMBERS!🪓", sub: "Let the shields shatter and the ground crack beneath your boots! The orange fire burning in your lungs will rip this peak to pieces!" },
+                    'Saturday': { head: "🔔 ASGARD'S CALL!🔥", sub: "Crimson fires are rising and screaming for blood!. One final push before the halls fly open!" },
+                    'Sunday': { head: "👑 VALHALLA CALLING ME!👑", sub: "Shattered bone and blood-soaked fields cannot halt your advance! Odin's golden gates fly open. Let the horns sound for the King!!" }
                 };
             }
 
