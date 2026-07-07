@@ -1,10 +1,10 @@
-const CACHE_NAME = 'viking-cache-v13';
+const CACHE_NAME = 'viking-cache-v14';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.jpg',
-  './icon-512.jpg',
+  './icon-192.png',
+  './icon-512.png',
   './background.webp'
 ];
 
