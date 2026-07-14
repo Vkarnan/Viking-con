@@ -1,6 +1,7 @@
 <!--
-TITLE: V_Forge - Conqueror Edition (Build v1.1.3 - Production)
-DATE/TIME (IST): July 14, 2026 - 11:55 PM IST
+================================================================================
+TITLE: V_Forge - Conqueror Edition (Build v1.1.3 - Production Hotfix 2)
+DATE/TIME (IST): July 14, 2026 - 11:59 PM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
@@ -12,6 +13,45 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
    - Maps your active streak to a detailed, thematic progress rank (from Thrall to Valhalla Legend).
 3. PROGRESSIVE CHECKED CARD GLOW SPECTRUM:
    - Completed checklist cards glow dynamically on BATTLEGROUND based on your progress 
+     ratio (Muted Slate -> Cyan -> Twilight Purple midway -> Amber -> Vivid Emerald).
+4. AMOLED SCREEN OPTIMIZER (FORGE BOTTOM UI):
+   - Two interactive sliders allow real-time control over vignette darkness (0% to 100%)
+     and ambient color saturation (0% to 30%) to save battery and boost contrast.
+5. DYNAMIC DUAL-LAYER BACKGROUND COMPLEMENT:
+   - Automatically parses your completed Stage Color, converts it to an RGB tint on-the-fly, 
+     and overlays a 97% black AMOLED mask and 4% color wash over your anvil background image.
+6. PERSISTENT TAB-RESILIENT CHRONO ENGINE:
+   - Active timer countdowns are globalized, running reliably in the background without freezing.
+   - Automatically re-binds ticking text nodes to newly rendered cards when switching tabs.
+   - Supports Orbitron font rendering, active pulsing states, and unified custom exercises.
+7. INTERACTIVE CHRONO TOUCH CONTROLS:
+   - Single-tap play/pauses countdowns.
+   - Hold (600ms) resets active timer to baseline (with haptic confirmations).
+   - Touch-release block flag prevents single-tap resume from instantly triggering on finger lift.
+8. ACTIVE SHIELD WALL (REST DAY):
+   - Low-profile trigger card located at the bottom of BATTLEGROUND.
+   - Pauses the skip backfiller, freezes your active streak, and logs a Muted Blue Shield node (🛡️).
+9. DYNAMIC FORGE REGISTRY ACCORDIONS:
+   - Collapses the Workout Registry, Cooldown Registry, and Custom Quotes under compact headers
+     with rotating chevron indicators (▼/▲) to eliminate vertical scrolling.
+10. COOLDOWN PROCEDURES CHECKLIST:
+    - Custom stretches can be added, deleted, or reordered inside the Forge.
+    - Stretches default automatically to "Log in Ledger: OFF" so they don't affect strength volumes.
+11. CHRONOLOGICAL AUTO-SKIP BACKFILLER:
+    - Backfills missed calendar days with red "skipped" nodes automatically.
+    - Fresh app installations are locked to backfill skips starting only from Monday of the current week.
+12. TIME-WARP & SIMULATION CALIBRATION:
+    - DEV Sandbox features (Warp Next Day, Roll Over) align wave calculations with virtual offset times.
+13. VALKYRIE WIPE-RESCUE CACHE:
+    - Rolling local backup saves your last 3 completed sessions to protect history from browser cache sweeps.
+14. PROTOCOL INTERCEPT SAFE-GUARDS:
+    - Bypasses non-HTTP/HTTPS network fetch requests, protecting the app from Chrome extension crashes.
+15. DST-SAFE CALENDAR MATH:
+    - Replaced millisecond math with native local Date setters to prevent Daylight Saving visual de-syncs.
+16. MOBILE KEYBOARD SELECTION UNLOCKED:
+    - Overrides global selection blocks on input and textareas so mobile keyboards operate cleanly.
+17. DOUBLE-TRIGGER TOUCH CONFLICTS RESOLVED & INTEGRATED PWA NATIVE INSTALLER CARD.
+================================================================================
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -819,7 +859,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 'Tuesday':   { head: "🦅 SOAR OVER NEW FRONTIERS!", sub: "The ravens are flying. Shields locked, spears raised. Forge ahead, warrior!" },
                 'Wednesday': { head: "🔨 THE POUND WITHIN!", sub: "Clank of hammers and the crash of thunder. Hold your ground for clan and kin!" },
                 'Thursday':  { head: "⛓️ IRON AND STEEL!", sub: "Sails swaying on crimson rivers. Exhaustion is just the forge testing your blade." },
-                'Friday':    { head: "🛡️ SPLINTERED TIMBERS!", sub: "Your will remains unbroken. Stand tall in the shield wall!" },
+                'Friday':    { head: "🛡️ SPLINTERED TIMBERS!", sub: "Your shield may be shattered, but your will remains unbroken. Stand tall in the shield wall!" },
                 'Saturday':  { head: "🔔 ASGARD'S CALL!", sub: "Fires are rising and the bells are ringing. One final push before the halls fly open!" },
                 'Sunday':    { head: "👑 VALHALLA CALLS ME!", sub: "Shattered bone and blood-soaked fields cannot halt your advance! Odin's golden gates fly open. You have plucked the strings of destiny!" }
             },
@@ -1131,8 +1171,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return { reps: dynamicReps, plank: dynamicPlank };
         }
 
+        // Updated SAGA Day lookup indices to be dynamic and safe from math type conversions
         function getTargetBoundsForDay(dayName) {
-            let dayIdx = DAYS_OF_WEEK[dayName === 'Sunday' ? 0 : PLANNED_ORDER.indexOf(dayName) + 1];
+            let dayIdx = dayName === 'Sunday' ? 0 : PLANNED_ORDER.indexOf(dayName) + 1;
             let offset = dayIdx === 0 ? 6 : dayIdx - 1;
             let targetReps = parseInt(appState.mondayRepBase) + offset;
             let targetPlank = parseInt(appState.mondayPlankBase) + (offset * 5);
@@ -1783,78 +1824,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         // =========================================================================
         // 🛡️ SUBSECTION 10: SAGA PROGRESSION & STAGING ACCORDIONS
         // =========================================================================
-        function renderWeeklyAccordionPanel() {
-            const deltaMs = getSimulatedDateObject().getTime() - appState.appInitTimestamp;
-            const weekNo = Math.floor(deltaMs / (1000 * 60 * 60 * 24 * 7)) + 1;
-            
-            let html = `
-            <div class="week-container-box">
-                <div class="week-box-title">CURRENT CYCLE: CONQUEST WAVE NO. ${weekNo}</div>
-                <div class="week-scroll-lane">`;
-
-            PLANNED_ORDER.forEach(dayName => {
-                let logData = appState.currentWeekData[dayName];
-                let targets = getTargetBoundsForDay(dayName);
-                
-                let displayReps = logData ? (logData.burb || targets.reps) : targets.reps;
-                let displayPlank = logData ? (logData.plank || targets.plank) : targets.plank;
-
-                let statusText = `${displayReps} Reps / ${displayPlank}s`;
-                let statusClass = 'status-locked';
-                let actionAttr = '';
-                let fadedClass = '';
-
-                const today = getSimulatedDateObject();
-                const currentDayIndex = today.getDay();
-                
-                let dayOffset = PLANNED_ORDER.indexOf(dayName);
-                let todayOffset = currentDayIndex === 0 ? 6 : currentDayIndex - 1;
-
-                if (logData) {
-                    statusText = '✓ View Vol';
-                    statusClass = dayName === 'Sunday' ? 'status-peak' : 'status-done';
-                    fadedClass = 'row-faded-done'; 
-                    actionAttr = `onclick="toggleDayAccordionElement('${dayName}')"`;
-                } else if (appState.monthlyArchive[new Date(today.getTime() - (todayOffset - dayOffset)*24*60*60*1000).toDateString()] === 'rest') {
-                    statusText = 'Shielded Rest';
-                    statusClass = 'status-peak';
-                } else if (dayOffset < todayOffset) {
-                    statusText = 'Skipped';
-                    statusClass = 'status-skipped';
-                } else if (dayName === 'Sunday') {
-                    statusClass = 'status-peak';
-                }
-
-                let isOpen = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true' ? 'open' : '';
-
-                html += `
-                <div class="week-row ${isOpen} ${fadedClass}" id="week-row-${dayName}">
-                    <div class="week-row-header" ${actionAttr}>
-                        <div class="week-day-name" style="font-size:0.95rem; font-weight:700;">${dayName} <span style="font-size:0.75rem; font-weight:400; opacity:0.5;">[${displayReps}R/${displayPlank}s]</span></div>
-                        <div class="week-day-status ${statusClass}">${statusText} ${logData ? '▼':''}</div>
-                    </div>`;
-
-                if (logData) {
-                    html += `
-                    <div class="week-row-content">
-                        <div class="volume-swipe-track">`;
-                    
-                    for (let id in logData) {
-                        let matchedWorkout = appState.workoutRegistry.find(w => w.id === id);
-                        let label = matchedWorkout ? matchedWorkout.title : id;
-                        html += `<div class="swipe-element-card"><div class="swipe-lbl">${label}</div><div class="swipe-val">${logData[id]}</div></div>`;
-                    }
-                    
-                    html += `</div>
-                    </div>`;
-                }
-                html += `</div>`;
-            });
-
-            html += `</div></div>`;
-            document.getElementById('weekly-accordion-matrix').innerHTML = html;
-        }
-
         function toggleDayAccordionElement(dayName) {
             const open = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true';
             sessionStorage.setItem(`open_week_day_${dayName}`, !open);
@@ -2296,7 +2265,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         function updateLiveClockDisplay() {
             const display = document.getElementById('radar-delta');
             if (!appState.lastWorkoutTimestamp) {
-                display.innerText = "CONQUEST RADAR ENGINE PINNED...";
+                display.innerText = CONFIG_THEME_AND_COPY.labels ? CONFIG_THEME_AND_COPY.labels.radarDefaultMessage : "CONQUEST RADAR ENGINE PINNED...";
                 return;
             }
             const diffHours = ((Date.now() - appState.lastWorkoutTimestamp) / (1000 * 60 * 60)).toFixed(1);
@@ -2587,84 +2556,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 renderMonthlyCalendarStack();
             }
             alert(`Skip injected on node: [${yesterday.toDateString()}]`);
-        }
-
-        // Updated SAGA Accordion Day checks to prevent DST shifts
-        function renderWeeklyAccordionPanel() {
-            const deltaMs = getSimulatedDateObject().getTime() - appState.appInitTimestamp;
-            const weekNo = Math.floor(deltaMs / (1000 * 60 * 60 * 24 * 7)) + 1;
-            
-            let html = `
-            <div class="week-container-box">
-                <div class="week-box-title">CURRENT CYCLE: CONQUEST WAVE NO. ${weekNo}</div>
-                <div class="week-scroll-lane">`;
-
-            PLANNED_ORDER.forEach(dayName => {
-                let logData = appState.currentWeekData[dayName];
-                let targets = getTargetBoundsForDay(dayName);
-                
-                let displayReps = logData ? (logData.burb || targets.reps) : targets.reps;
-                let displayPlank = logData ? (logData.plank || targets.plank) : targets.plank;
-
-                let statusText = `${displayReps} Reps / ${displayPlank}s`;
-                let statusClass = 'status-locked';
-                let actionAttr = '';
-                let fadedClass = '';
-
-                const today = getSimulatedDateObject();
-                const currentDayIndex = today.getDay();
-                
-                let dayOffset = PLANNED_ORDER.indexOf(dayName);
-                let todayOffset = currentDayIndex === 0 ? 6 : currentDayIndex - 1;
-
-                // Native DST-immune day verification
-                let targetDay = new Date(today);
-                targetDay.setDate(today.getDate() - (todayOffset - dayOffset));
-                let lookupStr = targetDay.toDateString();
-
-                if (logData) {
-                    statusText = '✓ View Vol';
-                    statusClass = dayName === 'Sunday' ? 'status-peak' : 'status-done';
-                    fadedClass = 'row-faded-done'; 
-                    actionAttr = `onclick="toggleDayAccordionElement('${dayName}')"`;
-                } else if (appState.monthlyArchive[lookupStr] === 'rest') {
-                    statusText = 'Shielded Rest';
-                    statusClass = 'status-peak';
-                } else if (dayOffset < todayOffset) {
-                    statusText = 'Skipped';
-                    statusClass = 'status-skipped';
-                } else if (dayName === 'Sunday') {
-                    statusClass = 'status-peak';
-                }
-
-                let isOpen = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true' ? 'open' : '';
-
-                html += `
-                <div class="week-row ${isOpen} ${fadedClass}" id="week-row-${dayName}">
-                    <div class="week-row-header" ${actionAttr}>
-                        <div class="week-day-name" style="font-size:0.95rem; font-weight:700;">${dayName} <span style="font-size:0.75rem; font-weight:400; opacity:0.5;">[${displayReps}R/${displayPlank}s]</span></div>
-                        <div class="week-day-status ${statusClass}">${statusText} ${logData ? '▼':''}</div>
-                    </div>`;
-
-                if (logData) {
-                    html += `
-                    <div class="week-row-content">
-                        <div class="volume-swipe-track">`;
-                    
-                    for (let id in logData) {
-                        let matchedWorkout = appState.workoutRegistry.find(w => w.id === id);
-                        let label = matchedWorkout ? matchedWorkout.title : id;
-                        html += `<div class="swipe-element-card"><div class="swipe-lbl">${label}</div><div class="swipe-val">${logData[id]}</div></div>`;
-                    }
-                    
-                    html += `</div>
-                    </div>`;
-                }
-                html += `</div>`;
-            });
-
-            html += `</div></div>`;
-            document.getElementById('weekly-accordion-matrix').innerHTML = html;
         }
 
         function testFastForwardWeek() {
