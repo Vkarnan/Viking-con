@@ -2626,12 +2626,25 @@ CAPABILITIES:
             }
         }
 
-        // --- SERVICE WORKER REGISTRATION ---
+        // --- SERVICE WORKER REGISTRATION WITH AUTO-UPDATE CONTROL ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker Active', reg))
-                    .catch(err => console.log('Registration Failed', err));
+                    .then(reg => {
+                        console.log('Service Worker Registered Successfully', reg);
+                    })
+                    .catch(err => {
+                        console.log('Registration Failed', err);
+                    });
+            });
+
+            // Automatically reloads the page once the new Service Worker takes over
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload(); // Instantly refreshes to display your updated build!
+                }
             });
         }
 
