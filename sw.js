@@ -57,4 +57,27 @@ self.addEventListener('fetch', event => {
         return caches.match(event.request);
       })
   );
+});// 3. Fetch Event - Network-First Strategy (Pulls latest from GitHub, falls back to cache only when offline)
+self.addEventListener('fetch', event => {
+  // Safely skip caching for non-http/https protocols (like chrome-extension schemes)
+  if (!event.request.url.startsWith('http')) {
+    return; 
+  }
+  event.respondWith(
+    fetch(event.request)
+      .then(networkResponse => {
+        // If network is active, clone the fresh response and update cache dynamically
+        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        // If offline (network fails), pull instantly from local cache fallback
+        return caches.match(event.request);
+      })
+  );
 });
