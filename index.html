@@ -1,7 +1,6 @@
 <!--
-================================================================================
-TITLE: V_Forge - Conqueror Edition (Build v1.1.3 - Production Hotfix 2)
-DATE/TIME (IST): July 14, 2026 - 11:59 PM IST
+TITLE: V_Forge - Conqueror Edition (Build v1.1.3 - Production)
+DATE/TIME (IST): July 15, 2026 - 12:05 AM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
@@ -11,46 +10,52 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 2. STREAK TRACKING & WARRIOR RANKS:
    - Tracks your daily completed workouts, calculating a rolling consecutive day streak.
    - Maps your active streak to a detailed, thematic progress rank (from Thrall to Valhalla Legend).
-3. PROGRESSIVE CHECKED CARD GLOW SPECTRUM:
-   - Completed checklist cards glow dynamically on BATTLEGROUND based on your progress 
-     ratio (Muted Slate -> Cyan -> Twilight Purple midway -> Amber -> Vivid Emerald).
-4. AMOLED SCREEN OPTIMIZER (FORGE BOTTOM UI):
+3. ACTIVE TARGET GUIDANCE & PROGRESSIVE SPECTRUM:
+   - The immediate next task on BATTLEGROUND gently pulses its border in its current progressive color.
+   - All other incomplete cards remain locked in flat, dark steel.
+   - Border colors scale dynamically based on your exact completion progress ratio: 
+     Slate (0-20%) -> Oceanic Cyan (20-40%) -> Twilight Purple (Plank, 40-60%) -> Amber (60-80%) -> Emerald Green (80-99%).
+4. 0.5-SECOND TRIUMPH FLASH:
+   - Checking an active card complete triggers an intense, bright glow of its progress color.
+   - Screen re-rendering is delayed by exactly 0.5s to show the flash, before moving the card
+     into the bottom completed stack with a clean, non-glowing border.
+5. AMOLED SCREEN OPTIMIZER & CONTROLLERS (FORGE BOTTOM UI):
    - Two interactive sliders allow real-time control over vignette darkness (0% to 100%)
      and ambient color saturation (0% to 30%) to save battery and boost contrast.
-5. DYNAMIC DUAL-LAYER BACKGROUND COMPLEMENT:
+6. DYNAMIC DUAL-LAYER BACKGROUND COMPLEMENT:
    - Automatically parses your completed Stage Color, converts it to an RGB tint on-the-fly, 
      and overlays a 97% black AMOLED mask and 4% color wash over your anvil background image.
-6. PERSISTENT TAB-RESILIENT CHRONO ENGINE:
+7. PERSISTENT TAB-RESILIENT CHRONO ENGINE:
    - Active timer countdowns are globalized, running reliably in the background without freezing.
    - Automatically re-binds ticking text nodes to newly rendered cards when switching tabs.
    - Supports Orbitron font rendering, active pulsing states, and unified custom exercises.
-7. INTERACTIVE CHRONO TOUCH CONTROLS:
+8. INTERACTIVE CHRONO TOUCH CONTROLS:
    - Single-tap play/pauses countdowns.
    - Hold (600ms) resets active timer to baseline (with haptic confirmations).
    - Touch-release block flag prevents single-tap resume from instantly triggering on finger lift.
-8. ACTIVE SHIELD WALL (REST DAY):
+9. ACTIVE SHIELD WALL (REST DAY):
    - Low-profile trigger card located at the bottom of BATTLEGROUND.
    - Pauses the skip backfiller, freezes your active streak, and logs a Muted Blue Shield node (🛡️).
-9. DYNAMIC FORGE REGISTRY ACCORDIONS:
-   - Collapses the Workout Registry, Cooldown Registry, and Custom Quotes under compact headers
-     with rotating chevron indicators (▼/▲) to eliminate vertical scrolling.
-10. COOLDOWN PROCEDURES CHECKLIST:
+10. DYNAMIC FORGE REGISTRY ACCORDIONS:
+    - Collapses the Workout Registry, Cooldown Registry, and Custom Quotes under compact headers
+      with rotating chevron indicators (▼/▲) to eliminate vertical scrolling.
+11. COOLDOWN PROCEDURES CHECKLIST:
     - Custom stretches can be added, deleted, or reordered inside the Forge.
     - Stretches default automatically to "Log in Ledger: OFF" so they don't affect strength volumes.
-11. CHRONOLOGICAL AUTO-SKIP BACKFILLER:
+12. CHRONOLOGICAL AUTO-SKIP BACKFILLER:
     - Backfills missed calendar days with red "skipped" nodes automatically.
     - Fresh app installations are locked to backfill skips starting only from Monday of the current week.
-12. TIME-WARP & SIMULATION CALIBRATION:
+13. TIME-WARP & SIMULATION CALIBRATION:
     - DEV Sandbox features (Warp Next Day, Roll Over) align wave calculations with virtual offset times.
-13. VALKYRIE WIPE-RESCUE CACHE:
+14. VALKYRIE WIPE-RESCUE CACHE:
     - Rolling local backup saves your last 3 completed sessions to protect history from browser cache sweeps.
-14. PROTOCOL INTERCEPT SAFE-GUARDS:
+15. PROTOCOL INTERCEPT SAFE-GUARDS:
     - Bypasses non-HTTP/HTTPS network fetch requests, protecting the app from Chrome extension crashes.
-15. DST-SAFE CALENDAR MATH:
+16. DST-SAFE CALENDAR MATH:
     - Replaced millisecond math with native local Date setters to prevent Daylight Saving visual de-syncs.
-16. MOBILE KEYBOARD SELECTION UNLOCKED:
+17. MOBILE KEYBOARD SELECTION UNLOCKED:
     - Overrides global selection blocks on input and textareas so mobile keyboards operate cleanly.
-17. DOUBLE-TRIGGER TOUCH CONFLICTS RESOLVED & INTEGRATED PWA NATIVE INSTALLER CARD.
+18. DOUBLE-TRIGGER TOUCH CONFLICTS RESOLVED & INTEGRATED PWA NATIVE INSTALLER CARD.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -598,6 +603,17 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         .open-dropdown .forge-header-chevron {
             color: var(--accent-glow);
         }
+
+        /* Active immediate next task pulse layout rules */
+        @keyframes immediate-target-pulse {
+            0% { border-color: var(--target-color); box-shadow: 0 0 4px var(--target-color); }
+            50% { border-color: var(--target-color); box-shadow: 0 0 12px var(--target-color); }
+            100% { border-color: var(--target-color); box-shadow: 0 0 4px var(--target-color); }
+        }
+        .immediate-focus-card {
+            animation: immediate-target-pulse 2s infinite ease-in-out !important;
+            border: 1.5px solid var(--target-color) !important;
+        }
     </style>
 </head>
 <body>
@@ -1120,7 +1136,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 gradientStr = `linear-gradient(rgba(18, 5, 28, ${vignetteOpacity}), rgba(18, 5, 28, ${vignetteOpacity}))`;
                 document.body.classList.add('conquered-state');
             } else if (isCompleted) {
-                gradientStr = `linear-gradient(rgba(0, 0, 0, ${vignetteOpacity}), rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${tintOpacity}))`;
+                // Hotfix: Weekday backdrop color wash math re-clamped to prevent bright washouts on AMOLED
+                gradientStr = `linear-gradient(rgba(0, 0, 0, ${vignetteOpacity}), rgba(${rgb.r * 0.05}, ${rgb.g * 0.05}, ${rgb.b * 0.05}, ${vignetteOpacity}))`;
                 document.body.classList.add('conquered-state');
             } else {
                 gradientStr = `linear-gradient(rgba(0, 0, 0, ${vignetteOpacity}), rgba(0, 0, 0, ${vignetteOpacity}))`;
@@ -1470,18 +1487,33 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 completedItemIndices.push('maint');
             }
 
+            // Find immediate next task to pulse border
+            let activeFocusTargetId = null;
+            const firstIncomplete = visibleWorkouts.find(w => !appState.completedExercisesToday[w.id]);
+            if (firstIncomplete) {
+                activeFocusTargetId = firstIncomplete.id;
+            } else if (!maintDone) {
+                activeFocusTargetId = 'maint';
+            }
+
             visibleWorkouts.forEach((ex) => {
                 const isCompleted = !!appState.completedExercisesToday[ex.id];
                 const displayVal = getTargetValueForWorkout(ex, targets);
                 let cardHtml = '';
                 
-                // Determine progressive glow specs
+                // Determine progressive glow and focus states
                 let glowStyles = '';
+                let cardClasses = '';
                 if (isCompleted) {
-                    const progressIndex = completedItemIndices.indexOf(ex.id);
+                    // Removed permanent neon glows on completed cards
+                    glowStyles = '';
+                } else if (ex.id === activeFocusTargetId) {
+                    // Immediate incomplete next task pulses its border in its progress color!
+                    const progressIndex = completedItemIndices.length;
                     let color = getProgressiveGlowColor(progressIndex, totalLoadoutItems);
-                    if (ex.id === 'plank') color = '#BC6CFF'; // Keep Purple specifically for Plank hold midway point
-                    glowStyles = `style="border-color: ${color} !important; box-shadow: 0 0 9px ${color}80 !important; transition: all 0.4s ease;"`;
+                    if (ex.id === 'plank') color = '#BC6CFF'; // Keep Purple specifically for Plank hold
+                    glowStyles = `style="--target-color: ${color};"`;
+                    cardClasses = 'immediate-focus-card';
                 }
 
                 if (ex.type === 'timer') {
@@ -1492,7 +1524,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     const currentDisplaySecs = isRunning ? timerRemainingSecs : displayVal;
                     
                     cardHtml = `
-                    <div class="shine-card" style="cursor: default;" id="card-${ex.id}" ${glowStyles}>
+                    <div class="shine-card ${cardClasses}" style="cursor: default;" id="card-${ex.id}" ${glowStyles}>
                         <div style="display: flex; align-items: center; gap: 12px; pointer-events: none;">
                             <div class="card-title">${ex.title}</div>
                         </div>
@@ -1516,7 +1548,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     const badgeHtml = displayVal ? `<span class="card-badge" style="margin-right: 14px;">${displayVal}</span>` : '';
                     
                     cardHtml = `
-                    <div class="shine-card" id="card-${ex.id}" onclick="toggleExerciseManualCheck(event, '${ex.id}')" ${glowStyles}>
+                    <div class="shine-card ${cardClasses}" id="card-${ex.id}" onclick="toggleExerciseManualCheck(event, '${ex.id}')" ${glowStyles}>
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="card-title">${ex.title}</div>
                         </div>
@@ -1555,16 +1587,20 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 cooldownItemsHtml += `<p style="margin: 4px 0; color:#a1a1aa;">• ${step}</p>`;
             });
 
-            // Determine dynamic progressive glow for the cooldown procedures
+            // Determine dynamic progressive focus or inactive styling for cooldown procedures
             let maintGlowStyles = '';
+            let maintClasses = '';
             if (maintDone) {
-                const maintProgressIndex = completedItemIndices.indexOf('maint');
-                const color = getProgressiveGlowColor(maintProgressIndex, totalLoadoutItems);
-                maintGlowStyles = `style="border-color: ${color} !important; box-shadow: 0 0 9px ${color}80 !important; transition: all 0.4s ease;"`;
+                maintGlowStyles = '';
+            } else if (activeFocusTargetId === 'maint') {
+                const progressIndex = completedItemIndices.length;
+                const color = getProgressiveGlowColor(progressIndex, totalLoadoutItems);
+                maintGlowStyles = `style="--target-color: ${color};"`;
+                maintClasses = 'immediate-focus-card';
             }
 
             document.getElementById('maint-wrapper').innerHTML = `
-            <div class="maint-bar shine-card ${accOpen} ${maintDone ? 'completed-container' : ''}" id="card-maint" ${maintGlowStyles}>
+            <div class="maint-bar shine-card ${accOpen} ${maintDone ? 'completed-container' : ''} ${maintClasses}" id="card-maint" ${maintGlowStyles}>
                 <div class="maint-flex" onclick="toggleMaintAccordionUI()">
                     <div style="display:flex; align-items:center; gap:12px;">
                         <div style="font-size:1.15rem; font-weight:700;">⚙️ Cooldown Procedures</div>
@@ -1607,19 +1643,44 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         function toggleExerciseManualCheck(event, id) {
             event.stopPropagation();
             triggerHapticPulse();
-            if (id === activeTimerId && timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                activeTimerId = null;
-                timerPaused = false;
-                document.title = "V_Forge";
-            }
-            const prevVal = !!appState.completedExercisesToday[id];
-            appState.completedExercisesToday[id] = !prevVal;
-            saveToStorage();
             
-            renderDashboard();
-            triggerVisualImpactFlash(`card-${id}`, !prevVal ? 'check' : 'uncheck');
+            const prevVal = !!appState.completedExercisesToday[id];
+            
+            if (!prevVal) {
+                // Flash on checkoff: apply a temporary high-intensity flash color state
+                const card = document.getElementById(`card-${id}`);
+                if (card) {
+                    const totalLoadoutItems = appState.workoutRegistry.filter(w => {
+                        return !w.addedTimestamp || w.addedTimestamp <= getSimulatedDateObject().getTime();
+                    }).length + 1;
+                    const progressIndex = Object.keys(appState.completedExercisesToday).length;
+                    const color = getProgressiveGlowColor(progressIndex, totalLoadoutItems);
+                    
+                    card.style.borderColor = color;
+                    card.style.boxShadow = `0 0 20px ${color}`;
+                    card.classList.add('completed-flash-active');
+                }
+                
+                // Delay actual update and re-render by 500ms to allow visual flash
+                setTimeout(() => {
+                    appState.completedExercisesToday[id] = true;
+                    saveToStorage();
+                    renderDashboard();
+                }, 500);
+            } else {
+                // Immediate uncheck
+                appState.completedExercisesToday[id] = false;
+                if (id === activeTimerId && timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    activeTimerId = null;
+                    timerPaused = false;
+                    document.title = "V_Forge";
+                }
+                saveToStorage();
+                renderDashboard();
+                triggerVisualImpactFlash(`card-${id}`, 'uncheck');
+            }
         }
 
         function toggleMaintAccordionUI() {
@@ -1632,12 +1693,34 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         function toggleMaintCompletion(event) {
             event.stopPropagation(); 
             triggerHapticPulse();
-            const prevVal = !!appState.completedExercisesToday['maint'];
-            appState.completedExercisesToday['maint'] = !prevVal;
-            saveToStorage();
             
-            renderDashboard();
-            triggerVisualImpactFlash('card-maint', !prevVal ? 'check' : 'uncheck');
+            const prevVal = !!appState.completedExercisesToday['maint'];
+            
+            if (!prevVal) {
+                const card = document.getElementById('card-maint');
+                if (card) {
+                    const totalLoadoutItems = appState.workoutRegistry.filter(w => {
+                        return !w.addedTimestamp || w.addedTimestamp <= getSimulatedDateObject().getTime();
+                    }).length + 1;
+                    const progressIndex = Object.keys(appState.completedExercisesToday).length;
+                    const color = getProgressiveGlowColor(progressIndex, totalLoadoutItems);
+                    
+                    card.style.borderColor = color;
+                    card.style.boxShadow = `0 0 20px ${color}`;
+                    card.classList.add('completed-flash-active');
+                }
+                
+                setTimeout(() => {
+                    appState.completedExercisesToday['maint'] = true;
+                    saveToStorage();
+                    renderDashboard();
+                }, 500);
+            } else {
+                appState.completedExercisesToday['maint'] = false;
+                saveToStorage();
+                renderDashboard();
+                triggerVisualImpactFlash('card-maint', 'uncheck');
+            }
         }
 
         function toggleShieldWall() {
@@ -2509,38 +2592,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             renderForgeCooldownRegistry();
             renderDashboard();
             alert("Cooldown stretch added successfully.");
-        }
-
-        function forgeMoveCooldownUp(index) {
-            triggerHapticPulse();
-            if (index === 0) return;
-            const temp = appState.cooldownRegistry[index];
-            appState.cooldownRegistry[index] = appState.cooldownRegistry[index - 1];
-            appState.cooldownRegistry[index - 1] = temp;
-            saveToStorage();
-            renderForgeCooldownRegistry();
-            renderDashboard();
-        }
-
-        function forgeMoveCooldownDown(index) {
-            triggerHapticPulse();
-            if (index === appState.cooldownRegistry.length - 1) return;
-            const temp = appState.cooldownRegistry[index];
-            appState.cooldownRegistry[index] = appState.cooldownRegistry[index + 1];
-            appState.cooldownRegistry[index + 1] = temp;
-            saveToStorage();
-            renderForgeCooldownRegistry();
-            renderDashboard();
-        }
-
-        function forgeRemoveCooldown(index) {
-            triggerHapticPulse();
-            if (confirm("Delete this cooldown stretch step?")) {
-                appState.cooldownRegistry.splice(index, 1);
-                saveToStorage();
-                renderForgeCooldownRegistry();
-                renderDashboard();
-            }
         }
 
         // =========================================================================
