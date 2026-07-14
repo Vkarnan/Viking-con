@@ -36,6 +36,10 @@ self.addEventListener('activate', event => {
 
 // 3. Fetch Event - Network-First Strategy (Pulls latest from GitHub, falls back to cache only when offline)
 self.addEventListener('fetch', event => {
+  // Safely skip caching for non-http/https protocols (like chrome-extension schemes)
+  if (!event.request.url.startsWith('http')) {
+    return; 
+  }
   event.respondWith(
     fetch(event.request)
       .then(networkResponse => {
