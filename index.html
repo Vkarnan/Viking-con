@@ -1,16 +1,17 @@
 <!--
-TITLE: V_Forge - Conquered Edition (Build v2.1.0 - Premium HUD Update)
-DATE/TIME (IST): July 16, 2026 - 11:30 AM IST
+TITLE: V_Forge - Conquered Edition (Build v2.3.0 - Holographic HUD & Parallax Current Update)
+DATE/TIME (IST): July 16, 2026 - 12:00 PM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 1. DECOUPLED SAFE CONFIGURATION ZONE (CONFIG_THEME_AND_COPY):
    - Consolidates all thematic text, stages, progress-flow colors, and status states into one clean, frozen object.
-2. DYNAMIC "BIFROST RISE" BACKGROUND WASH:
-   - Integrates a progress-driven linear gradient mask rising from the bottom of the screen (0% to 100%).
+2. DYNAMIC "BIFROST RISE" WAVY PROGRESS WASH:
+   - Features a dynamic, hardware-accelerated wavy liquid background (#bifrost-wash-layer + .bifrost-wave-cap).
+   - The wave-cap drifts horizontally loop-by-loop to create an infinite, relaxing water ripple effect.
 3. AMOLED SLIDER STACK ACCORDION:
-   - Re-stacks progress wash layer above black vignette overlay, fully resolving completed-state color wash washout.
-   - Consolidates vignette, ambient tint, and dynamic Bifrost wash intensity sliders into a collapsible, space-saving accordion dropdown.
+   - Consolidated sliders into a space-saving, collapsible settings dropdown accordion inside the Forge.
+   - Merged flat ambient tint and dynamic rising wash saturation controls into a single, cohesive "Bifrost Ambience & Wash" master slider.
 4. CALENDAR LEDGER AND SKIP PROTECTION:
    - Preserves Monday-to-Sunday progression architecture with standard and Sunday peak skipped states.
 5. DAILY CHECKLIST RESET GATE:
@@ -30,6 +31,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 12. EVENT-DELEGATED GLASS-MORPHIC HUD TOOLTIP:
     - Employs strict Event Delegation to reduce listener memory footprint by 95% on mobile devices.
     - Features a dynamic, vertically-anchored tooltip projecting above the thumb, complete with column partitions and custom status borders.
+    - Features a premium high-contrast frosted glass sheen (40px blur, specular glare, translucent bezels).
+13. "CALM FJORD" RIPPLE SETTLE:
+    - Automatically transitions wave ripple duration from 12s (energetic active) to 45s (hypnotic completion) while lowering wave opacity.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -98,15 +102,89 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             --wash-color-b: 255;
             --progress-height: 0%;
             
-            /* Background Stack Layer Re-ordering: Progress Wash Layer sits ON TOP of Black Vignette Overlay */
+            /* Body background acts as base wallpaper + black vignette layers. Progress wash moved to separate GPU layer div. */
             background-image: 
-                linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--wash-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--wash-opacity)) var(--progress-height), transparent var(--progress-height)),
                 linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
                 url("./background.webp");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             transition: background 0.4s ease;
+        }
+
+        /* Dynamic Parallax Wavy Bifrost Progress Wash Layer */
+        #bifrost-wash-layer {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: var(--progress-height, 0%);
+            background-color: rgb(var(--wash-color-r, 188), var(--wash-color-g, 108), var(--wash-color-b, 255));
+            opacity: var(--wash-opacity, 0.20);
+            transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+            pointer-events: none;
+            z-index: -1; /* Rendered securely behind screen contents but above base background images */
+            overflow: visible;
+        }
+
+        .bifrost-wave-back, .bifrost-wave-front, .bifrost-river-glint {
+            position: absolute;
+            top: -39px; /* Elevated higher to accommodate larger wave amplitudes */
+            left: 0;
+            width: 200%;
+            height: 40px;
+            background-color: rgb(var(--wash-color-r, 188), var(--wash-color-g, 108), var(--wash-color-b, 255));
+            mask-repeat: repeat-x;
+            -webkit-mask-repeat: repeat-x;
+            mask-size: 50% 100%;
+            -webkit-mask-size: 50% 100%;
+            transition: opacity 1.2s ease, animation-duration 1.2s ease;
+        }
+        
+        /* High-Amplitude Back Wave Cap: Slow drift left */
+        .bifrost-wave-back {
+            opacity: 0.45;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,80 C150,130 350,10 500,80 C650,150 850,-10 1000,80 C1150,150 1300,10 1500,80 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,80 C150,130 350,10 500,80 C650,150 850,-10 1000,80 C1150,150 1300,10 1500,80 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            animation: bifrost-wave-drift-reverse 16s linear infinite;
+        }
+
+        /* High-Amplitude Front Wave Cap: Medium drift right */
+        .bifrost-wave-front {
+            opacity: 0.85;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C150,120 350,0 500,60 C650,120 850,0 1000,60 C1150,120 1300,0 1500,60 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C150,120 350,0 500,60 C650,120 850,0 1000,60 C1150,120 1300,0 1500,60 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            animation: bifrost-wave-drift-normal 10s linear infinite;
+        }
+
+        /* Glistening River Particle-Glints: Rapid drift right with speckled mask */
+        .bifrost-river-glint {
+            opacity: 0.95;
+            filter: brightness(1.6);
+            mix-blend-mode: color-dodge;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            animation: bifrost-wave-drift-normal 7s linear infinite;
+        }
+
+        @keyframes bifrost-wave-drift-normal {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes bifrost-wave-drift-reverse {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Calm Fjord completion transition override states */
+        body.conquered-state .bifrost-wave-back {
+            animation-duration: 75s;
+            opacity: 0.15;
+        }
+        body.conquered-state .bifrost-wave-front {
+            animation-duration: 50s;
+            opacity: 0.25;
+        }
+        body.conquered-state .bifrost-river-glint {
+            opacity: 0; /* Fully dissolved particle glints in conquered peaceful state */
         }
 
         /* Safe Area Notch Padding support for modern phones */
@@ -423,18 +501,21 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border-top: 1px solid #130a1c;
         }
 
-        /* 12. FLOATING FROSTED GLASS HUD TOOLTIP */
+        /* 12. FLOATING ULTRA-FROSTED GLASS HUD TOOLTIP */
         .tooltip-deck { 
             position: fixed; 
-            background: rgba(3, 3, 5, 0.85); 
-            backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08); 
+            background: linear-gradient(rgba(18, 18, 28, 0.94), rgba(18, 18, 28, 0.94)),
+                        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 6px);
+            backdrop-filter: blur(40px); 
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.18); 
             border-radius: 16px; 
-            padding: 16px; 
+            padding: 18px; 
             z-index: 2000; 
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05),
-                        0 0 1px rgba(255, 255, 255, 0.1),
+            /* Chromatic Refraction Halo shadow glows */
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.25),
+                        -4px -4px 20px rgba(0, 240, 255, 0.12),
+                        4px 4px 20px rgba(188, 108, 255, 0.15),
                         0 12px 40px rgba(0, 0, 0, 0.95);
             pointer-events: none;
             opacity: 0;
@@ -450,6 +531,26 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
+        }
+
+        /* Tactical Cyberpunk HUD Decorative Brackets */
+        .tooltip-deck::before, .tooltip-deck::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            transition: border-color 0.4s ease;
+        }
+        .tooltip-deck::before {
+            top: 8px; left: 8px;
+            border-top: 2px solid var(--target-color, #BC6CFF);
+            border-left: 2px solid var(--target-color, #BC6CFF);
+        }
+        .tooltip-deck::after {
+            bottom: 8px; right: 8px;
+            border-bottom: 2px solid var(--target-color, #BC6CFF);
+            border-right: 2px solid var(--target-color, #BC6CFF);
         }
 
         .tooltip-title { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; color: var(--accent-glow); margin-bottom: 6px; }
@@ -674,6 +775,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
     <!-- CINEMATIC FLASH ANIMATING LAYER -->
     <div id="conquest-flash-layer"></div>
 
+    <!-- BIFROST PARALLAX WAVE-CURRENT progress WASH LAYER -->
+    <div id="bifrost-wash-layer">
+        <div class="bifrost-wave-back"></div>
+        <div class="bifrost-wave-front"></div>
+        <div class="bifrost-river-glint"></div>
+    </div>
+
     <!-- TARGET RADAR STRIP -->
     <div class="target-wrapper">
         <div class="shine-card" style="padding: 24px;">
@@ -856,7 +964,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 </div>
             </div>
 
-            <!-- COLLAPSIBLE AMOLED SCREEN OPTIMIZER ACCORDION -->
+            <!-- COLLAPSED AMOLED SCREEN OPTIMIZER ACCORDION -->
             <div class="section-label">⚙️ AMOLED SCREEN OPTIMIZER</div>
             <div class="shine-card" style="padding:15px; margin-bottom:20px; border-color:#1e142b;" id="forge-amoled-panel">
                 <div class="forge-accordion-header" onclick="toggleForgeAccordion('forge-amoled-panel')">
@@ -868,12 +976,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">AMOLED Black Vignette Darkness: <span id="vignette-val-display" style="color:var(--accent-glow);">96</span>%</label>
                         <input type="range" id="vignette-range" min="50" max="100" value="96" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
                     </div>
-                    <div class="config-grid-item" style="border:none; padding:0; margin-bottom:14px; background:none;">
-                        <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">Ambient Glow Saturation: <span id="tint-val-display" style="color:var(--accent-glow);">4</span>%</label>
-                        <input type="range" id="tint-range" min="0" max="30" value="4" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
-                    </div>
+                    <!-- Consolidated dynamic color sliders inside a single, high-performance master control -->
                     <div class="config-grid-item" style="border:none; padding:0; margin-bottom:0; background:none;">
-                        <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">Bifrost Progress Wash Intensity: <span id="wash-val-display" style="color:var(--accent-glow);">20</span>%</label>
+                        <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">Bifrost Ambience & Wash Intensity: <span id="wash-val-display" style="color:var(--accent-glow);">20</span>%</label>
                         <input type="range" id="wash-range" min="0" max="100" value="20" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
                     </div>
                 </div>
@@ -1075,7 +1180,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             customQuotes: {}, 
             workoutRegistry: [],
             cooldownRegistry: [],
-            backgroundSettings: { vignette: 96, tint: 4, wash: 20 }
+            backgroundSettings: { vignette: 96, wash: 20 }
         };
 
         // =========================================================================
@@ -1102,7 +1207,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             if (!appState.historicalVolumeLogs) appState.historicalVolumeLogs = {};
             if (!appState.completedExercisesToday) appState.completedExercisesToday = {};
             if (!appState.appInitTimestamp) appState.appInitTimestamp = Date.now();
-            if (!appState.backgroundSettings) appState.backgroundSettings = { vignette: 96, tint: 4, wash: 20 };
+            if (!appState.backgroundSettings) appState.backgroundSettings = { vignette: 96, wash: 20 };
             if (appState.backgroundSettings.wash === undefined) appState.backgroundSettings.wash = 20;
 
             if (!appState.customQuotes || Object.keys(appState.customQuotes).length === 0) {
@@ -1198,12 +1303,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             // Get configuration parameters
             const vignetteVal = appState.backgroundSettings ? appState.backgroundSettings.vignette : 96;
-            const tintVal = appState.backgroundSettings ? appState.backgroundSettings.tint : 4;
             const washVal = appState.backgroundSettings ? appState.backgroundSettings.wash : 20;
             
             const vignetteOpacity = vignetteVal / 100;
-            const tintOpacity = tintVal / 100;
             const washOpacity = washVal / 100;
+            
+            // Single Unified Ambient Tint scaled down to a comfortable 10% maximum of the Wash level
+            const tintOpacity = (washVal / 100) * 0.10; 
             
             // Calculate progress height dynamically for "Bifrost Rise" Gradient overlay
             let progressHeight = '0%';
@@ -1234,7 +1340,12 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             document.body.style.setProperty('--wash-color-r', rgb.r);
             document.body.style.setProperty('--wash-color-g', rgb.g);
             document.body.style.setProperty('--wash-color-b', rgb.b);
-            document.body.style.setProperty('--progress-height', progressHeight);
+            
+            // Set variables dynamically in our GPU-rendered wash container
+            const washLayer = document.getElementById('bifrost-wash-layer');
+            if (washLayer) {
+                washLayer.style.setProperty('--progress-height', progressHeight);
+            }
             
             if (isCompleted) {
                 document.body.classList.add('conquered-state');
@@ -1245,14 +1356,12 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
         function updateLiveBackgroundSliders() {
             const vignetteVal = parseInt(document.getElementById('vignette-range').value);
-            const tintVal = parseInt(document.getElementById('tint-range').value);
             const washVal = parseInt(document.getElementById('wash-range').value);
             
             document.getElementById('vignette-val-display').innerText = vignetteVal;
-            document.getElementById('tint-val-display').innerText = tintVal;
             document.getElementById('wash-val-display').innerText = washVal;
 
-            appState.backgroundSettings = { vignette: vignetteVal, tint: tintVal, wash: washVal };
+            appState.backgroundSettings = { vignette: vignetteVal, wash: washVal };
             saveToStorage();
             updateBodyBackground();
         }
@@ -1346,11 +1455,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             // Set slider values from memory
             document.getElementById('vignette-range').value = appState.backgroundSettings.vignette;
-            document.getElementById('tint-range').value = appState.backgroundSettings.tint;
             document.getElementById('wash-range').value = appState.backgroundSettings.wash;
             
             document.getElementById('vignette-val-display').innerText = appState.backgroundSettings.vignette;
-            document.getElementById('tint-val-display').innerText = appState.backgroundSettings.tint;
             document.getElementById('wash-val-display').innerText = appState.backgroundSettings.wash;
 
             let devPanelVal = localStorage.getItem('viking_dev_panel') || 'true';
@@ -2394,8 +2501,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 
                 tableRows += `
                     <div style="display: contents;">
-                        <div style="color:#ffffff; font-weight:700; text-align:left; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); padding:6px 8px 6px 0;">${label}</div>
-                        <div style="color:var(--success-glow); font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); padding:6px 8px;">${weeklyVal}</div>
+                        <div style="color:#ffffff; font-weight:700; text-align:left; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); padding:6px 8px 6px 0;">[•] ${label}</div>
+                        <div style="color:${statusPillColor}; font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); padding:6px 8px;">${weeklyVal}</div>
                         <div style="color:var(--cyan-neon); font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); padding:6px 0 6px 8px;">${allTimeVal}</div>
                     </div>
                 `;
@@ -2409,39 +2516,50 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 if (dayName === 'Sunday') {
                     statusPillColor = '#BC6CFF';
                     borderStyle = '1.5px solid #BC6CFF';
-                    boxShadowStyle = 'inset 0 1px 1px rgba(255, 255, 255, 0.03), 0 0 18px rgba(188, 108, 255, 0.35), 0 10px 40px rgba(0, 0, 0, 0.95)';
+                    boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.25), -4px -4px 20px rgba(0, 240, 255, 0.12), 4px 4px 20px rgba(188, 108, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.95)';
                 } else {
                     statusPillColor = 'var(--success-glow)';
                     borderStyle = '1px solid #10B981';
-                    boxShadowStyle = 'inset 0 1px 1px rgba(255, 255, 255, 0.03), 0 0 15px rgba(16, 185, 129, 0.25), 0 10px 40px rgba(0, 0, 0, 0.95)';
+                    boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.25), -4px -4px 20px rgba(0, 240, 255, 0.12), 4px 4px 20px rgba(188, 108, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.95)';
                 }
             } else if (archiveStatus === 'skipped' || archiveStatus === 'reset') {
                 statusPillColor = 'var(--danger-glow)';
                 borderStyle = '1px solid #B91C1C';
-                boxShadowStyle = 'inset 0 1px 1px rgba(255, 255, 255, 0.03), 0 0 15px rgba(185, 28, 28, 0.25), 0 10px 40px rgba(0, 0, 0, 0.95)';
+                boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.25), -4px -4px 20px rgba(0, 240, 255, 0.12), 4px 4px 20px rgba(188, 108, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.95)';
             } else if (archiveStatus === 'rest') {
                 statusPillColor = '#818cf8';
                 borderStyle = '1px solid #818cf8';
-                boxShadowStyle = 'inset 0 1px 1px rgba(255, 255, 255, 0.03), 0 0 15px rgba(129, 140, 248, 0.25), 0 10px 40px rgba(0, 0, 0, 0.95)';
+                boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.25), -4px -4px 20px rgba(0, 240, 255, 0.12), 4px 4px 20px rgba(188, 108, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.95)';
             }
 
             tt.style.border = borderStyle;
             tt.style.boxShadow = boxShadowStyle;
+            tt.style.setProperty('--target-color', statusPillColor);
 
             ttBody.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <div>
-                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:900;">TARGET FOR DAY</span>
-                        <div style="font-family:'Orbitron'; font-size:0.9rem; font-weight:900; color:#fff;">${targetsCalculated.reps} Reps / ${targetsCalculated.plank}s Plank</div>
-                    </div>
-                    <div style="background:${statusPillColor}20; border:1px solid ${statusPillColor}; color:${statusPillColor}; font-family:'Orbitron'; font-size:0.65rem; font-weight:900; padding:4px 8px; border-radius:4px;">${archiveStatus.toUpperCase()}</div>
-                </div>
+                <!-- Inner Panel Radial spotlight Glow Layer -->
+                <div style="position:absolute; top:0; left:0; right:0; bottom:0; background:radial-gradient(circle at center, ${statusPillColor}15 0%, transparent 70%); pointer-events:none; z-index:0; border-radius:16px;"></div>
                 
-                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0 0px; font-size: 0.8rem; line-height: 1.5; max-height: 250px; overflow-y: auto;">
-                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:left; border-bottom:1.5px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.05); padding-bottom:4px; padding-right:8px;">EXERCISE</div>
-                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.05); padding-bottom:4px; padding-left:8px; padding-right:8px;">WEEK</div>
-                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:4px; padding-left:8px;">LIFETIME</div>
-                    ${tableRows}
+                <div style="position:relative; z-index:1;">
+                    <div style="font-family:'Space Grotesk'; font-size:0.6rem; color:var(--text-muted); font-weight:700; letter-spacing:0.05em; margin-bottom:2px;">🛰️ [LOG_RETRIEVAL] // SYSTEM_SAGA</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <div>
+                            <div style="font-family:'Orbitron'; font-size:0.95rem; font-weight:900; color:#fff; letter-spacing:0.05em; text-shadow:0 0 10px ${statusPillColor}80;">${dayName.toUpperCase()}</div>
+                        </div>
+                        <div style="background:${statusPillColor}20; border:1px solid ${statusPillColor}; color:${statusPillColor}; font-family:'Orbitron'; font-size:0.65rem; font-weight:900; padding:4px 8px; border-radius:4px;">${archiveStatus.toUpperCase()}</div>
+                    </div>
+                    
+                    <div style="border-left: 2px solid ${statusPillColor}; padding-left: 10px; margin-bottom:14px; background:rgba(0,0,0,0.2); padding-top:6px; padding-bottom:6px; border-radius:0 4px 4px 0;">
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:900; display:block; letter-spacing:0.03em;">▶ BATTLE-TARGETS FOR SEGMENT:</span>
+                        <div style="font-family:'Orbitron'; font-size:0.85rem; font-weight:900; color:#fff;">[ ${targetsCalculated.reps} REPS // ${targetsCalculated.plank}s PLANK ]</div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 2.2fr 1fr 1fr; gap: 0 0px; font-size: 0.8rem; line-height: 1.5; max-height: 250px; overflow-y: auto;">
+                        <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:left; border-bottom:1.5px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.05); padding-bottom:4px; padding-right:8px;">EXERCISE</div>
+                        <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.05); padding-bottom:4px; padding-left:8px; padding-right:8px;">WEEK</div>
+                        <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:4px; padding-left:8px;">LIFETIME</div>
+                        ${tableRows}
+                    </div>
                 </div>
             `;
             
@@ -2703,7 +2821,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             } catch (err) {}
         }
 
-        // JSON backup tools
         function exportBackupData() {
             triggerHapticPulse();
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
@@ -3131,23 +3248,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. TARGETED SELECTION EXEMPTIONS:
-   Swaps the user-select CSS attributes to suppress text selection magnifiers globally, 
-   while explicitly whitelisting input text fields and settings areas so typing ranges 
-   and copy-paste workflows remain functional.
+1. OPTIMIZED AMOLED CONTROLS DROPDOWN:
+   Consolidates the active screen optimization features inside a collapsible, space-saving 
+   dropdown accordion inside the Forge. Ambient background tint and wavy progress rise are 
+   unified into a single master saturation slider to minimize layout footprint.
 
-2. VERTICAL FLOATING HUD POSITIONS:
-   Calculates active bounding client coordinates to float the ledger tooltips 
-   directly above touched calendar dots, clamping boundaries to prevent edge clipping 
-   while eliminating physical thumb coverage of table results.
+2. PARALLAX LIQUID WAVE CORE (DOUBLE CURVATURES & PARTICLE GLINTS):
+   Injects a triple-layer dynamic flowing background (#bifrost-wash-layer) that uses 
+   high-amplitude SVG wave-caps counter-drifting horizontally (back wave left, front wave right) 
+   to simulate fluid volume depth. Overlays a rapid speckled glint layer to represent light 
+   glistening on running water. Transitions to slow, pacified ripples upon completion.
 
-3. PRESTIGE FROSTED ACCENTS & GRID PARTITIONS:
-   Upgrades the popup layer with deep frosted glass filters and border shadows, 
-   partitioning row labels and volume statistics cleanly with vertical line dividers.
+3. HOLOGRAPHIC SCIFI HUD TOOLTIP OVERHAUL:
+   Transforms standard tooltips with diagnostic military overlays. Styled with 40px backdrop blur, 
+   carbon-fiber diagonal grid textures, glowing radial-spotlights, chromatic refraction shadows 
+   (glacial cyan left, bifrost violet right), and absolute corner targeting brackets.
 
-4. COLLAPSED AMOLED STACK DESIGN:
-   Consolidates the vignette, saturation, and newly-decoupled Bifrost Progress Wash 
-   intensity sliders into a space-saving accordion dropdown to preserve the screen 
-   footprint of the settings section.
+4. SYSTEM-WIDE SELECTION GESTURE PROTECTION:
+   Sets global target elements to user-select: none to block browser zoom magnifier window 
+   popups during long-presses, leaving specific text areas whitelisted for copying text.
 ================================================================================
 -->
