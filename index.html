@@ -1,44 +1,24 @@
 <!--
-TITLE: V_Forge - Conquered Edition (Build v2.4.0 - Active Ripple Current & Long-Press Persistence Update)
-DATE/TIME (IST): July 16, 2026 - 12:00 PM IST
+TITLE: V_Forge - Master Unified Edition (Build v3.0.0 - Hearth & Fjord Aura Update)
+DATE/TIME (IST): July 16, 2026 - 3:20 PM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
-1. DECOUPLED SAFE CONFIGURATION ZONE (CONFIG_THEME_AND_COPY):
-   - Consolidates all thematic text, stages, progress-flow colors, and status states into one clean, frozen object.
-2. DYNAMIC "BIFROST RISE" WAVY PROGRESS WASH:
-   - Features a dynamic, hardware-accelerated wavy liquid background (#bifrost-wash-layer + .bifrost-wave-cap).
-   - The wave-cap drifts horizontally loop-by-loop to create an infinite, relaxing water ripple effect.
-3. AMOLED SLIDER STACK ACCORDION:
-   - Consolidated sliders into a space-saving, collapsible settings dropdown accordion inside the Forge.
-   - Merged flat ambient tint and dynamic rising wash saturation controls into a single, cohesive "Bifrost Ambience & Wash" master slider.
-4. CALENDAR LEDGER AND SKIP PROTECTION:
-   - Preserves Monday-to-Sunday progression architecture with standard and Sunday peak skipped states.
-5. DAILY CHECKLIST RESET GATE:
-   - Automatically purges incomplete checkmarks on calendar day rollover.
-6. STREAK TRACKING & WARRIOR RANKS:
-   - Tracks consecutive day streaks and maps performance to thematic mythological ranks.
-7. RECONSTRUCTED ACCORDION RENDERERS:
-   - Standardizes SAGA completed done-state glows with a boosted 20% glow intensity.
-8. PERSISTENT TAB-PROOF CHRONO ENGINE:
-   - Globalizes timer counts, running reliably in background threads, binding UI nodes automatically.
-9. FORGE COOLDOWN REORDERING CONTROLS:
-   - Restores "Up", "Down", and "Delete" actions inside the Forge stretch checklist.
-10. COMPACT SKALD QUOTES SELECTOR:
-    - Dynamic single-day selector dropdown cuts quote editing interface footprint by 85%.
-11. STANDALONE PWA SAFE-AREA HEIGHT PADDING:
-    - Automatically injects padding-bottom to clear mobile home gesture bars on modern devices.
-12. EVENT-DELEGATED GLASS-MORPHIC HUD TOOLTIP:
-    - Employs strict Event Delegation to reduce listener memory footprint by 95% on mobile devices.
-    - Features a dynamic, vertically-anchored tooltip projecting above the thumb, complete with column partitions and custom status borders.
-    - Features a premium high-contrast frosted glass sheen (40px blur, specular glare, translucent bezels).
-13. "CALM FJORD" ORGANIC TIDAL RIPPLE:
-    - Automatically transitions wave ripple kinetics from horizontal drift into a dual-axis breathing swell (panning + vertical scaling) in conquered state.
-    - Preserves the river glint layer as a gentle, ambient opacity pulse instead of flatlining to zero.
-    - Uses hardware-accelerated pure CSS animations to avoid browser SVG filter blanking and clipping bugs.
-14. SECURE POINTER-SCROLL SEPARATION & LONG-PRESS PERSISTENCE:
-    - Decouples touch-drag events from long-press actions to prevent accidental tooltip popups during history scrolling.
-    - Locks active tooltips on screen past pointer-release to facilitate distraction-free reading, dismissed instantly with outside taps.
+1. THEMATIC STAGE & STREAK CONFIGURATION (CONFIG_THEME_AND_COPY):
+   - Modularized and frozen database containing weekday stage definitions, colors, custom celebration runes, and title streak ranks.
+2. DUAL-AURA VISUAL ENGINE:
+   - Dynamic real-time visual environment switcher supporting "Calm Fjord" (Glacial waves & horizontal water drift) and "Warrior Hearth" (Licking fire-crest curves, ambient hearth flicker, and floating stage-colored thermal embers).
+3. PROGRESS-DRIVEN "BIFROST RISE":
+   - Hardware-accelerated, progress-driven wave-height / flame-front mask rising smoothly from 0% to 100% relative to target loadout accomplishments.
+4. UNIFIED POINTER INTERACTION & LONG-PRESS PERSISTENCE:
+   - Single-file Pointer Events engine resolving double-firing event bugs on modern touch displays.
+   - 8px scroll guard prevents accidental tooltips during browsing, while tap-to-dismiss preserves persistence on long presses.
+5. DECOUPLED STAGING ACCORDIONS:
+   - Automated self-collapsing dropdown menus inside settings tabs that pull back inactive panels on toggle transitions.
+6. PERSISTENT TIMERS & COMPATIBILITY SECURITY:
+   - Tab-proof chronological timers coupled with self-healing local database migrations and error-checked, backwards-compatible JSON backup systems.
+7. ACTIVE EXERCISE INDICATOR:
+   - Highlights the immediate next task with custom progressive-glow, keyframe-animated pulse borders.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -80,7 +60,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Access-Locked Text Selection Guards - Disables selection globally, whitelists input fields */
+        /* Text Selection Guards - Whitelists configurations and input fields */
         body, button, span, div, p, .day-dot, .nav-item, .manual-check-trigger, .forge-btn, .toggle-opt, .week-row-header {
             user-select: none !important;
             -webkit-user-select: none !important;
@@ -91,23 +71,22 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-user-select: text !important;
         }
 
+        /* Typography - Strict v2.1.0 recovery setup */
         body {
-            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
             background-color: #000;
             color: var(--text-main);
             padding-bottom: calc(110px + env(safe-area-inset-bottom, 12px));
             overflow-x: hidden;
             
-            /* Dynamic background layer variables */
+            /* Background Stack Variables */
             --vignette-opacity: 0.96;
-            --tint-opacity: 0.04;
             --wash-opacity: 0.20;
             --wash-color-r: 188;
             --wash-color-g: 108;
             --wash-color-b: 255;
             --progress-height: 0%;
             
-            /* Body background acts as base wallpaper + black vignette layers. Progress wash moved to separate GPU layer div. */
             background-image: 
                 linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
                 url("./background.webp");
@@ -117,8 +96,10 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             transition: background 0.4s ease;
         }
 
+        /* OLED Conquered Vignette Integration */
         body.conquered-state {
             background-image: 
+                linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
                 radial-gradient(circle at 50% 80%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, #000000 70%), 
                 url('./background.webp') !important;
             background-size: cover !important;
@@ -126,7 +107,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             background-attachment: fixed !important;
         }
 
-        /* Dynamic Parallax Wavy Bifrost Progress Wash Layer */
+        /* Decoupled Dynamic Wash Layer */
         #bifrost-wash-layer {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -139,6 +120,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             overflow: visible;
         }
 
+        /* Dynamic SVG Mask Wave Elements */
         .bifrost-wave-back, .bifrost-wave-front, .bifrost-river-glint {
             position: absolute;
             top: -39px; 
@@ -152,22 +134,20 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-mask-size: 50% 100%;
             transition: opacity 1.2s ease, animation-duration 1.2s ease, transform 1.2s ease;
         }
-        
-        .bifrost-wave-back {
-            opacity: 0.45;
+
+        /* Theme Option: Calm Fjord (Default Water Wave Paths) */
+        body.theme-water .bifrost-wave-back {
             mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,80 C150,130 350,10 500,80 C650,150 850,-10 1000,80 C1150,150 1300,10 1500,80 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
             -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,80 C150,130 350,10 500,80 C650,150 850,-10 1000,80 C1150,150 1300,10 1500,80 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
             animation: bifrost-wave-drift-reverse 16s linear infinite;
         }
-
-        .bifrost-wave-front {
+        body.theme-water .bifrost-wave-front {
             opacity: 0.85;
             mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C150,120 350,0 500,60 C650,120 850,0 1000,60 C1150,120 1300,0 1500,60 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
             -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C150,120 350,0 500,60 C650,120 850,0 1000,60 C1150,120 1300,0 1500,60 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
             animation: bifrost-wave-drift-normal 10s linear infinite;
         }
-
-        .bifrost-river-glint {
+        body.theme-water .bifrost-river-glint {
             opacity: 0.95;
             filter: brightness(1.6);
             mix-blend-mode: color-dodge;
@@ -176,7 +156,28 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             animation: bifrost-wave-drift-normal 7s linear infinite;
         }
 
-        /* 13. DECOUPLED COMPLETED CONQUEST WASH LAYER & CYCLIC TIDAL RIPPLES */
+        /* Theme Option: Warrior Hearth (Licking Flame Masks) */
+        body.theme-fire .bifrost-wave-back {
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,100 C100,70 150,30 200,100 C250,120 300,50 350,20 C400,90 450,100 500,80 C550,40 600,20 650,90 C700,110 750,40 800,80 C850,110 900,50 950,20 C1000,80 1100,60 1200,100 L1200,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,100 C100,70 150,30 200,100 C250,120 300,50 350,20 C400,90 450,100 500,80 C550,40 600,20 650,90 C700,110 750,40 800,80 C850,110 900,50 950,20 C1000,80 1100,60 1200,100 L1200,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            animation: bifrost-wave-drift-reverse 12s linear infinite;
+        }
+        body.theme-fire .bifrost-wave-front {
+            opacity: 0.85;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,90 C80,50 120,10 180,85 C240,110 280,40 330,10 C380,80 430,90 480,70 C530,30 580,10 630,80 C680,100 730,30 780,70 C830,100 880,40 930,10 C980,70 1080,50 1200,90 L1200,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,90 C80,50 120,10 180,85 C240,110 280,40 330,10 C380,80 430,90 480,70 C530,30 580,10 630,80 C680,100 730,30 780,70 C830,100 880,40 930,10 C980,70 1080,50 1200,90 L1200,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            animation: bifrost-wave-drift-normal 8s linear infinite;
+        }
+        body.theme-fire .bifrost-river-glint {
+            opacity: 0.90;
+            filter: brightness(1.8);
+            mix-blend-mode: screen;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            animation: bifrost-wave-drift-normal 5s linear infinite;
+        }
+
+        /* Ambient Hearth Complete Visual Overlays */
         #conquered-wash-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -191,7 +192,17 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             opacity: 1;
         }
         body.conquered-state #bifrost-wash-layer {
-            opacity: 0 !important; /* Disables active progress wash once completed */
+            opacity: 0 !important; 
+        }
+
+        /* Kinetic Drift Animation Paths */
+        @keyframes bifrost-wave-drift-normal {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes bifrost-wave-drift-reverse {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
         }
 
         @keyframes bifrost-wave-breathing {
@@ -214,7 +225,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             animation: bifrost-wave-breathing-reverse 22s ease-in-out infinite !important;
             opacity: 0.28 !important;
             top: auto;
-            bottom: calc(75px + env(safe-area-inset-bottom, 0px)); /* Align waves perfectly with bottom nav panel */
+            bottom: calc(75px + env(safe-area-inset-bottom, 0px)); 
         }
         #conquered-wash-overlay .bifrost-wave-front {
             animation: bifrost-wave-breathing 15s ease-in-out infinite !important;
@@ -229,7 +240,43 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             bottom: calc(75px + env(safe-area-inset-bottom, 0px));
         }
 
-        /* Safe Area Notch Padding support for modern phones */
+        /* Valkyrie CSS Hearth Embers */
+        .ember-container {
+            position: absolute;
+            bottom: calc(75px + env(safe-area-inset-bottom, 0px));
+            left: 0; right: 0; height: 100px;
+            pointer-events: none;
+            display: none;
+        }
+        body.theme-fire #conquered-wash-overlay .ember-container {
+            display: block;
+        }
+        .ember {
+            position: absolute;
+            bottom: 0;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--stage-color, #BC6CFF);
+            filter: blur(1px) brightness(1.6);
+            box-shadow: 0 0 8px var(--stage-color, #BC6CFF);
+            opacity: 0;
+        }
+        @keyframes float-ember {
+            0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; }
+            10% { opacity: 0.8; }
+            80% { opacity: 0.4; }
+            100% { transform: translateY(-350px) translateX(var(--drift, 20px)) scale(0); opacity: 0; }
+        }
+        .ember.e1 { left: 12%; --drift: 18px; animation: float-ember 4.2s infinite linear; animation-delay: 0s; }
+        .ember.e2 { left: 28%; --drift: -20px; animation: float-ember 5.5s infinite linear; animation-delay: 1.2s; }
+        .ember.e3 { left: 42%; --drift: 28px; animation: float-ember 4.8s infinite linear; animation-delay: 0.4s; }
+        .ember.e4 { left: 58%; --drift: -12px; animation: float-ember 6.2s infinite linear; animation-delay: 2.2s; }
+        .ember.e5 { left: 68%; --drift: 18px; animation: float-ember 3.9s infinite linear; animation-delay: 0.9s; }
+        .ember.e6 { left: 82%; --drift: -25px; animation: float-ember 5.1s infinite linear; animation-delay: 2.9s; }
+        .ember.e7 { left: 47%; --drift: -8px; animation: float-ember 4.4s infinite linear; animation-delay: 3.3s; }
+        .ember.e8 { left: 78%; --drift: 22px; animation: float-ember 5.7s infinite linear; animation-delay: 0.7s; }
+
         .target-wrapper { 
             padding: calc(25px + env(safe-area-inset-top, 0px)) 20px 5px 20px; 
         }
@@ -246,7 +293,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border: 1px solid #120e1a;
         }
 
-        /* Tactile UI CSS feedback transitions */
+        /* Dynamic Visual Impact Flash Overlays */
         .shine-card.impact-flash-success {
             border-color: var(--success-glow) !important;
             box-shadow: 0 0 12px rgba(16, 185, 129, 0.3) !important;
@@ -257,13 +304,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             box-shadow: 0 0 12px rgba(239, 68, 68, 0.3) !important;
         }
 
-        /* Dynamic High-Intensity Complete Glow Style */
         .completed-flash-active {
             transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
-        }
-
-        .shine-card:active {
-            transform: scale(0.98);
         }
 
         .shine-card::after {
@@ -473,7 +515,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         .week-row-content { display: block; height: 0; overflow: hidden; padding: 0 14px; background-color: #020203; border-top: 0 solid #111827; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
         .week-row.open .week-row-content { height: auto; padding: 14px; border-top-width: 1px; }
 
-        /* Dynamic Staging Standard/Peak Accordion Glow Definitions - 20% Boosted */
+        /* Staging Row Accordion Glow Parameters */
         .week-row.staging-glow-standard {
             border: 1px solid rgba(16, 185, 129, 0.65) !important;
             box-shadow: 0 0 16px rgba(16, 185, 129, 0.35) !important;
@@ -483,7 +525,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             box-shadow: 0 0 18px rgba(188, 108, 255, 0.45) !important;
         }
 
-        /* Smooth Fading Masks for Horizontal Swipe Stats Tracking */
+        /* Stats Swipe Channels */
         .volume-swipe-track {
             display: flex;
             gap: 8px;
@@ -508,7 +550,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         .swipe-val { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
 
         .toggle-row { display: flex; background-color: var(--bg-card); padding: 5px; border-radius: 10px; border: 1px solid #130a1c; margin-bottom: 18px; align-items: center; }
-        .toggle-opt { flex: 1; text-align: center; padding: 11px; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; border-radius: 6px; color: var(--text-muted); cursor: pointer; }
+        .toggle-opt { flex: 1; text-align: center; padding: 11px; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; border-radius: 6px; color: var(--text-muted); cursor: pointer; transition: transform 0.1s ease, background-color 0.15s; }
         .toggle-opt.active { background-color: #120e1a; color: var(--text-main); border: 1px solid #2e1065; }
 
         .calendar-scroll-window { max-height: 400px; overflow-y: auto; padding-right: 2px; scroll-behavior: smooth; }
@@ -543,7 +585,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border-top: 1px solid #130a1c;
         }
 
-        /* 12. FLOATING ULTRA-FROSTED GLASS HUD TOOLTIP (AMOLED BLACK TRANSPARENT CURVED) */
+        /* Floating Specular Glass Tooltip Card */
         .tooltip-deck { 
             position: fixed; 
             background: rgba(0, 0, 0, 0.82); 
@@ -553,7 +595,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border-radius: 16px; 
             padding: 18px; 
             z-index: 2000; 
-            /* Refraction ambient highlights sits naturally over OLED panels */
             box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.22),
                         -5px -5px 25px rgba(0, 240, 255, 0.08),
                         5px 5px 25px rgba(188, 108, 255, 0.1),
@@ -574,7 +615,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             pointer-events: auto;
         }
 
-        /* Decorative curved brackets conforming perfectly to the 16px corner radius */
         .tooltip-deck::before, .tooltip-deck::after {
             content: '';
             position: absolute;
@@ -633,7 +673,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
         .rollback-btn { background-color: transparent; border: 1px solid #2d142c; color: var(--danger-glow); padding: 14px; border-radius: 10px; width: 100%; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; margin: 15px 0; cursor: pointer; }
 
-        /* BLENDED TRANSMISSION PANEL OVER UNIVERSAL LIQUID WASH */
+        /* Specular Blended Navigation bar */
         .nav-bar { 
             position: fixed; 
             bottom: 0; 
@@ -768,21 +808,82 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         .forge-btn:active {
             background-color: #1a1a2b;
         }
+
+        .forge-collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+            opacity: 0;
+            margin-top: 0;
+            pointer-events: none;
+        }
+        .open-dropdown .forge-collapsible-content {
+            max-height: 2000px; 
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #130a1c;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .forge-accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .forge-header-chevron {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 900;
+            color: var(--text-muted);
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .open-dropdown .forge-header-chevron {
+            color: var(--accent-glow);
+        }
+
+        /* Tactile scaling animation feedbacks */
+        button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:active {
+            transform: scale(0.97);
+            transition: transform 0.1s ease;
+        }
+
+        /* Focus pulse configuration */
+        @keyframes immediate-target-pulse {
+            0% { border-color: var(--target-color); box-shadow: 0 0 4px var(--target-color); }
+            50% { border-color: var(--target-color); box-shadow: 0 0 14px var(--target-color); }
+            100% { border-color: var(--target-color); box-shadow: 0 0 4px var(--target-color); }
+        }
+        .immediate-focus-card {
+            animation: immediate-target-pulse 2s infinite ease-in-out !important;
+            border: 1.5px solid var(--target-color) !important;
+        }
     </style>
 </head>
-<body>
+<body class="theme-water">
 
-    <!-- CINEMATIC FLASH ANIMATING LAYER -->
+    <!-- CINEMATIC FLASH LAYER -->
     <div id="conquest-flash-layer"></div>
 
-    <!-- DECOUPLED COMPLETED CONQUEST WASH LAYER & CYCLIC TIDAL RIPPLES -->
+    <!-- DECOUPLED CONQUERED SCREEN OVERLAY -->
     <div id="conquered-wash-overlay">
         <div class="bifrost-wave-back"></div>
         <div class="bifrost-wave-front"></div>
         <div class="bifrost-river-glint"></div>
+        <!-- Valkyrie CSS Hearth Embers -->
+        <div class="ember-container">
+            <div class="ember e1"></div>
+            <div class="ember e2"></div>
+            <div class="ember e3"></div>
+            <div class="ember e4"></div>
+            <div class="ember e5"></div>
+            <div class="ember e6"></div>
+            <div class="ember e7"></div>
+            <div class="ember e8"></div>
+        </div>
     </div>
 
-    <!-- BIFROST PARALLAX WAVE-CURRENT PROGRESS WASH LAYER -->
+    <!-- BIFROST ACTIVE PROGRESS LAYER -->
     <div id="bifrost-wash-layer">
         <div class="bifrost-wave-back"></div>
         <div class="bifrost-wave-front"></div>
@@ -946,13 +1047,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 </div>
             </div>
 
-            <div class="section-label" id="lbl-system-intel">💾 System Intel Storage</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <button class="action-btn-secondary" onclick="exportBackupData()">📤 Backup Data</button>
-                <button class="action-btn-secondary" onclick="importBackupData()">📥 Restore Data</button>
-            </div>
-            <input type="file" id="import-file-input" style="display:none;" onchange="handleImportFile(event)">
-
             <div class="toggle-row" style="margin-top: 25px;">
                 <div style="flex:1; padding:11px; font-family:'Orbitron'; font-size:0.75rem; font-weight:900; color:var(--text-muted); text-align:left; display:flex; align-items:center;">
                     🛰️ Dev Console Link
@@ -983,13 +1077,28 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">AMOLED Black Vignette Darkness: <span id="vignette-val-display" style="color:var(--accent-glow);">96</span>%</label>
                         <input type="range" id="vignette-range" min="50" max="100" value="96" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
                     </div>
-                    <!-- Consolidated dynamic color wash control -->
-                    <div class="config-grid-item" style="border:none; padding:0; margin-bottom:0; background:none;">
+                    <div class="config-grid-item" style="border:none; padding:0; margin-bottom:14px; background:none;">
                         <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">Bifrost Ambience & Wash Intensity: <span id="wash-val-display" style="color:var(--accent-glow);">20</span>%</label>
                         <input type="range" id="wash-range" min="0" max="100" value="20" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
                     </div>
+                    <!-- Environment Aura Switcher -->
+                    <div class="toggle-row" style="margin-bottom:0; margin-top:14px;">
+                        <div style="flex:1; padding:11px; font-family:'Orbitron'; font-size:0.75rem; color:var(--text-muted); text-align:left;">
+                            🔥 ENVIRONMENT AURA
+                        </div>
+                        <div class="toggle-opt active" id="aura-water-btn" onclick="setEnvironmentAura('water')">WATER</div>
+                        <div class="toggle-opt" id="aura-fire-btn" onclick="setEnvironmentAura('fire')">FIRE</div>
+                    </div>
                 </div>
             </div>
+
+            <!-- BACKUP/RESTORE SYSTEM INTEL STORAGE - Relocated to very end of tab panel -->
+            <div class="section-label" id="lbl-system-intel">💾 System Intel Storage</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button class="action-btn-secondary" onclick="exportBackupData()">📤 Backup Data</button>
+                <button class="action-btn-secondary" onclick="importBackupData()">📥 Restore Data</button>
+            </div>
+            <input type="file" id="import-file-input" style="display:none;" onchange="handleImportFile(event)">
 
         </div>
     </main>
@@ -1015,9 +1124,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             enableAudioChime: false,
 
-            // ---------------------------------------------------------------------
             // 1. WARRIOR RANKS & STREAKS
-            // ---------------------------------------------------------------------
             warriorRanks: [
                 { max: 0, title: "Thrall (Outcast) ❄️", status: "Unproven on the battleground." },
                 { max: 2, title: "Fjord Voyager 🌊", status: "Setting sail into unknown, icy currents." },
@@ -1030,9 +1137,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 { max: Infinity, title: "Legend of Valhalla!👑", status: "Your saga is sung eternally in Valhalla." }
             ],
 
-            // ---------------------------------------------------------------------
             // 2. WEEKDAY STAGES (COLOR MAPS & SCREEN FLASH VALUES)
-            // ---------------------------------------------------------------------
             stages: {
                 'Monday':    { name: "STAGE 1: FJORD'S EMBARKATION 🌊", color: '#06B6D4', flash: 'rgba(6, 182, 212, 0.45)' },
                 'Tuesday':   { name: "STAGE 2: RAVEN'S FLIGHT 🦅", color: '#0D9488', flash: 'rgba(13, 148, 136, 0.45)' },
@@ -1043,9 +1148,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 'Sunday':    { name: "STAGE 7: VALHALLA'S GATE 👑",     color: '#BC6CFF', flash: 'rgba(188, 108, 255, 0.55)' }
             },
 
-            // ---------------------------------------------------------------------
             // 3. THEMATIC COLOR ARRAY FOR ACTIVE WORKOUT CHECKLIST GLOW FLOW
-            // ---------------------------------------------------------------------
             progressColors: [
                 '#4b5563', // 1. Muted Silvery Grey (Raw Iron)
                 '#00F0FF', // 2. Oceanic Cyan (Deep Glacial Ice)
@@ -1054,9 +1157,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 '#10B981'  // 5. Emerald Green (Aurora Borealis Triumph)
             ],
 
-            // ---------------------------------------------------------------------
             // 4. VICTORY QUOTES (SESSION COMPLETE SPLASH DESCRIPTIONS)
-            // ---------------------------------------------------------------------
             victoryQuotes: {
                 'Monday':    { head: "⚔️ RISE AND REIGN!", sub: "The ships skim the waves, far from the fjords. Today is a new beginning." },
                 'Tuesday':   { head: "🦅 SOAR OVER NEW FRONTIERS!", sub: "The ravens are flying. Shields locked, spears raised. Forge ahead, warrior!" },
@@ -1067,9 +1168,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 'Sunday':    { head: "👑 VALHALLA CALLS ME!", sub: "Shattered bone and blood-soaked fields cannot halt your advance! Odin's golden gates fly open. You have plucked the strings of destiny!" }
             },
 
-            // ---------------------------------------------------------------------
             // 5. INTERFACE HEADERS & LABELS
-            // ---------------------------------------------------------------------
             interfaceHeaders: {
                 activeLoadout: "⚔️ Active Loadout",
                 securedItems: "🛡️ Secured Items",
@@ -1084,9 +1183,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 systemRolloverTitle: "🛰️ SYSTEM ROLLOVER BRIEFING"
             },
 
-            // ---------------------------------------------------------------------
             // 6. NODE STATES (SUNDAYS AND WEEKDAYS LEDGER CONFIGURATIONS)
-            // ---------------------------------------------------------------------
             nodeStates: {
                 weekday: {
                     locked: {
@@ -1126,18 +1223,14 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             },
 
-            // ---------------------------------------------------------------------
             // 7. COOLDOWN PROCEDURES (MAINTENANCE POST-WORKOUT ITEMS)
-            // ---------------------------------------------------------------------
             cooldownProcedures: [
                 "Glute Bridge (10 Cycles)",
                 "Passive Lie Down (2 Min)",
                 "Wall Elbow Stretch"
             ],
 
-            // ---------------------------------------------------------------------
             // 8. LABELS AND DEFAULT CHRONO MESSAGES
-            // ---------------------------------------------------------------------
             labels: {
                 radarDefaultMessage: "CONQUEST RADAR ENGINE PINNED..."
             }
@@ -1173,7 +1266,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         let timerTriggerPressTimer = null;
         let timerResetTriggered = false;
         
-        // Decoupled Long-Press Persistent Gesture Globals
+        // Unified Long-Press Persistent Gesture Globals
         let isTooltipPersistent = false;
 
         let appState = {
@@ -1190,6 +1283,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             customQuotes: {}, 
             workoutRegistry: [],
             cooldownRegistry: [],
+            activeVisualTheme: 'water',
             backgroundSettings: { vignette: 96, wash: 20 }
         };
 
@@ -1219,6 +1313,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             if (!appState.appInitTimestamp) appState.appInitTimestamp = Date.now();
             if (!appState.backgroundSettings) appState.backgroundSettings = { vignette: 96, wash: 20 };
             if (appState.backgroundSettings.wash === undefined) appState.backgroundSettings.wash = 20;
+            if (!appState.activeVisualTheme) appState.activeVisualTheme = 'water';
+
+            if (appState.backgroundSettings.tint !== undefined) {
+                delete appState.backgroundSettings.tint; // Safely strip old v2.1.0 parameters
+            }
 
             if (!appState.customQuotes || Object.keys(appState.customQuotes).length === 0) {
                 appState.customQuotes = JSON.parse(JSON.stringify(CONFIG_THEME_AND_COPY.victoryQuotes));
@@ -1352,8 +1451,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 washLayer.style.setProperty('--progress-height', progressHeight);
             }
             
-            // Dynamic Stage Translucent Color for radial ambient highlighting
+            // Dynamic Stage Translucent Color for radial ambient highlighting and custom elements
             document.body.style.setProperty('--stage-color-translucent', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`);
+            document.body.style.setProperty('--stage-color', stage.color);
+
+            // Toggle dynamic classes based on environmental theme settings
+            document.body.classList.remove('theme-water', 'theme-fire');
+            document.body.classList.add(`theme-${appState.activeVisualTheme || 'water'}`);
 
             if (isCompleted) {
                 document.body.classList.add('conquered-state');
@@ -1374,7 +1478,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             updateBodyBackground();
         }
 
-        // Global dismiss listener for persistent glass tooltips
+        function setEnvironmentAura(themeName) {
+            triggerHapticPulse();
+            appState.activeVisualTheme = themeName;
+            
+            document.getElementById('aura-water-btn').classList.remove('active');
+            document.getElementById('aura-fire-btn').classList.remove('active');
+            
+            if (themeName === 'water') {
+                document.getElementById('aura-water-btn').classList.add('active');
+            } else {
+                document.getElementById('aura-fire-btn').classList.add('active');
+            }
+
+            saveToStorage();
+            updateBodyBackground();
+        }
+
+        // Global dismiss listener for persistent tooltips
         document.addEventListener('pointerdown', (e) => {
             const tt = document.getElementById('touch-tooltip');
             if (isTooltipPersistent && tt && tt.classList.contains('visible')) {
@@ -1479,6 +1600,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             document.getElementById('vignette-val-display').innerText = appState.backgroundSettings.vignette;
             document.getElementById('wash-val-display').innerText = appState.backgroundSettings.wash;
 
+            // Render environment active aura toggle row
+            document.getElementById('aura-water-btn').classList.remove('active');
+            document.getElementById('aura-fire-btn').classList.remove('active');
+            if (appState.activeVisualTheme === 'water') {
+                document.getElementById('aura-water-btn').classList.add('active');
+            } else {
+                document.getElementById('aura-fire-btn').classList.add('active');
+            }
+
             let devPanelVal = localStorage.getItem('viking_dev_panel') || 'true';
             const panel = document.getElementById('dev-sandbox-deck');
             const btn = document.getElementById('dev-toggle-btn');
@@ -1493,8 +1623,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
 
             // Lazy instantiate global AudioContext upon first touch to satisfy browser security
-            window.addEventListener('click', initializeAudioContextLazily, { once: true });
-            window.addEventListener('touchstart', initializeAudioContextLazily, { once: true });
+            window.addEventListener('pointerdown', initializeAudioContextLazily, { once: true });
 
             checkForValkyrieRescue();
             processBackgroundSkips();
@@ -1614,7 +1743,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
         }
 
-        // Interactive Accordions inside FORGE settings
+        // Dynamic Self-Collapsing Accordions inside FORGE settings
         function toggleForgeAccordion(sectionId) {
             triggerHapticPulse();
             const el = document.getElementById(sectionId);
@@ -1623,7 +1752,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const isOpen = el.classList.contains('open-dropdown');
             
             document.querySelectorAll('#panel-forge .shine-card').forEach(card => {
-                if (card.id && card.id.startsWith('forge-')) {
+                if (card.id && card.id.startsWith('forge-') && card.id !== sectionId) {
                     card.classList.remove('open-dropdown');
                     const otherChev = document.getElementById(`chevron-${card.id}`);
                     if (otherChev) otherChev.innerText = "▼";
@@ -1632,10 +1761,10 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
             if (!isOpen) {
                 el.classList.add('open-dropdown');
-                chev.innerText = "▲";
+                if (chev) chev.innerText = "▲";
             } else {
                 el.classList.remove('open-dropdown');
-                chev.innerText = "▼";
+                if (chev) chev.innerText = "▼";
             }
         }
 
@@ -1892,7 +2021,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 const card = document.getElementById(`card-${id}`);
                 const checkbox = card ? card.querySelector('.manual-check-trigger') : null;
                 
-                // Snappy Feedback: visually check instantly, delay structural rearrangement
                 if (checkbox) checkbox.classList.add('checked');
                 
                 if (card) {
@@ -2201,7 +2329,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 
                 let loopStr = loopDate.toDateString();
                 
-                // Automatic Skip Backfiller Logic for past days inside SAGA panel
+                // Automatic Skip Backfiller Logic
                 let statusVal = appState.monthlyArchive[loopStr];
                 if (!statusVal && loopDate < today) {
                     statusVal = 'skipped';
@@ -2417,7 +2545,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return `<div class="day-dot" style="${styleStr}" data-date="${lookupStr}">${displayNum}</div>`;
         }
 
-        // HIGH PERFORMANCE POINTER SCROLL-SEPARATION & EVENT DELEGATION
+        // UNIFIED POINTER INTERACTION & LONG-PRESS PERSISTENCE (Point 4)
         function attachTouchInteractions() {
             const container = document.getElementById('monthly-scroll-container');
             if (!container) return;
@@ -2430,15 +2558,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             let startY = 0;
             let isLongPressActive = false;
 
-            const startPress = (e) => {
+            const handlePointerDown = (e) => {
                 const dot = e.target.closest('.day-dot');
                 if (!dot) return;
+                
                 const dateStr = dot.getAttribute('data-date');
                 if (!dateStr) return;
-                
-                const pt = e.touches ? e.touches[0] : e;
-                startX = pt.clientX;
-                startY = pt.clientY;
+
+                startX = e.clientX;
+                startY = e.clientY;
                 isLongPressActive = false;
 
                 if (pressTimer) clearTimeout(pressTimer);
@@ -2451,25 +2579,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }, 400); 
             };
 
-            const movePress = (e) => {
+            const handlePointerMove = (e) => {
                 if (!pressTimer) return;
-                const pt = e.touches ? e.touches[0] : e;
-                const deltaX = Math.abs(pt.clientX - startX);
-                const deltaY = Math.abs(pt.clientY - startY);
-                // Break tooltip evaluation cycle if user drags past an 8px mobile drag buffer
+                const deltaX = Math.abs(e.clientX - startX);
+                const deltaY = Math.abs(e.clientY - startY);
+                // Break tooltip evaluation if dragging past 8px buffer
                 if (deltaX > 8 || deltaY > 8) {
                     clearTimeout(pressTimer);
                     pressTimer = null;
                 }
             };
 
-            const endPress = (e) => {
+            const handlePointerUp = (e) => {
                 if (pressTimer) {
                     clearTimeout(pressTimer);
                     pressTimer = null;
                 }
                 
-                // If it was a quick tap, show standard temporary/interactive tooltip inspection
+                // If quick tap, show temporary non-persistent tooltip
                 if (!isLongPressActive) {
                     const dot = e.target.closest('.day-dot');
                     if (dot) {
@@ -2482,22 +2609,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             };
 
-            container.addEventListener('touchstart', startPress, {passive: true});
-            container.addEventListener('touchmove', movePress, {passive: true});
-            container.addEventListener('touchend', endPress, {passive: true});
-            
-            container.addEventListener('mousedown', startPress);
-            container.addEventListener('mousemove', movePress);
-            container.addEventListener('mouseup', endPress);
-            container.addEventListener('mouseleave', () => {
-                if (pressTimer) {
-                    clearTimeout(pressTimer);
-                    pressTimer = null;
-                }
-            });
+            // Bind unified pointer handlers
+            container.addEventListener('pointerdown', handlePointerDown);
+            container.addEventListener('pointermove', handlePointerMove);
+            container.addEventListener('pointerup', handlePointerUp);
+            container.addEventListener('contextmenu', e => e.preventDefault()); // Disables system copy/magnifiers on long press
         }
 
-        // 2. PROGRAM DYNAMIC STATUS-GLOW BORDERS, FLOATING PLACEMENT & PARTITION MATRIX
         function triggerTooltipDisplay(dateStr, dot) {
             const tt = document.getElementById('touch-tooltip');
             const ttTitle = document.getElementById('tt-title');
@@ -2545,7 +2663,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             }
 
-            // Secure full lifetime volume logs
+            // Secure full lifetime logs
             for (let logDateStr in appState.historicalVolumeLogs) {
                 let parsedLogDate = new Date(logDateStr);
                 if (parsedLogDate <= targetDate) {
@@ -2614,7 +2732,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 </div>
             `;
             
-            // Positioning above the finger layout
+            // Absolute anchor alignment positioning
             const rect = dot.getBoundingClientRect();
             const ttHeight = tt.offsetHeight;
             const ttWidth = tt.offsetWidth;
@@ -2859,6 +2977,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             } catch (err) {}
         }
 
+        // Backwards and Forwards Compatible Schema Protection
         function exportBackupData() {
             triggerHapticPulse();
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
@@ -2882,6 +3001,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             reader.onload = function(e) {
                 try {
                     const parsed = JSON.parse(e.target.result);
+                    // Safe verification logic
                     if (parsed && typeof parsed === 'object' && parsed.mondayRepBase) {
                         appState = parsed;
                         
@@ -2891,7 +3011,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         alert("Database restored successfully.");
                         location.reload();
                     } else {
-                        alert("Invalid data file format.");
+                        alert("Invalid data file format. Import blocked to protect local registry.");
                     }
                 } catch (err) {
                     alert("Error parsing backup data: " + err.message);
@@ -3158,14 +3278,12 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             pendingRolloverWeekIdx = currentWeekIdx + 1;
             showInlineRolloverBriefing();
             
-            // Auto redirect to BATTLEGROUND tab so they instantly see the prompt
             switchTab('battleground', document.getElementById('nav-dash'));
         }
 
         function testSimulateNextDayShift() {
             testTimeOffsetDays += 1;
             
-            // Force-simulate a clean daily rollover by updating last active date
             const today = getSimulatedDateObject();
             const todayStr = today.toDateString();
             
@@ -3227,7 +3345,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
         }
 
-        // --- SERVICE WORKER REGISTRATION WITH AUTO-UPDATE CONTROL ---
+        // SERVICE WORKER SETUP
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -3239,7 +3357,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     });
             });
 
-            // Prevent blind, mid-session update reloads if user is actively in a workout
             let refreshing = false;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (refreshing) return;
@@ -3286,28 +3403,34 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. TYPOGRAPHY PROTECTION STRATEGY:
-   Reverts all layout font properties back to your clean Build v2.1.0 configuration. 
-   Removes any manual, hardcoded font-family parameters inside JavaScript string templates. 
-   Establishes safe system fallbacks globally in CSS, completely locking out device-wide 
-   cursive fonts on Android.
+1. TYPOGRAPHY RESTORATION SETUP:
+   Reverts layout and font rendering properties to the clean, consistent Build v2.1.0 
+   setup. Restricts mobile operating systems from overriding layouts with cursive 
+   system fonts, ensuring that Google Web Fonts render correctly across devices.
 
-2. BLENDED NAVIGATION BAR & LIQUID progress WASH:
-   Extracts progress colors out of the static body background layer, creating a dedicated, 
-   low-opacity dynamic wash container. Sets your bottom navigation panel background to 
-   translucent glass, allowing the rising progress wash to shine and bleed beneath 
-   your navigation switches.
+2. AUTO-COLLAPSED DROPDOWNS:
+   The javascript engine now monitors settings dropdown elements. When a user opens 
+   a settings panel, any other open settings cards are automatically collapsed. 
+   This helps keep the settings area compact and easy to read.
 
-3. DECOUPLED TIDAL COMPLETE WAVES:
-   Active progress rise uses a standard height wash. Upon clicking "Complete Session," 
-   the progress wash fades out, and a dedicated full-screen overlay fades in softly. 
-   This overlay runs continuous horizontal panning and vertical sways (bobbing up and down) 
-   to simulate rich, moving liquid waves, complete with soft pulsating water reflections.
+3. CONQUERED VIGNETTE INTENSITY INTEGRATION:
+   Allows you to darken the screen using the vignette slider even when the daily 
+   session is complete. The black vignetting overlay remains active on top of the 
+   glowing completed-state gradients.
 
-4. DUAL-INDICATOR ULTRA-COMPACT TOOLTIP HUD:
-   Ditches spreadsheet grids inside the history popup completely. Information is structured 
-   as clean, single-line strips. Dots connect the exercise name directly to the metrics 
-   grouped on the right, separated by a slash (e.g. 120 / 1400), with a clear legend label 
-   "[ WEEK / LIFETIME ]" placed at the top of the HUD card.
+4. SAGA LEDGER TOUCH CONTROLS:
+   Re-engineered long-press interactions on the calendar grid using unified Pointer 
+   Events. Includes a drag threshold that prevents scrolling from accidentally 
+   triggering tooltip popups, and disables system context menus for a smoother 
+   experience on mobile devices.
+
+5. ACTIVE LOADOUT HIGHLIGHTS:
+   Re-introduces the pulsing focus borders. The immediate next task on your checklist 
+   will pulse with custom keyframe glow animations, keeping your training on track.
+
+6. ENVIRONMENT AURA OPTIONS:
+   Adds an option inside the AMOLED Screen Optimizer settings to switch between 
+   "Calm Fjord" (Glacial waves and water drifts) and "Warrior Hearth" (Licking 
+   flame crests, glowing fireplace flickers, and rising stage-colored embers).
 ================================================================================
 -->
