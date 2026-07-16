@@ -1,24 +1,24 @@
 <!--
-TITLE: V_Forge - Master Unified Edition (Build v3.0.0 - Hearth & Fjord Aura Update)
-DATE/TIME (IST): July 16, 2026 - 3:20 PM IST
+TITLE: V_Forge - Master Unified Edition (Build v3.2.0 - True Flame & Typography Update)
+DATE/TIME (IST): July 16, 2026 - 01:00 PM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
-1. THEMATIC STAGE & STREAK CONFIGURATION (CONFIG_THEME_AND_COPY):
-   - Modularized and frozen database containing weekday stage definitions, colors, custom celebration runes, and title streak ranks.
-2. DUAL-AURA VISUAL ENGINE:
-   - Dynamic real-time visual environment switcher supporting "Calm Fjord" (Glacial waves & horizontal water drift) and "Warrior Hearth" (Licking fire-crest curves, ambient hearth flicker, and floating stage-colored thermal embers).
-3. PROGRESS-DRIVEN "BIFROST RISE":
-   - Hardware-accelerated, progress-driven wave-height / flame-front mask rising smoothly from 0% to 100% relative to target loadout accomplishments.
-4. UNIFIED POINTER INTERACTION & LONG-PRESS PERSISTENCE:
-   - Single-file Pointer Events engine resolving double-firing event bugs on modern touch displays.
-   - 8px scroll guard prevents accidental tooltips during browsing, while tap-to-dismiss preserves persistence on long presses.
-5. DECOUPLED STAGING ACCORDIONS:
-   - Automated self-collapsing dropdown menus inside settings tabs that pull back inactive panels on toggle transitions.
+1. HIGH-PRIORITY GOOGLE FONTS LINK ENGINE:
+   - Resolves all mobile typography fallback reset bugs by utilizing robust, high-priority preconnected HTML <link> elements instead of CSS @import.
+2. DYNAMIC "WARRIOR HEARTH" SPIKY FLAME OVERLAYS:
+   - Swaps out bubbly cubic Bezier water paths for jagged, licking quadratic Bezier (Q command) flame vectors in the Fire theme.
+   - Features a performance-friendly, hardware-accelerated @keyframes vertical flicker animation to simulate an active, burning hearth.
+3. CONQUERED AMBIENCE & EMBER COUPLING:
+   - Sets `#conquered-wash-overlay` opacity to bind directly with the `--wash-opacity` variable, allowing completed state dimming.
+   - Embeds a zero-CPU, CSS-only floating ember particle generator drifting up from the bottom navigation bar.
+4. UNIFIED POINTER ENGINE & 24PX TOUCH ZONE:
+   - Standardizes gesture checks via Pointer Events. Uses a relaxed 24px fingertip dead-zone threshold to prevent natural finger flattening from cancelling ledger long presses.
+   - Features a simplified, global click-dismiss listener to close tooltips on outside taps.
+5. SELF-COLLAPSING FORGE ACCORDIONS:
+   - Updates `toggleForgeAccordion` to query and pull back inactive settings panels automatically when a new accordion is chosen.
 6. PERSISTENT TIMERS & COMPATIBILITY SECURITY:
-   - Tab-proof chronological timers coupled with self-healing local database migrations and error-checked, backwards-compatible JSON backup systems.
-7. ACTIVE EXERCISE INDICATOR:
-   - Highlights the immediate next task with custom progressive-glow, keyframe-animated pulse borders.
+   - Maintains tab-proof countdown timers, dynamic stage color mappings, baseline calculations, and error-checked backup/restore systems.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -34,10 +34,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
     
     <link rel="manifest" href="./manifest.json">
 
+    <!-- High-Priority Typography Engine (Point 1 & 5) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+
     <title>V_Forge</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght=600;900&family=Space+Grotesk:wght=400;700&display=swap');
-
         :root {
             --bg-primary: #000000;
             --bg-card: #030305;
@@ -60,7 +63,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Text Selection Guards - Whitelists configurations and input fields */
+        /* User Selection Guards */
         body, button, span, div, p, .day-dot, .nav-item, .manual-check-trigger, .forge-btn, .toggle-opt, .week-row-header {
             user-select: none !important;
             -webkit-user-select: none !important;
@@ -71,7 +74,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-user-select: text !important;
         }
 
-        /* Typography - Strict v2.1.0 recovery setup */
+        /* Typography - Strict v2.1.0 recovery setup (Point 1) */
         body {
             font-family: 'Space Grotesk', -apple-system, sans-serif;
             background-color: #000;
@@ -96,7 +99,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             transition: background 0.4s ease;
         }
 
-        /* OLED Conquered Vignette Integration */
+        /* OLED Conquered Vignette Integration (Point 3) */
         body.conquered-state {
             background-image: 
                 linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
@@ -156,17 +159,25 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             animation: bifrost-wave-drift-normal 7s linear infinite;
         }
 
-        /* Theme Option: Warrior Hearth (Licking Flame Masks) */
+        /* Dynamic Flame Shimmer/Scale keyframes (Point 2) */
+        @keyframes flame-flicker {
+            0%, 100% { transform: scaleY(1.0) scaleX(1.0); filter: brightness(1); }
+            25% { transform: scaleY(0.92) scaleX(1.02); filter: brightness(0.95); }
+            50% { transform: scaleY(1.10) scaleX(0.98); filter: brightness(1.1); }
+            75% { transform: scaleY(0.95) scaleX(1.01); filter: brightness(0.98); }
+        }
+
+        /* Theme Option: Warrior Hearth (Licking Flame Paths - Point 2) */
         body.theme-fire .bifrost-wave-back {
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,100 C100,70 150,30 200,100 C250,120 300,50 350,20 C400,90 450,100 500,80 C550,40 600,20 650,90 C700,110 750,40 800,80 C850,110 900,50 950,20 C1000,80 1100,60 1200,100 L1200,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,100 C100,70 150,30 200,100 C250,120 300,50 350,20 C400,90 450,100 500,80 C550,40 600,20 650,90 C700,110 750,40 800,80 C850,110 900,50 950,20 C1000,80 1100,60 1200,100 L1200,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            animation: bifrost-wave-drift-reverse 12s linear infinite;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,70 Q50,10 100,80 Q150,15 200,70 Q250,5 300,75 Q350,20 400,80 Q450,10 500,75 Q550,15 600,70 Q650,5 700,80 Q750,20 800,70 Q850,10 900,75 Q950,20 1000,80 Q1050,10 1100,75 Q1150,20 1200,70 L1200,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,70 Q50,10 100,80 Q150,15 200,70 Q250,5 300,75 Q350,20 400,80 Q450,10 500,75 Q550,15 600,70 Q650,5 700,80 Q750,20 800,70 Q850,10 900,75 Q950,20 1000,80 Q1050,10 1100,75 Q1150,20 1200,70 L1200,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            animation: bifrost-wave-drift-reverse 12s linear infinite, flame-flicker 0.15s infinite ease-in-out;
         }
         body.theme-fire .bifrost-wave-front {
             opacity: 0.85;
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,90 C80,50 120,10 180,85 C240,110 280,40 330,10 C380,80 430,90 480,70 C530,30 580,10 630,80 C680,100 730,30 780,70 C830,100 880,40 930,10 C980,70 1080,50 1200,90 L1200,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,90 C80,50 120,10 180,85 C240,110 280,40 330,10 C380,80 430,90 480,70 C530,30 580,10 630,80 C680,100 730,30 780,70 C830,100 880,40 930,10 C980,70 1080,50 1200,90 L1200,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            animation: bifrost-wave-drift-normal 8s linear infinite;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,65 Q60,15 110,75 Q160,20 210,65 Q260,8 310,70 Q360,25 410,75 Q460,15 510,70 Q560,20 610,65 Q660,8 710,75 Q760,25 810,65 Q860,15 910,70 Q960,25 1010,75 Q1060,15 1110,70 Q1160,25 1200,65 L1200,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,65 Q60,15 110,75 Q160,20 210,65 Q260,8 310,70 Q360,25 410,75 Q460,15 510,70 Q560,20 610,65 Q660,8 710,75 Q760,25 810,65 Q860,15 910,70 Q960,25 1010,75 Q1060,15 1110,70 Q1160,25 1200,65 L1200,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            animation: bifrost-wave-drift-normal 8s linear infinite, flame-flicker 0.18s infinite ease-in-out;
         }
         body.theme-fire .bifrost-river-glint {
             opacity: 0.90;
@@ -177,7 +188,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             animation: bifrost-wave-drift-normal 5s linear infinite;
         }
 
-        /* Ambient Hearth Complete Visual Overlays */
+        /* Ambient Hearth Complete Visual Overlays - Linked to slider value (Point 3) */
         #conquered-wash-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -189,13 +200,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             overflow: visible;
         }
         body.conquered-state #conquered-wash-overlay {
-            opacity: 1;
+            opacity: var(--wash-opacity, 0.20); 
         }
         body.conquered-state #bifrost-wash-layer {
             opacity: 0 !important; 
         }
 
-        /* Kinetic Drift Animation Paths */
+        /* Dynamic Wave Drift Animators */
         @keyframes bifrost-wave-drift-normal {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -848,7 +859,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             transition: transform 0.1s ease;
         }
 
-        /* Focus pulse configuration */
+        /* Focus pulse configuration (Point 5) */
         @keyframes immediate-target-pulse {
             0% { border-color: var(--target-color); box-shadow: 0 0 4px var(--target-color); }
             50% { border-color: var(--target-color); box-shadow: 0 0 14px var(--target-color); }
@@ -1498,9 +1509,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         // Global dismiss listener for persistent tooltips
         document.addEventListener('pointerdown', (e) => {
             const tt = document.getElementById('touch-tooltip');
-            if (isTooltipPersistent && tt && tt.classList.contains('visible')) {
+            if (tt && tt.classList.contains('visible')) {
                 if (!tt.contains(e.target) && !e.target.closest('.day-dot')) {
-                    isTooltipPersistent = false;
                     tt.classList.remove('visible');
                 }
             }
@@ -1743,7 +1753,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
         }
 
-        // Dynamic Self-Collapsing Accordions inside FORGE settings
+        // Dynamic Self-Collapsing Accordions inside FORGE settings (Point 2)
         function toggleForgeAccordion(sectionId) {
             triggerHapticPulse();
             const el = document.getElementById(sectionId);
@@ -2583,8 +2593,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 if (!pressTimer) return;
                 const deltaX = Math.abs(e.clientX - startX);
                 const deltaY = Math.abs(e.clientY - startY);
-                // Break tooltip evaluation if dragging past 8px buffer
-                if (deltaX > 8 || deltaY > 8) {
+                // Relaxed 24px dead-zone threshold for mobile fingertip flattening
+                if (deltaX > 24 || deltaY > 24) {
                     clearTimeout(pressTimer);
                     pressTimer = null;
                 }
@@ -2596,7 +2606,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     pressTimer = null;
                 }
                 
-                // If quick tap, show temporary non-persistent tooltip
+                // If quick tap, show standard interactive tooltip
                 if (!isLongPressActive) {
                     const dot = e.target.closest('.day-dot');
                     if (dot) {
