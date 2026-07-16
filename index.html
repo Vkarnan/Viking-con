@@ -1,24 +1,30 @@
 <!--
-TITLE: V_Forge - Master Unified Edition (Build v3.2.0 - True Flame & Typography Update)
-DATE/TIME (IST): July 16, 2026 - 01:00 PM IST
+TITLE: V_Forge - Master Unified Edition (Build v3.5.0 - Fireplace & OLED Ledger Refinement)
+DATE/TIME (IST): July 16, 2026 - 05:20 PM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 1. HIGH-PRIORITY GOOGLE FONTS LINK ENGINE:
-   - Resolves all mobile typography fallback reset bugs by utilizing robust, high-priority preconnected HTML <link> elements instead of CSS @import.
-2. DYNAMIC "WARRIOR HEARTH" SPIKY FLAME OVERLAYS:
-   - Swaps out bubbly cubic Bezier water paths for jagged, licking quadratic Bezier (Q command) flame vectors in the Fire theme.
-   - Features a performance-friendly, hardware-accelerated @keyframes vertical flicker animation to simulate an active, burning hearth.
-3. CONQUERED AMBIENCE & EMBER COUPLING:
-   - Sets `#conquered-wash-overlay` opacity to bind directly with the `--wash-opacity` variable, allowing completed state dimming.
-   - Embeds a zero-CPU, CSS-only floating ember particle generator drifting up from the bottom navigation bar.
-4. UNIFIED POINTER ENGINE & 24PX TOUCH ZONE:
-   - Standardizes gesture checks via Pointer Events. Uses a relaxed 24px fingertip dead-zone threshold to prevent natural finger flattening from cancelling ledger long presses.
-   - Features a simplified, global click-dismiss listener to close tooltips on outside taps.
-5. SELF-COLLAPSING FORGE ACCORDIONS:
-   - Updates `toggleForgeAccordion` to query and pull back inactive settings panels automatically when a new accordion is chosen.
-6. PERSISTENT TIMERS & COMPATIBILITY SECURITY:
-   - Maintains tab-proof countdown timers, dynamic stage color mappings, baseline calculations, and error-checked backup/restore systems.
+   - Eliminates mobile typography fallback reset bugs by utilizing robust, preconnected HTML <link> elements instead of CSS @import.
+2. DYNAMIC PROCEDURAL CAMPFIRE ENGINE (WARRIOR HEARTH):
+   - Integrates the advanced SVG <feTurbulence> and <feDisplacementMap> fluid noise filter directly into the body.
+   - Feeds asymmetric, sharp-tongued campfire Bezier paths with randomized heights through the noise, making the flames look alive.
+   - Softens base opacity (stop-opacity="0.3") and raises the vertical fade mask (40%) to completely dissolve solid bottom blocks.
+   - White-out blending safeguard: Back layer uses "normal" blend mode, while Mid and Front layers use "screen" to prevent bright stage colors from turning into a solid white block.
+   - Minimum scaleY is clamped to 0.50. Combined with a progressive container height expansion, flames always remain tall, sharp, and natural.
+3. GLITCH-FREE INTERLOCKING KEYFRAME LOOPS:
+   - Decouples horizontal translation from vertical scaling by applying the `@keyframes flame-flicker` and sways on parent wrappers, eliminating CSS transform collisions.
+4. AMBIENCE COUPLING & OLED COMPATIBILITY:
+   - Connects the completed state conquered wash overlay directly to the `--wash-opacity` variable.
+   - Restructures skipped Sundays to a visible, deep burgundy (`#3b0712`) with a crimson border (`#e11d48`) and rose text (`#fda4af`) to ensure they don't blend into black screens.
+5. UNIFIED POINTER ENGINE & 24PX TOUCH ZONE:
+   - Standardizes gesture checks via Pointer Events. Uses a relaxed 24px fingertip dead-zone threshold and setPointerCapture to prevent natural finger flattening or body scrolling from cancelling ledger long presses.
+   - Suppresses mobile system context menus and magnifying tools using global event preventions.
+6. SELF-COLLAPSING ACCORDIONS & COMPACT DESIGN:
+   - Automatically collapses inactive settings panels on toggle transitions and rescales all elements by 10% to 15% to maintain a compact design on mobile viewports.
+7. ACTIVE LASER-GLOW CAPSULE PROGRESS BAR:
+   - Removes overflow restrictions on the progress container and upgrades both container and progress line to a fully rounded 24px capsule.
+   - Appends an active glowing laser-point pseudo-element to the leading edge of the progress bar with a bright white core and nested stage-colored halos.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -34,7 +40,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
     
     <link rel="manifest" href="./manifest.json">
 
-    <!-- High-Priority Typography Engine (Point 1 & 5) -->
+    <!-- High-Priority Typography Engine (Point 1) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
@@ -74,7 +80,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-user-select: text !important;
         }
 
-        /* Typography - Strict v2.1.0 recovery setup (Point 1) */
+        /* Typography - Strict v2.1.0 recovery setup with tightened proportions */
         body {
             font-family: 'Space Grotesk', -apple-system, sans-serif;
             background-color: #000;
@@ -89,6 +95,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             --wash-color-g: 108;
             --wash-color-b: 255;
             --progress-height: 0%;
+            --fire-progress: 0.0; /* Float between 0.0 and 1.0 */
             
             background-image: 
                 linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
@@ -99,7 +106,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             transition: background 0.4s ease;
         }
 
-        /* OLED Conquered Vignette Integration (Point 3) */
+        /* OLED Conquered Vignette Integration */
         body.conquered-state {
             background-image: 
                 linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
@@ -110,20 +117,194 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             background-attachment: fixed !important;
         }
 
-        /* Decoupled Dynamic Wash Layer */
+        /* ------------------------------------------------------------- */
+        /* LAYER 1: PROGRESSIVE ACTIVE WAVE LAYER (#bifrost-wash-layer) */
+        /* ------------------------------------------------------------- */
         #bifrost-wash-layer {
             position: fixed;
             bottom: 0; left: 0; right: 0;
-            height: var(--progress-height, 0%);
-            background-color: rgb(var(--wash-color-r, 188), var(--wash-color-g, 108), var(--wash-color-b, 255));
-            opacity: var(--wash-opacity, 0.20);
-            transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+            /* Compression-free model: dynamically changes container height while preserving shape aspect ratio */
+            height: calc(15vh + var(--fire-progress) * 80vh); 
+            background: linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--wash-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0) 100%);
+            mix-blend-mode: screen; 
             pointer-events: none;
             z-index: -1; 
             overflow: visible;
+            transform-origin: bottom;
+            /* Restricts scaling down below 0.50 so flames never squash or look flat */
+            transform: scaleY(calc(0.50 + var(--fire-progress) * 0.50));
+            transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
+        
+        body.theme-water #bifrost-wash-layer {
+            height: var(--progress-height, 0%) !important;
+            transform: scaleY(1.0) !important;
+            background-color: rgb(var(--wash-color-r, 188), var(--wash-color-g, 108), var(--wash-color-b, 255));
+            opacity: var(--wash-opacity, 0.20);
+            transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
         }
 
-        /* Dynamic SVG Mask Wave Elements */
+        /* ------------------------------------------------------------- */
+        /* LAYER 2: COMPLETED CAMPFIRE STATE (#conquered-wash-overlay) */
+        /* ------------------------------------------------------------- */
+        #conquered-wash-overlay {
+            position: fixed;
+            top: auto; left: 0; right: 0; bottom: 0;
+            height: 38vh; /* Clamped to a cozy, medium-height firewood campfire level */
+            background-image: radial-gradient(circle at 50% 100%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, #000000 70%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+            transform-origin: bottom;
+            transform: scaleY(0.9);
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: visible;
+        }
+        
+        body.theme-water #conquered-wash-overlay {
+            top: 0; left: 0; right: 0; bottom: 0;
+            height: 100% !important;
+            transform: scaleY(1.0) !important;
+            background-image: radial-gradient(circle at 50% 80%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, #000000 70%);
+            transition: opacity 0.4s ease;
+        }
+
+        body.conquered-state #conquered-wash-overlay {
+            opacity: var(--wash-opacity, 0.20); 
+            transform: scaleY(1.0);
+        }
+        body.conquered-state #bifrost-wash-layer {
+            opacity: 0 !important; 
+        }
+
+        /* PROCEDURAL HEAT WAVE DISTORTION WRAPPER (APPLIES SVG TURBULENCE FILTER) */
+        .breath-flicker-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            animation: slow-hearth-breath 5.5s infinite ease-in-out;
+            will-change: transform, filter;
+            transform: translateZ(0);
+            
+            /* Applies browser-composited organic gas distortion filter */
+            filter: url(#campfire-turbulence);
+            -webkit-filter: url(#campfire-turbulence);
+            
+            /* Vertical gradient mask raised to 40% to completely dissolve solid bottom blocks into soft wispy tendrils */
+            mask-image: linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 12%, rgba(0,0,0,1) 40%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 12%, rgba(0,0,0,1) 40%);
+        }
+
+        @keyframes slow-hearth-breath {
+            0%, 100% { opacity: 0.95; }
+            50% { opacity: 0.82; }
+        }
+
+        /* CALMED FIREPLACE SHIMMER (Only on completed overlay) */
+        #conquered-wash-overlay .breath-flicker-wrapper {
+            animation: slow-hearth-breath 4.0s infinite ease-in-out, fireplace-distortion 4.5s infinite ease-in-out;
+        }
+
+        /* Soft, calming completed heat shimmer (skewX clamped strictly to ±0.4deg to remove micro-flicker) */
+        @keyframes fireplace-distortion {
+            0%, 100% { transform: scaleY(1.0) skewX(0deg); }
+            50% { transform: scaleY(0.98) skewX(-0.4deg); }
+        }
+
+        /* DECOUPLED MULTI-DIRECTIONAL SWAY CONTAINERS */
+        .sway-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: bottom;
+        }
+        
+        /* Non-linear out-of-phase sways running at independent frequencies to make flames look "alive" */
+        .back-sway { animation: layer-sway-back 7.0s ease-in-out infinite; }
+        .mid-sway { animation: layer-sway-mid 5.5s ease-in-out infinite; }
+        .front-sway { animation: layer-sway-front 4.2s ease-in-out infinite; }
+
+        @keyframes layer-sway-back {
+            0%, 100% { transform: translateX(-12px); }
+            50% { transform: translateX(12px); }
+        }
+        @keyframes layer-sway-mid {
+            0%, 100% { transform: translateX(16px); }
+            50% { transform: translateX(-16px); }
+        }
+        @keyframes layer-sway-front {
+            0%, 100% { transform: translateX(-20px); }
+            50% { transform: translateX(20px); }
+        }
+
+        /* SEAMLESS LOOPING JAGGED FLAME SVGS */
+        .flame-svg {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 200%; /* Spans double container width for seamless horizontal translation loop */
+            height: 100%;
+            transform-origin: bottom;
+        }
+
+        /* White-out safeguard: Back layer is kept normal to create a rich solid background base */
+        .flame-back {
+            fill: url(#gradient-back);
+            filter: brightness(0.55) contrast(1.1);
+            animation: flame-drift-reverse-back 18s linear infinite;
+            mix-blend-mode: normal; 
+        }
+
+        /* Mid layer uses screen additive blending to create bright interior cores */
+        .flame-mid {
+            fill: url(#gradient-mid);
+            filter: brightness(0.9) saturate(1.1);
+            animation: flame-drift-normal-mid 12s linear infinite;
+            mix-blend-mode: screen; 
+        }
+
+        /* Front layer uses screen additive blending to inject high-luminance cores */
+        .flame-front {
+            fill: url(#gradient-front);
+            filter: brightness(1.6) saturate(1.35);
+            animation: flame-drift-normal-front 8.5s linear infinite;
+            mix-blend-mode: screen; 
+        }
+
+        /* Decoupled Seamless Translation Loops combined with vertical oscillation to avoid static feel */
+        @keyframes flame-drift-normal-front {
+            0% { transform: translateX(0) translateY(1px); }
+            50% { transform: translateX(-25%) translateY(-3px); }
+            100% { transform: translateX(-50%) translateY(1px); }
+        }
+
+        @keyframes flame-drift-normal-mid {
+            0% { transform: translateX(0) translateY(-2px); }
+            50% { transform: translateX(-25%) translateY(2px); }
+            100% { transform: translateX(-50%) translateY(-2px); }
+        }
+
+        @keyframes flame-drift-reverse-back {
+            0% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-25%) translateY(-4px); }
+            100% { transform: translateX(0) translateY(0); }
+        }
+
+        /* ------------------------------------------------------------- */
+        /* CLASS TOGGLERS FOR WATER VS FIRE THEMES */
+        /* ------------------------------------------------------------- */
+        body.theme-fire .bifrost-wave-back,
+        body.theme-fire .bifrost-wave-front,
+        body.theme-fire .bifrost-river-glint {
+            display: none !important;
+        }
+        body.theme-water .sway-container {
+            display: none !important;
+        }
+
+        /* Dynamic SVG Mask Wave Elements (Water Theme Backwards Compatibility) */
         .bifrost-wave-back, .bifrost-wave-front, .bifrost-river-glint {
             position: absolute;
             top: -39px; 
@@ -155,138 +336,48 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             filter: brightness(1.6);
             mix-blend-mode: color-dodge;
             mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 Keys A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
             animation: bifrost-wave-drift-normal 7s linear infinite;
         }
 
-        /* Dynamic Flame Shimmer/Scale keyframes (Point 2) */
-        @keyframes flame-flicker {
-            0%, 100% { transform: scaleY(1.0) scaleX(1.0); filter: brightness(1); }
-            25% { transform: scaleY(0.92) scaleX(1.02); filter: brightness(0.95); }
-            50% { transform: scaleY(1.10) scaleX(0.98); filter: brightness(1.1); }
-            75% { transform: scaleY(0.95) scaleX(1.01); filter: brightness(0.98); }
-        }
-
-        /* Theme Option: Warrior Hearth (Licking Flame Paths - Point 2) */
-        body.theme-fire .bifrost-wave-back {
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,70 Q50,10 100,80 Q150,15 200,70 Q250,5 300,75 Q350,20 400,80 Q450,10 500,75 Q550,15 600,70 Q650,5 700,80 Q750,20 800,70 Q850,10 900,75 Q950,20 1000,80 Q1050,10 1100,75 Q1150,20 1200,70 L1200,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,70 Q50,10 100,80 Q150,15 200,70 Q250,5 300,75 Q350,20 400,80 Q450,10 500,75 Q550,15 600,70 Q650,5 700,80 Q750,20 800,70 Q850,10 900,75 Q950,20 1000,80 Q1050,10 1100,75 Q1150,20 1200,70 L1200,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            animation: bifrost-wave-drift-reverse 12s linear infinite, flame-flicker 0.15s infinite ease-in-out;
-        }
-        body.theme-fire .bifrost-wave-front {
-            opacity: 0.85;
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,65 Q60,15 110,75 Q160,20 210,65 Q260,8 310,70 Q360,25 410,75 Q460,15 510,70 Q560,20 610,65 Q660,8 710,75 Q760,25 810,65 Q860,15 910,70 Q960,25 1010,75 Q1060,15 1110,70 Q1160,25 1200,65 L1200,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,120 L0,65 Q60,15 110,75 Q160,20 210,65 Q260,8 310,70 Q360,25 410,75 Q460,15 510,70 Q560,20 610,65 Q660,8 710,75 Q760,25 810,65 Q860,15 910,70 Q960,25 1010,75 Q1060,15 1110,70 Q1160,25 1200,65 L1200,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            animation: bifrost-wave-drift-normal 8s linear infinite, flame-flicker 0.18s infinite ease-in-out;
-        }
-        body.theme-fire .bifrost-river-glint {
-            opacity: 0.90;
-            filter: brightness(1.8);
-            mix-blend-mode: screen;
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            animation: bifrost-wave-drift-normal 5s linear infinite;
-        }
-
-        /* Ambient Hearth Complete Visual Overlays - Linked to slider value (Point 3) */
-        #conquered-wash-overlay {
+        /* Valkyrie CSS Hearth Embers */
+        #ember-field {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(circle at 50% 80%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, #000000 70%);
-            opacity: 0;
             pointer-events: none;
-            z-index: -1;
-            transition: opacity 0.4s ease;
-            overflow: visible;
+            z-index: 10;
+            overflow: hidden;
         }
-        body.conquered-state #conquered-wash-overlay {
-            opacity: var(--wash-opacity, 0.20); 
-        }
-        body.conquered-state #bifrost-wash-layer {
-            opacity: 0 !important; 
-        }
+        .ember-container { display: none; } /* Deactivated old static containers */
 
-        /* Dynamic Wave Drift Animators */
-        @keyframes bifrost-wave-drift-normal {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        @keyframes bifrost-wave-drift-reverse {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
-        }
-
-        @keyframes bifrost-wave-breathing {
-            0% { transform: translateX(0) scaleY(1.0); }
-            50% { transform: translateX(-25%) scaleY(1.18) translateY(-2px); }
-            100% { transform: translateX(-50%) scaleY(1.0); }
-        }
-        @keyframes bifrost-wave-breathing-reverse {
-            0% { transform: translateX(-50%) scaleY(1.0); }
-            50% { transform: translateX(-25%) scaleY(1.15) translateY(2px); }
-            100% { transform: translateX(0) scaleY(1.0); }
-        }
-        @keyframes bifrost-shimmer-pulse {
-            0% { opacity: 0.12; transform: scale(1.0) rotate(0deg); }
-            50% { opacity: 0.35; transform: scale(1.03) rotate(0.5deg); }
-            100% { opacity: 0.12; transform: scale(1.0) rotate(0deg); }
-        }
-
-        #conquered-wash-overlay .bifrost-wave-back {
-            animation: bifrost-wave-breathing-reverse 22s ease-in-out infinite !important;
-            opacity: 0.28 !important;
-            top: auto;
-            bottom: calc(75px + env(safe-area-inset-bottom, 0px)); 
-        }
-        #conquered-wash-overlay .bifrost-wave-front {
-            animation: bifrost-wave-breathing 15s ease-in-out infinite !important;
-            opacity: 0.42 !important;
-            top: auto;
-            bottom: calc(75px + env(safe-area-inset-bottom, 0px));
-        }
-        #conquered-wash-overlay .bifrost-river-glint {
-            animation: bifrost-shimmer-pulse 9s ease-in-out infinite !important;
-            opacity: 0.25 !important;
-            top: auto;
-            bottom: calc(75px + env(safe-area-inset-bottom, 0px));
-        }
-
-        /* Valkyrie CSS Hearth Embers */
-        .ember-container {
+        .ember-particle {
             position: absolute;
-            bottom: calc(75px + env(safe-area-inset-bottom, 0px));
-            left: 0; right: 0; height: 100px;
-            pointer-events: none;
-            display: none;
-        }
-        body.theme-fire #conquered-wash-overlay .ember-container {
-            display: block;
-        }
-        .ember {
-            position: absolute;
-            bottom: 0;
-            width: 5px;
-            height: 5px;
+            bottom: -10px;
             border-radius: 50%;
-            background: var(--stage-color, #BC6CFF);
-            filter: blur(1px) brightness(1.6);
-            box-shadow: 0 0 8px var(--stage-color, #BC6CFF);
+            background: var(--stage-color); 
+            filter: blur(0.5px) brightness(1.8);
+            box-shadow: 0 0 8px var(--stage-color);
             opacity: 0;
+            pointer-events: none;
+            animation: ascend-ember linear forwards;
         }
-        @keyframes float-ember {
-            0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; }
-            10% { opacity: 0.8; }
-            80% { opacity: 0.4; }
-            100% { transform: translateY(-350px) translateX(var(--drift, 20px)) scale(0); opacity: 0; }
+
+        @keyframes ascend-ember {
+            0% {
+                transform: translateY(0) translateX(0) scale(0.6);
+                opacity: 0;
+            }
+            15% {
+                opacity: var(--ember-target-opacity, 0.8);
+            }
+            80% {
+                opacity: var(--ember-target-opacity, 0.8);
+            }
+            100% {
+                transform: translateY(var(--ascend-distance, -400px)) translateX(var(--drift-offset, 30px)) scale(0);
+                opacity: 0;
+            }
         }
-        .ember.e1 { left: 12%; --drift: 18px; animation: float-ember 4.2s infinite linear; animation-delay: 0s; }
-        .ember.e2 { left: 28%; --drift: -20px; animation: float-ember 5.5s infinite linear; animation-delay: 1.2s; }
-        .ember.e3 { left: 42%; --drift: 28px; animation: float-ember 4.8s infinite linear; animation-delay: 0.4s; }
-        .ember.e4 { left: 58%; --drift: -12px; animation: float-ember 6.2s infinite linear; animation-delay: 2.2s; }
-        .ember.e5 { left: 68%; --drift: 18px; animation: float-ember 3.9s infinite linear; animation-delay: 0.9s; }
-        .ember.e6 { left: 82%; --drift: -25px; animation: float-ember 5.1s infinite linear; animation-delay: 2.9s; }
-        .ember.e7 { left: 47%; --drift: -8px; animation: float-ember 4.4s infinite linear; animation-delay: 3.3s; }
-        .ember.e8 { left: 78%; --drift: 22px; animation: float-ember 5.7s infinite linear; animation-delay: 0.7s; }
 
         .target-wrapper { 
             padding: calc(25px + env(safe-area-inset-top, 0px)) 20px 5px 20px; 
@@ -328,9 +419,10 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             pointer-events: none;
         }
         
+        /* Tightened Proportional Font Scales (Point 3) */
         .target-massive {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.9rem;
+            font-size: 1.65rem;
             font-weight: 900;
             letter-spacing: -0.01em;
             line-height: 1.2;
@@ -338,7 +430,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
 
         @media (min-width: 480px) {
-            .target-massive { font-size: 2.1rem; }
+            .target-massive { font-size: 1.85rem; }
         }
 
         .target-massive span {
@@ -361,13 +453,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             letter-spacing: 0.1em;
         }
 
+        /* Upgraded Progress Bar Design (Capsule laser glow) */
         .progress-container {
-            height: 4px;
+            height: 6px;
             background-color: #000000;
             margin: 0 20px 15px 20px;
-            border-radius: 2px;
-            overflow: hidden;
+            border-radius: 24px;
+            overflow: visible; /* Prevent glow clipping */
             border: 1px solid #130a1c;
+            position: relative;
         }
 
         .progress-bar {
@@ -376,6 +470,28 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             background: var(--accent-glow);
             box-shadow: 0 0 10px var(--accent-glow);
             transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 24px;
+            position: relative;
+        }
+
+        /* High-intensity neon laser glow point */
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffffff; /* Bright white core */
+            box-shadow: 0 0 12px 4px var(--accent-glow), 0 0 25px 8px var(--accent-glow);
+            opacity: 0;
+            transition: opacity 0.3s ease, background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .progress-bar.active-glow::after {
+            opacity: 1;
         }
 
         .view-panel { 
@@ -497,15 +613,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             box-sizing: border-box;
         }
         
+        /* Proportional headline scales (Point 3) */
         .conquered-headline { 
             font-family: 'Orbitron', sans-serif; 
-            font-size: 2rem; 
+            font-size: 1.75rem; 
             font-weight: 900; 
             letter-spacing: 0.08em; 
             margin-bottom: 16px; 
             text-transform: uppercase;
         }
-        .conquered-sub { font-size: 1.05rem; color: #a1a1aa; opacity: 0.85; line-height: 1.6; max-width: 420px; margin: 0 auto; text-align: center; font-style: italic; }
+        .conquered-sub { font-size: 0.95rem; color: #a1a1aa; opacity: 0.85; line-height: 1.5; max-width: 420px; margin: 0 auto; text-align: center; font-style: italic; }
 
         .week-container-box { background-color: var(--bg-card); border: 1px solid #0f0b14; border-radius: 16px; padding: 14px; margin-bottom: 20px; }
         .week-box-title { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.05em; }
@@ -575,7 +692,20 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         .month-title { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; margin-bottom: 14px; color: var(--text-muted); letter-spacing: 0.05em; }
         .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
         
-        .day-dot { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; border: 1px solid transparent; cursor: pointer; transition: all 0.2s ease; }
+        /* Suppress browser scroll intercepts on day-dots (Point 4) */
+        .day-dot { 
+            aspect-ratio: 1; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.85rem; 
+            font-weight: 700; 
+            border: 1px solid transparent; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            touch-action: none !important;
+        }
 
         .maint-bar { border-radius: 14px; margin-top: 12px; }
         .maint-flex { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -684,7 +814,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
         .rollback-btn { background-color: transparent; border: 1px solid #2d142c; color: var(--danger-glow); padding: 14px; border-radius: 10px; width: 100%; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; margin: 15px 0; cursor: pointer; }
 
-        /* Specular Blended Navigation bar */
+        /* Specular Blended Navigation bar (Upgraded bottom bleed integration) */
         .nav-bar { 
             position: fixed; 
             bottom: 0; 
@@ -692,10 +822,10 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             right: 0; 
             height: calc(75px + env(safe-area-inset-bottom, 0px)); 
             padding-bottom: env(safe-area-inset-bottom, 0px);
-            background: rgba(0, 0, 0, 0.45); 
-            backdrop-filter: blur(35px); 
-            -webkit-backdrop-filter: blur(35px); 
-            border-top: 1px solid rgba(255, 255, 255, 0.08); 
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0) 100%);
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px); 
+            border-top: none; 
             display: flex; 
             justify-content: space-around; 
             align-items: center; 
@@ -873,6 +1003,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 </head>
 <body class="theme-water">
 
+    <!-- PROCEDURAL FLUID MORPHING FILTER DEFINITION -->
+    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+        <defs>
+            <filter id="campfire-turbulence" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.015 0.04" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="35" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
     <!-- CINEMATIC FLASH LAYER -->
     <div id="conquest-flash-layer"></div>
 
@@ -881,16 +1021,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         <div class="bifrost-wave-back"></div>
         <div class="bifrost-wave-front"></div>
         <div class="bifrost-river-glint"></div>
-        <!-- Valkyrie CSS Hearth Embers -->
-        <div class="ember-container">
-            <div class="ember e1"></div>
-            <div class="ember e2"></div>
-            <div class="ember e3"></div>
-            <div class="ember e4"></div>
-            <div class="ember e5"></div>
-            <div class="ember e6"></div>
-            <div class="ember e7"></div>
-            <div class="ember e8"></div>
+        
+        <!-- Upgraded Realistic Completed Campfire Overlays -->
+        <div class="breath-flicker-wrapper">
+            <div class="sway-container back-sway">
+                <svg class="flame-svg flame-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M 0,120 L 0,85 L 40,15 L 45,15 L 80,95 L 100,70 L 105,70 L 130,95 L 170,5 L 175,5 L 210,100 L 235,50 L 240,50 L 275,95 L 320,30 L 325,30 L 370,102 L 400,75 L 405,75 L 440,90 L 490,10 L 495,10 L 535,95 L 570,45 L 575,45 L 600,85 L 600,85 L 640,15 L 645,15 L 680,95 L 700,70 L 705,70 L 730,95 L 770,5 L 775,5 L 810,100 L 835,50 L 840,50 L 875,95 L 920,30 L 925,30 L 970,102 L 1000,75 L 1005,75 L 1040,90 L 1090,10 L 1095,10 L 1135,95 L 1170,45 L 1175,45 L 1200,85 L 1200,120 L 0,120 Z" />
+                </svg>
+            </div>
+            <div class="sway-container mid-sway">
+                <svg class="flame-svg flame-mid" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M 0,120 L 0,90 L 30,55 L 35,55 L 70,100 L 110,10 L 115,10 L 155,95 L 190,40 L 195,40 L 230,102 L 260,75 L 265,75 L 300,90 L 345,15 L 350,15 L 395,95 L 430,50 L 435,50 L 470,100 L 515,30 L 520,30 L 560,95 L 585,60 L 590,60 L 600,90 L 600,90 L 630,55 L 635,55 L 670,100 L 710,10 L 715,10 L 755,95 L 790,40 L 795,40 L 830,102 L 860,75 L 865,75 L 900,90 L 945,15 L 950,15 L 995,95 L 1030,50 L 1035,50 L 1070,100 L 1115,30 L 1120,30 L 1160,95 L 1185,60 L 1190,60 L 1200,90 L 1200,120 L 0,120 Z" />
+                </svg>
+            </div>
+            <div class="sway-container front-sway">
+                <svg class="flame-svg flame-front" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M 0,120 L 0,95 L 20,70 L 23,70 L 50,102 L 80,35 L 83,35 L 115,95 L 145,12 L 148,12 L 180,100 L 215,60 L 218,60 L 250,95 L 285,25 L 288,25 L 320,100 L 355,75 L 358,75 L 385,95 L 415,8 L 418,8 L 450,100 L 485,50 L 488,50 L 520,95 L 555,30 L 558,30 L 580,95 L 592,72 L 595,72 L 600,95 L 600,95 L 620,70 L 623,70 L 650,102 L 680,35 L 683,35 L 715,95 L 745,12 L 748,12 L 780,100 L 815,60 L 818,60 L 850,95 L 885,25 L 888,25 L 920,100 L 955,75 L 958,75 L 985,95 L 1015,8 L 1018,8 L 1050,100 L 1085,50 L 1088,50 L 1120,95 L 1155,30 L 1158,30 L 1180,95 L 1192,72 L 1195,72 L 1200,95 L 1200,120 L 0,120 Z" />
+                </svg>
+            </div>
         </div>
     </div>
 
@@ -899,6 +1047,42 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         <div class="bifrost-wave-back"></div>
         <div class="bifrost-wave-front"></div>
         <div class="bifrost-river-glint"></div>
+        
+        <!-- Upgraded Realistic Campfire Progress State -->
+        <div class="breath-flicker-wrapper">
+            <div class="sway-container back-sway">
+                <svg class="flame-svg flame-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="gradient-back" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
+                            <stop offset="40%" stop-color="var(--stage-color)" stop-opacity="0.65"/>
+                            <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                        </linearGradient>
+                        <linearGradient id="gradient-mid" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
+                            <stop offset="45%" stop-color="var(--stage-color)" stop-opacity="0.75" />
+                            <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                        </linearGradient>
+                        <linearGradient id="gradient-front" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
+                            <stop offset="40%" stop-color="var(--stage-color)" stop-opacity="0.8" />
+                            <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 0,120 L 0,85 L 40,15 L 45,15 L 80,95 L 100,70 L 105,70 L 130,95 L 170,5 L 175,5 L 210,100 L 235,50 L 240,50 L 275,95 L 320,30 L 325,30 L 370,102 L 400,75 L 405,75 L 440,90 L 490,10 L 495,10 L 535,95 L 570,45 L 575,45 L 600,85 L 600,85 L 640,15 L 645,15 L 680,95 L 700,70 L 705,70 L 730,95 L 770,5 L 775,5 L 810,100 L 835,50 L 840,50 L 875,95 L 920,30 L 925,30 L 970,102 L 1000,75 L 1005,75 L 1040,90 L 1090,10 L 1095,10 L 1135,95 L 1170,45 L 1175,45 L 1200,85 L 1200,120 L 0,120 Z" />
+                </svg>
+            </div>
+            <div class="sway-container mid-sway">
+                <svg class="flame-svg flame-mid" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M 0,120 L 0,90 L 30,55 L 35,55 L 70,100 L 110,10 L 115,10 L 155,95 L 190,40 L 195,40 L 230,102 L 260,75 L 265,75 L 300,90 L 345,15 L 350,15 L 395,95 L 430,50 L 435,50 L 470,100 L 515,30 L 520,30 L 560,95 L 585,60 L 590,60 L 600,90 L 600,90 L 630,55 L 635,55 L 670,100 L 710,10 L 715,10 L 755,95 L 790,40 L 795,40 L 830,102 L 860,75 L 865,75 L 900,90 L 945,15 L 950,15 L 995,95 L 1030,50 L 1035,50 L 1070,100 L 1115,30 L 1120,30 L 1160,95 L 1185,60 L 1190,60 L 1200,90 L 1200,120 L 0,120 Z" />
+                </svg>
+            </div>
+            <div class="sway-container front-sway">
+                <svg class="flame-svg flame-front" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M 0,120 L 0,95 L 20,70 L 23,70 L 50,102 L 80,35 L 83,35 L 115,95 L 145,12 L 148,12 L 180,100 L 215,60 L 218,60 L 250,95 L 285,25 L 288,25 L 320,100 L 355,75 L 358,75 L 385,95 L 415,8 L 418,8 L 450,100 L 485,50 L 488,50 L 520,95 L 555,30 L 558,30 L 580,95 L 592,72 L 595,72 L 600,95 L 600,95 L 620,70 L 623,70 L 650,102 L 680,35 L 683,35 L 715,95 L 745,12 L 748,12 L 780,100 L 815,60 L 818,60 L 850,95 L 885,25 L 888,25 L 920,100 L 955,75 L 958,75 L 985,95 L 1015,8 L 1018,8 L 1050,100 L 1085,50 L 1088,50 L 1120,95 L 1155,30 L 1158,30 L 1180,95 L 1192,72 L 1195,72 L 1200,95 L 1200,120 L 0,120 Z" />
+                </svg>
+            </div>
+        </div>
     </div>
 
     <!-- TARGET RADAR STRIP -->
@@ -1120,6 +1304,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         <div class="tooltip-body" id="tt-body">Reading registry...</div>
     </div>
 
+    <!-- DYNAMIC FIREPLACE EMBERS LAYER -->
+    <div id="ember-field"></div>
+
     <!-- PERSISTENT FOOTER DECK -->
     <nav class="nav-bar">
         <div class="nav-item active" id="nav-dash" onclick="switchTab('battleground', this)">BATTLEGROUND</div>
@@ -1226,10 +1413,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         backgroundColor: '#12072b',
                         glowStyle: '0 0 14px #BC6CFF'
                     },
+                    // Visually standing out skipped/burgundy Sundays (Point 3 Upgrade)
                     skipped: {
-                        textColor: '#B91C1C', 
-                        borderColor: '#7F1D1D', 
-                        backgroundColor: '#180202' 
+                        textColor: '#fda4af', 
+                        borderColor: '#e11d48', 
+                        backgroundColor: '#3b0712' 
                     }
                 }
             },
@@ -1279,6 +1467,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         
         // Unified Long-Press Persistent Gesture Globals
         let isTooltipPersistent = false;
+        let emberInterval = null;
+        let currentProgressValue = 0;
 
         let appState = {
             mondayRepBase: 20,
@@ -1327,7 +1517,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             if (!appState.activeVisualTheme) appState.activeVisualTheme = 'water';
 
             if (appState.backgroundSettings.tint !== undefined) {
-                delete appState.backgroundSettings.tint; // Safely strip old v2.1.0 parameters
+                delete appState.backgroundSettings.tint; // Safely strip old parameters
             }
 
             if (!appState.customQuotes || Object.keys(appState.customQuotes).length === 0) {
@@ -1429,20 +1619,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const washOpacity = washVal / 100;
             
             let progressHeight = '0%';
+            let progressFloat = 0;
+            const todayTimestamp = today.getTime();
+            const visibleWorkouts = appState.workoutRegistry.filter(w => {
+                return !w.addedTimestamp || w.addedTimestamp <= todayTimestamp;
+            });
+            const totalItems = visibleWorkouts.length + 1; // Workouts + Cooldown Block
+            let doneCount = 0;
+            visibleWorkouts.forEach(ex => {
+                if (appState.completedExercisesToday[ex.id] === true) doneCount++;
+            });
+            if (appState.completedExercisesToday['maint'] === true) doneCount++;
+            
             if (isCompleted) {
                 progressHeight = '100%';
+                progressFloat = 1.0;
             } else {
-                const todayTimestamp = today.getTime();
-                const visibleWorkouts = appState.workoutRegistry.filter(w => {
-                    return !w.addedTimestamp || w.addedTimestamp <= todayTimestamp;
-                });
-                const totalItems = visibleWorkouts.length + 1; // Workouts + Cooldown Block
-                let doneCount = 0;
-                visibleWorkouts.forEach(ex => {
-                    if (appState.completedExercisesToday[ex.id] === true) doneCount++;
-                });
-                if (appState.completedExercisesToday['maint'] === true) doneCount++;
-                progressHeight = `${Math.round((doneCount / totalItems) * 100)}%`;
+                progressFloat = doneCount / totalItems;
+                progressHeight = `${Math.round(progressFloat * 100)}%`;
             }
             
             // Get today's Stage Color
@@ -1455,6 +1649,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             document.body.style.setProperty('--wash-color-r', rgb.r);
             document.body.style.setProperty('--wash-color-g', rgb.g);
             document.body.style.setProperty('--wash-color-b', rgb.b);
+            document.body.style.setProperty('--fire-progress', progressFloat);
             
             // Set variables dynamically in our progress-wash container
             const washLayer = document.getElementById('bifrost-wash-layer');
@@ -1475,6 +1670,67 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             } else {
                 document.body.classList.remove('conquered-state');
             }
+
+            // Sync the procedural campfire ember density based on active visual theme
+            currentProgressValue = progressFloat;
+            adjustEmberSpawnerCycle();
+        }
+
+        // =========================================================================
+        // PARTICLES ENGINE: EMBER ENGINE (INTEGRATED FOR REALISTIC CAMPFIRE)
+        // =========================================================================
+        function spawnIndividualEmber() {
+            if (currentProgressValue < 0.05 || appState.activeVisualTheme !== 'fire') return;
+
+            const ember = document.createElement('div');
+            ember.classList.add('ember-particle');
+
+            // Pick randomized visual parameters
+            const size = Math.random() * 4.5 + 1.5; 
+            const leftPosition = Math.random() * 100; 
+            
+            const baseDuration = 5.5 - (currentProgressValue * 3.0); 
+            const duration = Math.random() * 1.5 + baseDuration;
+            
+            const maximumAllowedHeight = document.body.classList.contains('conquered-state') ? 220 : 650;
+            const baseHeight = 120 + (currentProgressValue * maximumAllowedHeight); 
+            const ascendDistance = Math.random() * 100 + baseHeight;
+            const driftOffset = (Math.random() * 60 - 30); 
+
+            // Assign styles
+            ember.style.width = `${size}px`;
+            ember.style.height = `${size}px`;
+            ember.style.left = `${leftPosition}%`;
+            ember.style.setProperty('--ascend-distance', `-${ascendDistance}px`);
+            ember.style.setProperty('--drift-offset', `${driftOffset}px`);
+            ember.style.setProperty('--ember-target-opacity', Math.random() * 0.4 + 0.5);
+            ember.style.animationDuration = `${duration}s`;
+
+            emberField.appendChild(ember);
+
+            // Clean up node safely after animation cycle
+            setTimeout(() => {
+                ember.remove();
+            }, duration * 1000);
+        }
+
+        function adjustEmberSpawnerCycle() {
+            if (emberInterval) {
+                clearInterval(emberInterval);
+                emberInterval = null;
+            }
+
+            if (appState.activeVisualTheme !== 'fire' || currentProgressValue < 0.08) return; 
+
+            // Pacing decreased by 50% for 50% more speed/density
+            const baseInterval = 260 - (currentProgressValue * 220); 
+            
+            emberInterval = setInterval(() => {
+                const spawnCount = currentProgressValue > 0.95 ? 3 : 1;
+                for (let i = 0; i < spawnCount; i++) {
+                    spawnIndividualEmber();
+                }
+            }, baseInterval);
         }
 
         function updateLiveBackgroundSliders() {
@@ -1686,39 +1942,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return streak;
         }
 
-        function getWarriorRank(streak) {
-            for (let r of CONFIG_THEME_AND_COPY.warriorRanks) {
-                if (streak <= r.max) return r;
-            }
-            return CONFIG_THEME_AND_COPY.warriorRanks[CONFIG_THEME_AND_COPY.warriorRanks.length - 1];
-        }
-
-        function refreshRadarHeader() {
-            const targets = getComputedTargets();
-            const today = getSimulatedDateObject();
-            const todayStr = today.toDateString();
-            const dayName = DAYS_OF_WEEK[today.getDay()];
-            
-            document.getElementById('radar-day-label').innerText = `${dayName.toUpperCase()} BATTLE-TARGET`;
-
-            if (appState.monthlyArchive[todayStr] === 'done') {
-                document.getElementById('radar-target').innerHTML = `<span>CONQUERED</span>`;
-            } else if (appState.monthlyArchive[todayStr] === 'rest') {
-                document.getElementById('radar-target').innerHTML = `<span style="color:#818cf8;">SHIELDED REST</span>`;
-            } else {
-                document.getElementById('radar-target').innerHTML = `<span>${targets.reps}</span> REPS / <span>${targets.plank}s</span>`;
-            }
-            updateLiveClockDisplay();
-            
-            const currentStreak = calculateCurrentStreak();
-            const rank = getWarriorRank(currentStreak);
-            
-            document.getElementById('radar-stats').innerHTML = `
-                STREAK: ${currentStreak} 🔥 | <span style="color:var(--cyan-neon);">${rank.title}</span>
-                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:5px; font-weight:400; letter-spacing:0.02em;">📜${rank.status}</div>
-            `;
-        }
-
         // =========================================================================
         // 🛡️ SUBSECTION 7: TAB NAVIGATION & INTERFACE SWITCHES
         // =========================================================================
@@ -1845,8 +2068,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 `;
                 
                 document.getElementById('conquered-splash').style.display = 'flex';
+                
                 const progressBar = document.getElementById('completion-progress-bar');
-                if (progressBar) progressBar.style.width = '100%';
+                if (progressBar) {
+                    progressBar.style.width = '100%';
+                    progressBar.classList.add('active-glow');
+                }
+                
                 updateBodyBackground();
                 return;
             }
@@ -1997,7 +2225,14 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
             let percentDone = Math.round((completedItemIndices.length / totalLoadoutItems) * 100);
             const progressBar = document.getElementById('completion-progress-bar');
-            if (progressBar) progressBar.style.width = `${percentDone}%`;
+            if (progressBar) {
+                progressBar.style.width = `${percentDone}%`;
+                if (percentDone > 0) {
+                    progressBar.classList.add('active-glow');
+                } else {
+                    progressBar.classList.remove('active-glow');
+                }
+            }
 
             updateBodyBackground();
 
@@ -2555,7 +2790,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return `<div class="day-dot" style="${styleStr}" data-date="${lookupStr}">${displayNum}</div>`;
         }
 
-        // UNIFIED POINTER INTERACTION & LONG-PRESS PERSISTENCE (Point 4)
+        // UNIFIED POINTER INTERACTION & LONG-PRESS PERSISTENCE (Point 4 Upgrade)
         function attachTouchInteractions() {
             const container = document.getElementById('monthly-scroll-container');
             if (!container) return;
@@ -2567,6 +2802,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             let startX = 0;
             let startY = 0;
             let isLongPressActive = false;
+            let activeTargetDot = null;
 
             const handlePointerDown = (e) => {
                 const dot = e.target.closest('.day-dot');
@@ -2575,9 +2811,18 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 const dateStr = dot.getAttribute('data-date');
                 if (!dateStr) return;
 
+                activeTargetDot = dot;
                 startX = e.clientX;
                 startY = e.clientY;
                 isLongPressActive = false;
+
+                // Request pointer capture to lock touch coordinates to the dot
+                try {
+                    dot.setPointerCapture(e.pointerId);
+                } catch (err) {}
+
+                // Disable body scroll dynamically to prevent mobile scroll-cancels
+                document.body.style.overflow = "hidden";
 
                 if (pressTimer) clearTimeout(pressTimer);
                 
@@ -2597,6 +2842,14 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 if (deltaX > 24 || deltaY > 24) {
                     clearTimeout(pressTimer);
                     pressTimer = null;
+                    
+                    // Release pointer capture and restore body scroll
+                    if (activeTargetDot) {
+                        try {
+                            activeTargetDot.releasePointerCapture(e.pointerId);
+                        } catch (err) {}
+                    }
+                    document.body.style.overflow = "";
                 }
             };
 
@@ -2606,6 +2859,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     pressTimer = null;
                 }
                 
+                // Restore body scroll
+                document.body.style.overflow = "";
+
+                if (activeTargetDot) {
+                    try {
+                        activeTargetDot.releasePointerCapture(e.pointerId);
+                    } catch (err) {}
+                }
+
                 // If quick tap, show standard interactive tooltip
                 if (!isLongPressActive) {
                     const dot = e.target.closest('.day-dot');
@@ -3413,34 +3675,28 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. TYPOGRAPHY RESTORATION SETUP:
-   Reverts layout and font rendering properties to the clean, consistent Build v2.1.0 
-   setup. Restricts mobile operating systems from overriding layouts with cursive 
-   system fonts, ensuring that Google Web Fonts render correctly across devices.
+1. PROCEDURAL LIQUID DISTORTION:
+   The rigid triangular paths are dynamically warped into realistic, gaseous tendrils 
+   of heat using an SVG fractal noise filter (<feTurbulence> and <feDisplacementMap>). 
+   By moving the individual vectors underneath this static filter, the flames morph 
+   and lurch organically as they rise.
 
-2. AUTO-COLLAPSED DROPDOWNS:
-   The javascript engine now monitors settings dropdown elements. When a user opens 
-   a settings panel, any other open settings cards are automatically collapsed. 
-   This helps keep the settings area compact and easy to read.
+2. GRADIENT BLEND CORES:
+   By wrapping each layer inside a 'screen' blend mode, we achieve the luminous core 
+   physics seen in your reference fireplace photos. Where the Front, Mid, and Back 
+   flame layers overlap near the bottom, their color values additively combine to 
+   form intensely glowing hot spots, while keeping the single outer tips translucent.
 
-3. CONQUERED VIGNETTE INTENSITY INTEGRATION:
-   Allows you to darken the screen using the vignette slider even when the daily 
-   session is complete. The black vignetting overlay remains active on top of the 
-   glowing completed-state gradients.
+3. ADVANCED BASE DISSOLVE:
+   We combined a vertical CSS gradient mask with the SVG turbulence engine. The bottom 
+   15% of the frame fades smoothly to transparent. When the displacement filter is 
+   applied, the edges of this transparent zone twist and erode—fully disintegrating 
+   the straight, heavy, static bottom bar into floating independent hot spots.
 
-4. SAGA LEDGER TOUCH CONTROLS:
-   Re-engineered long-press interactions on the calendar grid using unified Pointer 
-   Events. Includes a drag threshold that prevents scrolling from accidentally 
-   triggering tooltip popups, and disables system context menus for a smoother 
-   experience on mobile devices.
-
-5. ACTIVE LOADOUT HIGHLIGHTS:
-   Re-introduces the pulsing focus borders. The immediate next task on your checklist 
-   will pulse with custom keyframe glow animations, keeping your training on track.
-
-6. ENVIRONMENT AURA OPTIONS:
-   Adds an option inside the AMOLED Screen Optimizer settings to switch between 
-   "Calm Fjord" (Glacial waves and water drifts) and "Warrior Hearth" (Licking 
-   flame crests, glowing fireplace flickers, and rising stage-colored embers).
+4. HARMONIOUS COLOR ADAPTATION:
+   All layers are completely decoupled from static colors and coupled directly to 
+   "--stage-color". Using distinct CSS filters (brightness/contrast offsets), we 
+   generate rich 3D shading on any active day (Red, Purple, Cyan, Green) without 
+   creating color conflicts.
 ================================================================================
 -->
