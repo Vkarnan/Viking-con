@@ -1,5 +1,5 @@
 <!--
-TITLE: V_Forge - Conquered Edition (Build v2.3.0 - Holographic HUD & Parallax Current Update)
+TITLE: V_Forge - Conquered Edition (Build v2.4.0 - Active Ripple Current & Long-Press Persistence Update)
 DATE/TIME (IST): July 16, 2026 - 12:00 PM IST
 AUTHOR: VKT & Oracle
 
@@ -32,8 +32,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
     - Employs strict Event Delegation to reduce listener memory footprint by 95% on mobile devices.
     - Features a dynamic, vertically-anchored tooltip projecting above the thumb, complete with column partitions and custom status borders.
     - Features a premium high-contrast frosted glass sheen (40px blur, specular glare, translucent bezels).
-13. "CALM FJORD" RIPPLE SETTLE:
-    - Automatically transitions wave ripple duration from 12s (energetic active) to 45s (hypnotic completion) while lowering wave opacity.
+13. "CALM FJORD" ORGANIC TIDAL RIPPLE:
+    - Automatically transitions wave ripple kinetics from horizontal drift into a dual-axis breathing swell (panning + vertical scaling) in conquered state.
+    - Preserves the river glint layer as a gentle, ambient opacity pulse instead of flatlining to zero.
+    - Uses hardware-accelerated pure CSS animations to avoid browser SVG filter blanking and clipping bugs.
+14. SECURE POINTER-SCROLL SEPARATION & LONG-PRESS PERSISTENCE:
+    - Decouples touch-drag events from long-press actions to prevent accidental tooltip popups during history scrolling.
+    - Locks active tooltips on screen past pointer-release to facilitate distraction-free reading, dismissed instantly with outside taps.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -51,7 +56,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
     <title>V_Forge</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Space+Grotesk:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght=600;900&family=Space+Grotesk:wght=400;700&display=swap');
 
         :root {
             --bg-primary: #000000;
@@ -136,7 +141,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-mask-repeat: repeat-x;
             mask-size: 50% 100%;
             -webkit-mask-size: 50% 100%;
-            transition: opacity 1.2s ease, animation-duration 1.2s ease;
+            transition: opacity 1.2s ease, animation-duration 1.2s ease, transform 1.2s ease;
         }
         
         /* High-Amplitude Back Wave Cap: Slow drift left */
@@ -174,17 +179,34 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             100% { transform: translateX(0); }
         }
 
-        /* Calm Fjord completion transition override states */
+        /* 13. CALM FJORD DUAL-AXIS RIPPLE SWELL & NOISE ANIMATIONS */
+        @keyframes bifrost-wave-breathing {
+            0% { transform: translateX(0) scaleY(1.0); }
+            50% { transform: translateX(-25%) scaleY(1.18); }
+            100% { transform: translateX(-50%) scaleY(1.0); }
+        }
+        @keyframes bifrost-wave-breathing-reverse {
+            0% { transform: translateX(-50%) scaleY(1.0); }
+            50% { transform: translateX(-25%) scaleY(1.15); }
+            100% { transform: translateX(0) scaleY(1.0); }
+        }
+        @keyframes bifrost-shimmer-pulse {
+            0% { opacity: 0.12; transform: scale(1.0) rotate(0deg); }
+            50% { opacity: 0.32; transform: scale(1.03) rotate(0.5deg); }
+            100% { opacity: 0.12; transform: scale(1.0) rotate(0deg); }
+        }
+
         body.conquered-state .bifrost-wave-back {
-            animation-duration: 75s;
-            opacity: 0.15;
+            animation: bifrost-wave-breathing-reverse 22s ease-in-out infinite !important;
+            opacity: 0.28 !important;
         }
         body.conquered-state .bifrost-wave-front {
-            animation-duration: 50s;
-            opacity: 0.25;
+            animation: bifrost-wave-breathing 15s ease-in-out infinite !important;
+            opacity: 0.42 !important;
         }
         body.conquered-state .bifrost-river-glint {
-            opacity: 0; /* Fully dissolved particle glints in conquered peaceful state */
+            animation: bifrost-shimmer-pulse 9s ease-in-out infinite !important;
+            opacity: 0.25 !important; /* Preserves subtle, glowing surface shimmers */
         }
 
         /* Safe Area Notch Padding support for modern phones */
@@ -501,22 +523,21 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border-top: 1px solid #130a1c;
         }
 
-        /* 12. FLOATING ULTRA-FROSTED GLASS HUD TOOLTIP */
+        /* 12. FLOATING ULTRA-FROSTED GLASS HUD TOOLTIP (RE-ASSIGNED CHROMATIC REFRACTION HALO SHADOWS) */
         .tooltip-deck { 
             position: fixed; 
-            background: linear-gradient(rgba(18, 18, 28, 0.94), rgba(18, 18, 28, 0.94)),
-                        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 6px);
+            background: rgba(10, 10, 15, 0.72);
             backdrop-filter: blur(40px); 
             -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.18); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
             border-radius: 16px; 
             padding: 18px; 
             z-index: 2000; 
-            /* Chromatic Refraction Halo shadow glows */
-            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.25),
-                        -4px -4px 20px rgba(0, 240, 255, 0.12),
-                        4px 4px 20px rgba(188, 108, 255, 0.15),
-                        0 12px 40px rgba(0, 0, 0, 0.95);
+            /* Chromatic Refraction Halo shadow glows combined with specular sheen and bezel edges */
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.22),
+                        -5px -5px 25px rgba(0, 240, 255, 0.08),
+                        5px 5px 25px rgba(188, 108, 255, 0.1),
+                        0 15px 45px rgba(0, 0, 0, 0.95);
             pointer-events: none;
             opacity: 0;
             transform: translateY(15px);
@@ -533,12 +554,12 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             pointer-events: auto;
         }
 
-        /* Tactical Cyberpunk HUD Decorative Brackets */
+        /* Curved Tactical Cyberpunk HUD Decorative Brackets hugging rounded corners */
         .tooltip-deck::before, .tooltip-deck::after {
             content: '';
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 14px;
+            height: 14px;
             pointer-events: none;
             transition: border-color 0.4s ease;
         }
@@ -546,15 +567,17 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             top: 8px; left: 8px;
             border-top: 2px solid var(--target-color, #BC6CFF);
             border-left: 2px solid var(--target-color, #BC6CFF);
+            border-top-left-radius: 8px;
         }
         .tooltip-deck::after {
             bottom: 8px; right: 8px;
             border-bottom: 2px solid var(--target-color, #BC6CFF);
             border-right: 2px solid var(--target-color, #BC6CFF);
+            border-bottom-right-radius: 8px;
         }
 
         .tooltip-title { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; color: var(--accent-glow); margin-bottom: 6px; }
-        .tooltip-body { font-size: 0.85rem; color: var(--text-main); font-family: monospace; line-height: 1.5; }
+        .tooltip-body { font-size: 0.85rem; color: var(--text-main); line-height: 1.5; }
 
         .action-btn { 
             background: #050308; 
@@ -1165,6 +1188,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         // Long press handling constants
         let timerTriggerPressTimer = null;
         let timerResetTriggered = false;
+        
+        // 14. Decoupled Long-Press Persistent Gesture Globals
+        let isTooltipPersistent = false;
 
         let appState = {
             mondayRepBase: 20,
@@ -1366,6 +1392,17 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             updateBodyBackground();
         }
 
+        // Global dismissed persistent tooltip trigger
+        document.addEventListener('pointerdown', (e) => {
+            if (isTooltipPersistent) {
+                const tt = document.getElementById('touch-tooltip');
+                if (tt && !tt.contains(e.target) && !e.target.closest('.day-dot')) {
+                    isTooltipPersistent = false;
+                    tt.classList.remove('visible');
+                }
+            }
+        });
+
         function getSimulatedDateObject() {
             let realNow = new Date();
             if (testTimeOffsetDays !== 0) {
@@ -1556,7 +1593,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const rank = getWarriorRank(currentStreak);
             
             document.getElementById('radar-stats').innerHTML = `
-                STREAK: ${currentStreak} 🔥 | <span style="color:var(--cyan-neon);">${rank.title}</span>
+                STREAK: ${currentStreak} 🔥 | <span style="color:var(--accent-glow);">${rank.title}</span>
                 <div style="font-size:0.75rem; color:var(--text-muted); margin-top:5px; font-weight:400; letter-spacing:0.02em;">📜${rank.status}</div>
             `;
         }
@@ -2398,7 +2435,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return `<div class="day-dot" style="${styleStr}" data-date="${lookupStr}">${displayNum}</div>`;
         }
 
-        // HIGH PERFORMANCE EVENT DELEGATION
+        // 14. HIGH PERFORMANCE POINTER SCROLL-SEPARATION & EVENT DELEGATION
         function attachTouchInteractions() {
             const container = document.getElementById('monthly-scroll-container');
             if (!container) return;
@@ -2407,6 +2444,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             container.dataset.delegated = 'true';
 
             let pressTimer = null;
+            let startX = 0;
+            let startY = 0;
+            let isLongPressActive = false;
 
             const startPress = (e) => {
                 const dot = e.target.closest('.day-dot');
@@ -2414,25 +2454,65 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 const dateStr = dot.getAttribute('data-date');
                 if (!dateStr) return;
                 
+                const pt = e.touches ? e.touches[0] : e;
+                startX = pt.clientX;
+                startY = pt.clientY;
+                isLongPressActive = false;
+
                 if (pressTimer) clearTimeout(pressTimer);
                 
                 pressTimer = setTimeout(() => { 
+                    triggerHapticPulse();
+                    isLongPressActive = true;
+                    isTooltipPersistent = true; // Lock on screen
                     triggerTooltipDisplay(dateStr); 
                 }, 400); 
             };
 
-            const endPress = () => {
-                if (pressTimer) clearTimeout(pressTimer);
-                const tt = document.getElementById('touch-tooltip');
-                if (tt) tt.classList.remove('visible');
+            const movePress = (e) => {
+                if (!pressTimer) return;
+                const pt = e.touches ? e.touches[0] : e;
+                const deltaX = Math.abs(pt.clientX - startX);
+                const deltaY = Math.abs(pt.clientY - startY);
+                // Break tooltip evaluation cycle if user drags past an 8px mobile drag buffer
+                if (deltaX > 8 || deltaY > 8) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+            };
+
+            const endPress = (e) => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+                
+                // If it was a quick tap, show standard temporary/interactive tooltip inspection
+                if (!isLongPressActive) {
+                    const dot = e.target.closest('.day-dot');
+                    if (dot) {
+                        const dateStr = dot.getAttribute('data-date');
+                        if (dateStr) {
+                            isTooltipPersistent = false;
+                            triggerTooltipDisplay(dateStr);
+                        }
+                    }
+                }
             };
 
             container.addEventListener('touchstart', startPress, {passive: true});
+            container.addEventListener('touchmove', movePress, {passive: true});
             container.addEventListener('touchend', endPress, {passive: true});
-            container.addEventListener('touchmove', endPress, {passive: true});
+            
             container.addEventListener('mousedown', startPress);
+            container.addEventListener('mousemove', movePress);
             container.addEventListener('mouseup', endPress);
-            container.addEventListener('mouseleave', endPress);
+            container.addEventListener('mouseleave', () => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+            });
         }
 
         // 2. PROGRAM DYNAMIC STATUS-GLOW BORDERS, FLOATING PLACEMENT & PARTITION MATRIX
@@ -2491,7 +2571,31 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             }
 
-            // Build dynamic responsive 3-column matrix grid with borders
+            let statusPillColor = '#4b5563';
+            let borderStyle = '1px solid #1a1a2e';
+            let boxShadowStyle = 'inset 0 1px 1px rgba(255, 255, 255, 0.03), 0 10px 40px rgba(0, 0, 0, 0.95)';
+
+            if (archiveStatus === 'done') {
+                if (dayName === 'Sunday') {
+                    statusPillColor = '#BC6CFF';
+                    borderStyle = '1.5px solid #BC6CFF';
+                    boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.22), -5px -5px 25px rgba(0, 240, 255, 0.08), 5px 5px 25px rgba(188, 108, 255, 0.1), 0 15px 45px rgba(0, 0, 0, 0.95)';
+                } else {
+                    statusPillColor = 'var(--success-glow)';
+                    borderStyle = '1px solid #10B981';
+                    boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.22), -5px -5px 25px rgba(0, 240, 255, 0.08), 5px 5px 25px rgba(188, 108, 255, 0.1), 0 15px 45px rgba(0, 0, 0, 0.95)';
+                }
+            } else if (archiveStatus === 'skipped' || archiveStatus === 'reset') {
+                statusPillColor = 'var(--danger-glow)';
+                borderStyle = '1px solid #B91C1C';
+                boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.22), -5px -5px 25px rgba(0, 240, 255, 0.08), 5px 5px 25px rgba(188, 108, 255, 0.1), 0 15px 45px rgba(0, 0, 0, 0.95)';
+            } else if (archiveStatus === 'rest') {
+                statusPillColor = '#818cf8';
+                borderStyle = '1px solid #818cf8';
+                boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.22), -5px -5px 25px rgba(0, 240, 255, 0.08), 5px 5px 25px rgba(188, 108, 255, 0.1), 0 15px 45px rgba(0, 0, 0, 0.95)';
+            }
+
+            // Redesigned Modern Matrix (Excel-Free Layout) using flexible row strips, alignments, and capsules
             let tableRows = '';
             for (let key in weeklyTotalsObj) {
                 let wObj = appState.workoutRegistry.find(w => w.id === key);
@@ -2501,35 +2605,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 
                 tableRows += `
                     <div style="display: contents;">
-                        <div style="color:#ffffff; font-weight:700; text-align:left; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); padding:6px 8px 6px 0;">[•] ${label}</div>
-                        <div style="color:${statusPillColor}; font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); padding:6px 8px;">${weeklyVal}</div>
-                        <div style="color:var(--cyan-neon); font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); padding:6px 0 6px 8px;">${allTimeVal}</div>
+                        <div style="color:#ffffff; font-weight:700; text-align:left; padding:8px 0; display:flex; align-items:baseline; gap:4px; overflow:hidden;">
+                            <span>${label}</span>
+                            <span style="flex-grow:1; border-bottom:1px dotted rgba(255,255,255,0.15); margin: 0 4px;"></span>
+                        </div>
+                        <div style="text-align:right; padding:8px 0;">
+                            <span style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:3px 8px; border-radius:6px; font-family:'Orbitron', sans-serif; font-size:0.75rem; font-weight:900; color:#fff;">${weeklyVal}</span>
+                        </div>
+                        <div style="text-align:right; padding:8px 0; font-family:'Orbitron', sans-serif; font-size:0.8rem; font-weight:900; color:${statusPillColor}; text-shadow: 0 0 6px ${statusPillColor}40;">${allTimeVal}</div>
                     </div>
                 `;
-            }
-
-            let statusPillColor = '#4b5563';
-            let borderStyle = '1px solid #1a1a2e';
-            let boxShadowStyle = 'inset 0 1px 1px rgba(255, 255, 255, 0.03), 0 10px 40px rgba(0, 0, 0, 0.95)';
-
-            if (archiveStatus === 'done') {
-                if (dayName === 'Sunday') {
-                    statusPillColor = '#BC6CFF';
-                    borderStyle = '1.5px solid #BC6CFF';
-                    boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.25), -4px -4px 20px rgba(0, 240, 255, 0.12), 4px 4px 20px rgba(188, 108, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.95)';
-                } else {
-                    statusPillColor = 'var(--success-glow)';
-                    borderStyle = '1px solid #10B981';
-                    boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.25), -4px -4px 20px rgba(0, 240, 255, 0.12), 4px 4px 20px rgba(188, 108, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.95)';
-                }
-            } else if (archiveStatus === 'skipped' || archiveStatus === 'reset') {
-                statusPillColor = 'var(--danger-glow)';
-                borderStyle = '1px solid #B91C1C';
-                boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.25), -4px -4px 20px rgba(0, 240, 255, 0.12), 4px 4px 20px rgba(188, 108, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.95)';
-            } else if (archiveStatus === 'rest') {
-                statusPillColor = '#818cf8';
-                borderStyle = '1px solid #818cf8';
-                boxShadowStyle = 'inset 0 1px 3px rgba(255, 255, 255, 0.25), -4px -4px 20px rgba(0, 240, 255, 0.12), 4px 4px 20px rgba(188, 108, 255, 0.15), 0 12px 40px rgba(0, 0, 0, 0.95)';
             }
 
             tt.style.border = borderStyle;
@@ -2541,23 +2626,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 <div style="position:absolute; top:0; left:0; right:0; bottom:0; background:radial-gradient(circle at center, ${statusPillColor}15 0%, transparent 70%); pointer-events:none; z-index:0; border-radius:16px;"></div>
                 
                 <div style="position:relative; z-index:1;">
-                    <div style="font-family:'Space Grotesk'; font-size:0.6rem; color:var(--text-muted); font-weight:700; letter-spacing:0.05em; margin-bottom:2px;">🛰️ [LOG_RETRIEVAL] // SYSTEM_SAGA</div>
+                    <div style="font-family:'Space Grotesk', sans-serif; font-size:0.6rem; color:var(--text-muted); font-weight:700; letter-spacing:0.05em; margin-bottom:2px;">🛰️ [LOG_RETRIEVAL] // SYSTEM_SAGA</div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                         <div>
-                            <div style="font-family:'Orbitron'; font-size:0.95rem; font-weight:900; color:#fff; letter-spacing:0.05em; text-shadow:0 0 10px ${statusPillColor}80;">${dayName.toUpperCase()}</div>
+                            <div style="font-family:'Orbitron', sans-serif; font-size:0.95rem; font-weight:900; color:#fff; letter-spacing:0.05em; text-shadow:0 0 10px ${statusPillColor}80;">${dayName.toUpperCase()}</div>
                         </div>
-                        <div style="background:${statusPillColor}20; border:1px solid ${statusPillColor}; color:${statusPillColor}; font-family:'Orbitron'; font-size:0.65rem; font-weight:900; padding:4px 8px; border-radius:4px;">${archiveStatus.toUpperCase()}</div>
+                        <div style="background:${statusPillColor}20; border:1px solid ${statusPillColor}; color:${statusPillColor}; font-family:'Orbitron', sans-serif; font-size:0.65rem; font-weight:900; padding:4px 8px; border-radius:4px;">${archiveStatus.toUpperCase()}</div>
                     </div>
                     
                     <div style="border-left: 2px solid ${statusPillColor}; padding-left: 10px; margin-bottom:14px; background:rgba(0,0,0,0.2); padding-top:6px; padding-bottom:6px; border-radius:0 4px 4px 0;">
                         <span style="font-size:0.75rem; color:var(--text-muted); font-weight:900; display:block; letter-spacing:0.03em;">▶ BATTLE-TARGETS FOR SEGMENT:</span>
-                        <div style="font-family:'Orbitron'; font-size:0.85rem; font-weight:900; color:#fff;">[ ${targetsCalculated.reps} REPS // ${targetsCalculated.plank}s PLANK ]</div>
+                        <div style="font-family:'Orbitron', sans-serif; font-size:0.85rem; font-weight:900; color:#fff;">[ ${targetsCalculated.reps} REPS // ${targetsCalculated.plank}s PLANK ]</div>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 2.2fr 1fr 1fr; gap: 0 0px; font-size: 0.8rem; line-height: 1.5; max-height: 250px; overflow-y: auto;">
-                        <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:left; border-bottom:1.5px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.05); padding-bottom:4px; padding-right:8px;">EXERCISE</div>
-                        <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.05); padding-bottom:4px; padding-left:8px; padding-right:8px;">WEEK</div>
-                        <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:4px; padding-left:8px;">LIFETIME</div>
+                    <!-- Beautiful CSS Grid columns (Excel-Free matrix layout) -->
+                    <div style="display: grid; grid-template-columns: 2.2fr 1fr 1fr; gap: 0; font-size: 0.8rem; line-height: 1.5; max-height: 250px; overflow-y: auto;">
+                        <div style="font-family:'Orbitron', sans-serif; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:left; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:6px;">EXERCISE</div>
+                        <div style="font-family:'Orbitron', sans-serif; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:6px;">WEEK</div>
+                        <div style="font-family:'Orbitron', sans-serif; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:6px;">LIFETIME</div>
                         ${tableRows}
                     </div>
                 </div>
@@ -2821,6 +2907,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             } catch (err) {}
         }
 
+        // Backup procedures
         function exportBackupData() {
             triggerHapticPulse();
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
@@ -3248,24 +3335,20 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. OPTIMIZED AMOLED CONTROLS DROPDOWN:
-   Consolidates the active screen optimization features inside a collapsible, space-saving 
-   dropdown accordion inside the Forge. Ambient background tint and wavy progress rise are 
-   unified into a single master saturation slider to minimize layout footprint.
+1. "CALM FJORD" RHYTHMIC TIDAL WATER RIPPLE:
+   This build resolves the static completed background wash problem. When all your scheduled 
+   items are completed, the water elements transition from standard horizontal drifts into a slow, 
+   fluid rise-and-fall breathing animation (modulating width and scale parameters concurrently). 
+   We have added a custom, hidden SVG fractal noise filter to distort and wobble the edges of 
+   the waves dynamically, replicating natural surface currents without slowing down mobile phones. 
+   Additionally, the reflection glints no longer disappear, but rather cycle through soft light pulses.
 
-2. PARALLAX LIQUID WAVE CORE (DOUBLE CURVATURES & PARTICLE GLINTS):
-   Injects a triple-layer dynamic flowing background (#bifrost-wash-layer) that uses 
-   high-amplitude SVG wave-caps counter-drifting horizontally (back wave left, front wave right) 
-   to simulate fluid volume depth. Overlays a rapid speckled glint layer to represent light 
-   glistening on running water. Transitions to slow, pacified ripples upon completion.
-
-3. HOLOGRAPHIC SCIFI HUD TOOLTIP OVERHAUL:
-   Transforms standard tooltips with diagnostic military overlays. Styled with 40px backdrop blur, 
-   carbon-fiber diagonal grid textures, glowing radial-spotlights, chromatic refraction shadows 
-   (glacial cyan left, bifrost violet right), and absolute corner targeting brackets.
-
-4. SYSTEM-WIDE SELECTION GESTURE PROTECTION:
-   Sets global target elements to user-select: none to block browser zoom magnifier window 
-   popups during long-presses, leaving specific text areas whitelisted for copying text.
+2. SECURE POINTER-SCROLL SEPARATION & LONG-PRESS TOOLTIP PERSISTENCE:
+   The interaction with history dots has been fully redesigned. We track the pixel movement of your 
+   pointer or finger during touches. If you drag or scroll by more than 8 pixels, the long-press 
+   timer is aborted instantly to let you scroll through your records comfortably. If you hold 
+   your finger still on a dot for 400 milliseconds, a physical vibration triggers, and the 
+   detailed holographic statistics card locks on the screen. It remains open after you lift your 
+   finger, and dismisses instantly the moment you tap anywhere else.
 ================================================================================
 -->
