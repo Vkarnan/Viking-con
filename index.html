@@ -1,6 +1,6 @@
 <!--
 TITLE: V_Forge - Conquered Edition (Build v2.0.0 - Production)
-DATE/TIME (IST): July 15, 2026 - 04:30 AM IST
+DATE/TIME (IST): July 15, 2026 - 05:00 AM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
@@ -102,7 +102,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             --progress-height: 0%;
             
             background-image: 
-                radial-gradient(circle, transparent 20%, rgba(0, 0, 0, var(--vignette-opacity)) 95%),
+                linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
                 linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--tint-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--tint-opacity)) var(--progress-height), transparent var(--progress-height)),
                 url("./background.webp");
             background-size: cover;
@@ -971,9 +971,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         glowStyle: '0 0 14px #BC6CFF'
                     },
                     skipped: {
-                        textColor: '#F87171', 
-                        borderColor: '#7F1D1D', 
-                        backgroundColor: '#180202'
+                        textColor: '#B91C1C', // Darkened Crimson Missed Peak Sunday Text
+                        borderColor: '#7F1D1D', // Darkened Crimson Missed Peak Sunday Border
+                        backgroundColor: '#180202' // Darkened Crimson Missed Peak Sunday Background
                     }
                 }
             },
@@ -2322,51 +2322,45 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             }
 
-            ttBody.innerHTML = `
-                <b>TARGET FOR DAY:</b><br>
-                ${targetsCalculated.reps} Reps / ${targetsCalculated.plank}s Plank<br><br>
-                <b>ACCUMULATED WEEK VOLUME:</b><br>
-                <div class="volume-swipe-container">
-                    <div class="volume-swipe-track">
-            `;
-            
+            // Build dynamic responsive 3-column matrix grid
+            let tableRows = '';
             for (let key in weeklyTotalsObj) {
                 let wObj = appState.workoutRegistry.find(w => w.id === key);
                 let label = wObj ? wObj.title : key;
-                ttBody.innerHTML += `
-                    <div class="swipe-element-card">
-                        <div class="swipe-lbl">${label}</div>
-                        <div class="swipe-val">${weeklyTotalsObj[key]}</div>
-                    </div>
-                `;
-            }
-            
-            ttBody.innerHTML += `
-                    </div>
-                </div>
-                <br><b>ALL-TIME LIFETIME VOLUME:</b><br>
-                <div class="volume-swipe-container">
-                    <div class="volume-swipe-track">
-            `;
-
-            for (let key in allTimeTotalsObj) {
-                let wObj = appState.workoutRegistry.find(w => w.id === key);
-                let label = wObj ? wObj.title : key;
-                ttBody.innerHTML += `
-                    <div class="swipe-element-card">
-                        <div class="swipe-lbl">${label}</div>
-                        <div class="swipe-val">${allTimeTotalsObj[key]}</div>
+                let weeklyVal = weeklyTotalsObj[key];
+                let allTimeVal = allTimeTotalsObj[key] || 0;
+                
+                tableRows += `
+                    <div style="display: contents;">
+                        <div style="color:#ffffff; font-weight:700; text-align:left; border-bottom:1px solid #130a1c; padding:6px 0;">${label}</div>
+                        <div style="color:var(--success-glow); font-weight:700; text-align:right; border-bottom:1px solid #130a1c; padding:6px 0;">${weeklyVal}</div>
+                        <div style="color:var(--cyan-neon); font-weight:700; text-align:right; border-bottom:1px solid #130a1c; padding:6px 0;">${allTimeVal}</div>
                     </div>
                 `;
             }
 
-            ttBody.innerHTML += `
+            let statusPillColor = '#4b5563';
+            if (archiveStatus === 'done') statusPillColor = 'var(--success-glow)';
+            else if (archiveStatus === 'skipped') statusPillColor = 'var(--danger-glow)';
+            else if (archiveStatus === 'rest') statusPillColor = '#818cf8';
+
+            ttBody.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <div>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:900;">TARGET FOR DAY</span>
+                        <div style="font-family:'Orbitron'; font-size:0.9rem; font-weight:900; color:#fff;">${targetsCalculated.reps} Reps / ${targetsCalculated.plank}s Plank</div>
                     </div>
+                    <div style="background:${statusPillColor}20; border:1px solid ${statusPillColor}; color:${statusPillColor}; font-family:'Orbitron'; font-size:0.65rem; font-weight:900; padding:4px 8px; border-radius:4px;">${archiveStatus.toUpperCase()}</div>
                 </div>
-                REGISTRY ID: [${archiveStatus.toUpperCase()}]
+                
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0 12px; font-size: 0.8rem; line-height: 1.5; max-height: 250px; overflow-y: auto;">
+                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:left; border-bottom:1.5px solid #231233; padding-bottom:4px;">EXERCISE</div>
+                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid #231233; padding-bottom:4px;">WEEK</div>
+                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid #231233; padding-bottom:4px;">LIFETIME</div>
+                    ${tableRows}
+                </div>
             `;
             tt.style.display = 'block';
-            attachTouchInteractions();
         }
 
         // =========================================================================
@@ -3020,19 +3014,27 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. DOUBLE-TOUCH EVENT RESOLVED:
-   Consolidated duplicate style attributes into a single string for timer (Plank) 
-   cards, which successfully enables the border-glow pulse alongside the global 
-   accent-glow countdown text animations.
+1. FIXED TIMER CARD ACTIVE GLOW:
+   Consolidated duplicate, competing inline style attributes into a single string. 
+   This safely maps the local `--target-color` CSS variable directly onto the Plank 
+   container without mobile webview truncation.
 
-2. ADVANCED SAGA DONE-GLOWS (20% BOOSTED):
-   Dynamic completed card headers in SAGA staging now reflect standard completed days 
-   in luminous green, and Sunday Peak days in brilliant purple. Visual shadow-opacities 
-   and borders were boosted by 20% to make historical views pop.
+2. ENHANCED DISTRIBUTION ACCORDIONS:
+   Day card headers in SAGA staging now parse each day's targets in real-time, 
+   while completed "DONE" cards emit an ambient green (or purple on Sunday) glow.
 
-3. HARDENED PWA SWEOVERS:
-   PWA automated updates are blocked from executing if a session is actively in progress. 
-   When you trigger "Warp Next Day" inside developer overrides, the clock not only shifts 
-   but also emulates a clean daily rollover by wiping checkmarks and resetting day gates.
+3. STAGING AUTO-SKIP MECHANICS:
+   Any past day of the current week that remains uncompleted is dynamically 
+   evaluated as "SKIPPED" instead of remaining locked, aligning SAGA views 
+   perfectly with your Monday-to-Sunday day-backfiller logic.
+
+4. LIFETIME ACCUMULATIVE LEDGER TOOLTIPS:
+   The tooltip scanner was updated to output two individual volume metrics side-by-side:
+   "Weekly Volume" and "All-Time Lifetime Volume," tracking your absolute progress.
+
+5. 7-STAGE UNIQUE REALM TRANSITION:
+   Mapped Monday to Sunday into 7 entirely unique mythological stages. Standard days 
+   transition through icy blue, teal, emerald, amber, and molten orange, Saturday is 
+   the crimson forge red stage, and Sunday ends in royal purple, keeping your lyrics intact.
 ================================================================================
 -->
