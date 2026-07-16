@@ -1,6 +1,6 @@
 <!--
 TITLE: V_Forge - Conquered Edition (Build v2.1.0 - Premium HUD Update)
-DATE/TIME (IST): July 16, 2026 - 10:30 AM IST
+DATE/TIME (IST): July 16, 2026 - 11:30 AM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
@@ -8,10 +8,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
    - Consolidates all thematic text, stages, progress-flow colors, and status states into one clean, frozen object.
 2. DYNAMIC "BIFROST RISE" BACKGROUND WASH:
    - Integrates a progress-driven linear gradient mask rising from the bottom of the screen (0% to 100%).
-3. AMOLED SLIDER STACK OPTIMIZATION:
-   - Keeps the background dark and crisp, fully resolving completed-state brightness blowout.
+3. AMOLED SLIDER STACK ACCORDION:
+   - Re-stacks progress wash layer above black vignette overlay, fully resolving completed-state color wash washout.
+   - Consolidates vignette, ambient tint, and dynamic Bifrost wash intensity sliders into a collapsible, space-saving accordion dropdown.
 4. CALENDAR LEDGER AND SKIP PROTECTION:
-   - Restores deep crimson red indicators strictly for skipped Sundays on SAGA ledger views.
+   - Preserves Monday-to-Sunday progression architecture with standard and Sunday peak skipped states.
 5. DAILY CHECKLIST RESET GATE:
    - Automatically purges incomplete checkmarks on calendar day rollover.
 6. STREAK TRACKING & WARRIOR RANKS:
@@ -25,10 +26,10 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 10. COMPACT SKALD QUOTES SELECTOR:
     - Dynamic single-day selector dropdown cuts quote editing interface footprint by 85%.
 11. STANDALONE PWA SAFE-AREA HEIGHT PADDING:
-    - Automatically injects padding-bottom to clear mobile home gesture bars on iOS/Android.
+    - Automatically injects padding-bottom to clear mobile home gesture bars on modern devices.
 12. EVENT-DELEGATED GLASS-MORPHIC HUD TOOLTIP:
-    - Injects high-performance obsidian blur background, smooth kinetic slide transitions, and dynamic status-colored boundary glow effects.
     - Employs strict Event Delegation to reduce listener memory footprint by 95% on mobile devices.
+    - Features a dynamic, vertically-anchored tooltip projecting above the thumb, complete with column partitions and custom status borders.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -70,16 +71,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Access-Unlocked Target Input Selection Rules */
-        body, button, input, textarea, select, span, div, p {
-            user-select: text !important;
-            -webkit-user-select: text !important;
-        }
-
-        .nav-item, .manual-check-trigger, .forge-btn, .toggle-opt, .week-row-header {
+        /* Access-Locked Text Selection Guards - Disables selection globally, whitelists input fields */
+        body, button, span, div, p, .day-dot, .nav-item, .manual-check-trigger, .forge-btn, .toggle-opt, .week-row-header {
             user-select: none !important;
             -webkit-user-select: none !important;
-            cursor: pointer;
+        }
+
+        input, textarea, select {
+            user-select: text !important;
+            -webkit-user-select: text !important;
         }
 
         body {
@@ -92,14 +92,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             /* Dynamic background layer variables */
             --vignette-opacity: 0.96;
             --tint-opacity: 0.04;
+            --wash-opacity: 0.20;
             --wash-color-r: 188;
             --wash-color-g: 108;
             --wash-color-b: 255;
             --progress-height: 0%;
             
+            /* Background Stack Layer Re-ordering: Progress Wash Layer sits ON TOP of Black Vignette Overlay */
             background-image: 
+                linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--wash-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--wash-opacity)) var(--progress-height), transparent var(--progress-height)),
                 linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
-                linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--tint-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--tint-opacity)) var(--progress-height), transparent var(--progress-height)),
                 url("./background.webp");
             background-size: cover;
             background-position: center;
@@ -421,23 +423,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border-top: 1px solid #130a1c;
         }
 
-        /* 1. REDESIGN THE TOOLTIP CONTAINER (.tooltip-deck / #touch-tooltip) */
+        /* 12. FLOATING FROSTED GLASS HUD TOOLTIP */
         .tooltip-deck { 
             position: fixed; 
-            bottom: 90px; 
-            left: 20px; 
-            right: 20px; 
             background: rgba(3, 3, 5, 0.85); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid #1a1a2e; 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
             border-radius: 16px; 
             padding: 16px; 
             z-index: 2000; 
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.03), 0 10px 40px rgba(0, 0, 0, 0.95); 
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05),
+                        0 0 1px rgba(255, 255, 255, 0.1),
+                        0 12px 40px rgba(0, 0, 0, 0.95);
             pointer-events: none;
             opacity: 0;
             transform: translateY(15px);
+            width: calc(100vw - 40px);
+            max-width: 320px;
             transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
                         opacity 0.2s ease, 
                         border-color 0.2s ease, 
@@ -853,16 +856,26 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 </div>
             </div>
 
-            <!-- REAL-TIME AMOLED SCREEN OPTIMIZER (LAST IN FORGE PANEL) -->
+            <!-- COLLAPSIBLE AMOLED SCREEN OPTIMIZER ACCORDION -->
             <div class="section-label">⚙️ AMOLED SCREEN OPTIMIZER</div>
-            <div class="shine-card" style="padding:18px; margin-bottom:20px; border-color:#1e142b;">
-                <div class="config-grid-item" style="border:none; padding:0; margin-bottom:14px; background:none;">
-                    <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">AMOLED Black Vignette Darkness: <span id="vignette-val-display" style="color:var(--accent-glow);">96</span>%</label>
-                    <input type="range" id="vignette-range" min="50" max="100" value="96" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
+            <div class="shine-card" style="padding:15px; margin-bottom:20px; border-color:#1e142b;" id="forge-amoled-panel">
+                <div class="forge-accordion-header" onclick="toggleForgeAccordion('forge-amoled-panel')">
+                    <span style="font-family:'Orbitron'; font-size:0.85rem; font-weight:900;">SCREEN OPTIMIZER DETAILS</span>
+                    <span class="forge-header-chevron" id="chevron-forge-amoled-panel">▼</span>
                 </div>
-                <div class="config-grid-item" style="border:none; padding:0; margin-bottom:0; background:none;">
-                    <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">Ambient Glow Saturation: <span id="tint-val-display" style="color:var(--accent-glow);">4</span>%</label>
-                    <input type="range" id="tint-range" min="0" max="30" value="4" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
+                <div class="forge-collapsible-content">
+                    <div class="config-grid-item" style="border:none; padding:0; margin-bottom:14px; background:none;">
+                        <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">AMOLED Black Vignette Darkness: <span id="vignette-val-display" style="color:var(--accent-glow);">96</span>%</label>
+                        <input type="range" id="vignette-range" min="50" max="100" value="96" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
+                    </div>
+                    <div class="config-grid-item" style="border:none; padding:0; margin-bottom:14px; background:none;">
+                        <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">Ambient Glow Saturation: <span id="tint-val-display" style="color:var(--accent-glow);">4</span>%</label>
+                        <input type="range" id="tint-range" min="0" max="30" value="4" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
+                    </div>
+                    <div class="config-grid-item" style="border:none; padding:0; margin-bottom:0; background:none;">
+                        <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">Bifrost Progress Wash Intensity: <span id="wash-val-display" style="color:var(--accent-glow);">20</span>%</label>
+                        <input type="range" id="wash-range" min="0" max="100" value="20" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
+                    </div>
                 </div>
             </div>
 
@@ -994,9 +1007,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         glowStyle: '0 0 14px #BC6CFF'
                     },
                     skipped: {
-                        textColor: '#B91C1C', // Darkened Crimson Missed Peak Sunday Text
-                        borderColor: '#7F1D1D', // Darkened Crimson Missed Peak Sunday Border
-                        backgroundColor: '#180202' // Darkened Crimson Missed Peak Sunday Background
+                        textColor: '#B91C1C', 
+                        borderColor: '#7F1D1D', 
+                        backgroundColor: '#180202' 
                     }
                 }
             },
@@ -1062,7 +1075,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             customQuotes: {}, 
             workoutRegistry: [],
             cooldownRegistry: [],
-            backgroundSettings: { vignette: 96, tint: 4 }
+            backgroundSettings: { vignette: 96, tint: 4, wash: 20 }
         };
 
         // =========================================================================
@@ -1089,7 +1102,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             if (!appState.historicalVolumeLogs) appState.historicalVolumeLogs = {};
             if (!appState.completedExercisesToday) appState.completedExercisesToday = {};
             if (!appState.appInitTimestamp) appState.appInitTimestamp = Date.now();
-            if (!appState.backgroundSettings) appState.backgroundSettings = { vignette: 96, tint: 4 };
+            if (!appState.backgroundSettings) appState.backgroundSettings = { vignette: 96, tint: 4, wash: 20 };
+            if (appState.backgroundSettings.wash === undefined) appState.backgroundSettings.wash = 20;
 
             if (!appState.customQuotes || Object.keys(appState.customQuotes).length === 0) {
                 appState.customQuotes = JSON.parse(JSON.stringify(CONFIG_THEME_AND_COPY.victoryQuotes));
@@ -1185,9 +1199,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             // Get configuration parameters
             const vignetteVal = appState.backgroundSettings ? appState.backgroundSettings.vignette : 96;
             const tintVal = appState.backgroundSettings ? appState.backgroundSettings.tint : 4;
+            const washVal = appState.backgroundSettings ? appState.backgroundSettings.wash : 20;
             
             const vignetteOpacity = vignetteVal / 100;
             const tintOpacity = tintVal / 100;
+            const washOpacity = washVal / 100;
             
             // Calculate progress height dynamically for "Bifrost Rise" Gradient overlay
             let progressHeight = '0%';
@@ -1214,6 +1230,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             // Write styles dynamically to root DOM variables
             document.body.style.setProperty('--vignette-opacity', vignetteOpacity);
             document.body.style.setProperty('--tint-opacity', tintOpacity);
+            document.body.style.setProperty('--wash-opacity', washOpacity);
             document.body.style.setProperty('--wash-color-r', rgb.r);
             document.body.style.setProperty('--wash-color-g', rgb.g);
             document.body.style.setProperty('--wash-color-b', rgb.b);
@@ -1229,11 +1246,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         function updateLiveBackgroundSliders() {
             const vignetteVal = parseInt(document.getElementById('vignette-range').value);
             const tintVal = parseInt(document.getElementById('tint-range').value);
+            const washVal = parseInt(document.getElementById('wash-range').value);
             
             document.getElementById('vignette-val-display').innerText = vignetteVal;
             document.getElementById('tint-val-display').innerText = tintVal;
+            document.getElementById('wash-val-display').innerText = washVal;
 
-            appState.backgroundSettings = { vignette: vignetteVal, tint: tintVal };
+            appState.backgroundSettings = { vignette: vignetteVal, tint: tintVal, wash: washVal };
             saveToStorage();
             updateBodyBackground();
         }
@@ -1328,8 +1347,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             // Set slider values from memory
             document.getElementById('vignette-range').value = appState.backgroundSettings.vignette;
             document.getElementById('tint-range').value = appState.backgroundSettings.tint;
+            document.getElementById('wash-range').value = appState.backgroundSettings.wash;
+            
             document.getElementById('vignette-val-display').innerText = appState.backgroundSettings.vignette;
             document.getElementById('tint-val-display').innerText = appState.backgroundSettings.tint;
+            document.getElementById('wash-val-display').innerText = appState.backgroundSettings.wash;
 
             let devPanelVal = localStorage.getItem('viking_dev_panel') || 'true';
             const panel = document.getElementById('dev-sandbox-deck');
@@ -1961,7 +1983,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
                     } catch (err) {}
                     
-                    activeTimerId = null; // Clean engine garbage collection references
+                    activeTimerId = null; 
                 }
             }, 1000);
         }
@@ -2269,7 +2291,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return `<div class="day-dot" style="${styleStr}" data-date="${lookupStr}">${displayNum}</div>`;
         }
 
-        // HIGH PERFORMANCE EVENT DELEGATION: Slashes listener count by 95% 
+        // HIGH PERFORMANCE EVENT DELEGATION
         function attachTouchInteractions() {
             const container = document.getElementById('monthly-scroll-container');
             if (!container) return;
@@ -2306,7 +2328,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             container.addEventListener('mouseleave', endPress);
         }
 
-        // 2. PROGRAM THE DYNAMIC STATUS-GLOW BORDERS & 3. CLEAN UP MATRIX LAYOUT
+        // 2. PROGRAM DYNAMIC STATUS-GLOW BORDERS, FLOATING PLACEMENT & PARTITION MATRIX
         function triggerTooltipDisplay(dateStr) {
             const tt = document.getElementById('touch-tooltip');
             const ttTitle = document.getElementById('tt-title');
@@ -2362,7 +2384,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             }
 
-            // Build dynamic responsive 3-column matrix grid
+            // Build dynamic responsive 3-column matrix grid with borders
             let tableRows = '';
             for (let key in weeklyTotalsObj) {
                 let wObj = appState.workoutRegistry.find(w => w.id === key);
@@ -2372,14 +2394,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 
                 tableRows += `
                     <div style="display: contents;">
-                        <div style="color:#ffffff; font-weight:700; text-align:left; border-bottom:1px solid rgba(255,255,255,0.05); padding:6px 0;">${label}</div>
-                        <div style="color:var(--success-glow); font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); padding:6px 0;">${weeklyVal}</div>
-                        <div style="color:var(--cyan-neon); font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); padding:6px 0;">${allTimeVal}</div>
+                        <div style="color:#ffffff; font-weight:700; text-align:left; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); padding:6px 8px 6px 0;">${label}</div>
+                        <div style="color:var(--success-glow); font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); padding:6px 8px;">${weeklyVal}</div>
+                        <div style="color:var(--cyan-neon); font-weight:700; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); padding:6px 0 6px 8px;">${allTimeVal}</div>
                     </div>
                 `;
             }
 
-            // Map configurations for dynamic color borders & shadows
             let statusPillColor = '#4b5563';
             let borderStyle = '1px solid #1a1a2e';
             let boxShadowStyle = 'inset 0 1px 1px rgba(255, 255, 255, 0.03), 0 10px 40px rgba(0, 0, 0, 0.95)';
@@ -2416,15 +2437,46 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     <div style="background:${statusPillColor}20; border:1px solid ${statusPillColor}; color:${statusPillColor}; font-family:'Orbitron'; font-size:0.65rem; font-weight:900; padding:4px 8px; border-radius:4px;">${archiveStatus.toUpperCase()}</div>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0 12px; font-size: 0.8rem; line-height: 1.5; max-height: 250px; overflow-y: auto;">
-                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:left; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:4px;">EXERCISE</div>
-                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:4px;">WEEK</div>
-                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:4px;">LIFETIME</div>
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0 0px; font-size: 0.8rem; line-height: 1.5; max-height: 250px; overflow-y: auto;">
+                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:left; border-bottom:1.5px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.05); padding-bottom:4px; padding-right:8px;">EXERCISE</div>
+                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); border-right:1px solid rgba(255,255,255,0.05); padding-bottom:4px; padding-left:8px; padding-right:8px;">WEEK</div>
+                    <div style="font-family:'Orbitron'; font-size:0.65rem; color:var(--text-muted); font-weight:900; text-align:right; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:4px; padding-left:8px;">LIFETIME</div>
                     ${tableRows}
                 </div>
             `;
             
-            tt.classList.add('visible');
+            // Dynamic Positioning anchoring cleanly above the finger layout
+            const container = document.getElementById('monthly-scroll-container');
+            const dot = container.querySelector(`[data-date="${dateStr}"]`);
+            if (dot) {
+                const rect = dot.getBoundingClientRect();
+                
+                tt.classList.add('visible');
+                const ttHeight = tt.offsetHeight;
+                const ttWidth = tt.offsetWidth;
+                
+                let topPos = rect.top - ttHeight - 12;
+                let leftPos = rect.left + (rect.width / 2) - (ttWidth / 2);
+                
+                // Viewport boundary clamp offsets
+                const screenPadding = 16;
+                if (leftPos < screenPadding) {
+                    leftPos = screenPadding;
+                } else if (leftPos + ttWidth > window.innerWidth - screenPadding) {
+                    leftPos = window.innerWidth - ttWidth - screenPadding;
+                }
+                
+                tt.style.top = `${topPos}px`;
+                tt.style.left = `${leftPos}px`;
+                tt.style.bottom = 'auto';
+                tt.style.right = 'auto';
+            } else {
+                tt.style.bottom = '90px';
+                tt.style.left = '20px';
+                tt.style.right = '20px';
+                tt.style.top = 'auto';
+                tt.classList.add('visible');
+            }
         }
 
         // =========================================================================
@@ -2515,7 +2567,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             renderDashboard();
         }
 
-        // Freeze progression manually
         function freezeProgression() {
             triggerHapticPulse();
             if (pendingRolloverWeekIdx !== null) {
@@ -2652,6 +2703,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             } catch (err) {}
         }
 
+        // JSON backup tools
         function exportBackupData() {
             triggerHapticPulse();
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
@@ -3079,19 +3131,23 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. GLASS-MORPHIC OBSIDIAN LAYER:
-   Modified .tooltip-deck in the stylesheet to render a modern blur-filter layer 
-   and standard 16px borders, ensuring smooth 3D hardware-accelerated animations 
-   take effect on mobile screens instead of abrupt visibility changes.
+1. TARGETED SELECTION EXEMPTIONS:
+   Swaps the user-select CSS attributes to suppress text selection magnifiers globally, 
+   while explicitly whitelisting input text fields and settings areas so typing ranges 
+   and copy-paste workflows remain functional.
 
-2. DYNAMIC STATUS-GLOW BOUNDARIES:
-   Programmed triggerTooltipDisplay to calculate active weekday, Peak Sunday, skipped, 
-   or resting days, applying high-fidelity ambient border shadows and colors 
-   matching corresponding training nodes on the ledger view.
+2. VERTICAL FLOATING HUD POSITIONS:
+   Calculates active bounding client coordinates to float the ledger tooltips 
+   directly above touched calendar dots, clamping boundaries to prevent edge clipping 
+   while eliminating physical thumb coverage of table results.
 
-3. HIGH-PERFORMANCE EVENT DELEGATION:
-   Replaced multi-instance event bindings with a centralized, event-delegated listener 
-   on the monthly scroll container, saving up to 95% of active bindings and 
-   effectively preventing system memory leaks on older devices.
+3. PRESTIGE FROSTED ACCENTS & GRID PARTITIONS:
+   Upgrades the popup layer with deep frosted glass filters and border shadows, 
+   partitioning row labels and volume statistics cleanly with vertical line dividers.
+
+4. COLLAPSED AMOLED STACK DESIGN:
+   Consolidates the vignette, saturation, and newly-decoupled Bifrost Progress Wash 
+   intensity sliders into a space-saving accordion dropdown to preserve the screen 
+   footprint of the settings section.
 ================================================================================
 -->
