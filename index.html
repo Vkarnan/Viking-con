@@ -1,61 +1,38 @@
 <!--
-TITLE: V_Forge - Conqueror Edition (Build v1.1.3 - Production)
-DATE/TIME (IST): July 15, 2026 - 12:05 AM IST
+TITLE: V_Forge - Conquered Edition (Build v2.0.0 - Production)
+DATE/TIME (IST): July 15, 2026 - 04:30 AM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 1. DECOUPLED SAFE CONFIGURATION ZONE (CONFIG_THEME_AND_COPY):
-   - Consolidates all thematic text, workout stages, victory quotes, interface headers, 
-     cooldown stretches, and calendar styles into one clean object for safe manual edits.
-2. STREAK TRACKING & WARRIOR RANKS:
-   - Tracks your daily completed workouts, calculating a rolling consecutive day streak.
-   - Maps your active streak to a detailed, thematic progress rank (from Thrall to Valhalla Legend).
-3. ACTIVE TARGET GUIDANCE & PROGRESSIVE SPECTRUM:
-   - The immediate next task on BATTLEGROUND gently pulses its border in its current progressive color.
-   - All other incomplete cards remain locked in flat, dark steel.
-   - Border colors scale dynamically based on your exact completion progress ratio: 
-     Slate (0-20%) -> Oceanic Cyan (20-40%) -> Twilight Purple (Plank, 40-60%) -> Amber (60-80%) -> Emerald Green (80-99%).
-4. 0.5-SECOND TRIUMPH FLASH:
-   - Checking an active card complete triggers an intense, bright glow of its progress color.
-   - Screen re-rendering is delayed by exactly 0.5s to show the flash, before moving the card
-     into the bottom completed stack with a clean, non-glowing border.
-5. AMOLED SCREEN OPTIMIZER & CONTROLLERS (FORGE BOTTOM UI):
-   - Two interactive sliders allow real-time control over vignette darkness (0% to 100%)
-     and ambient color saturation (0% to 30%) to save battery and boost contrast.
-6. DYNAMIC DUAL-LAYER BACKGROUND COMPLEMENT:
-   - Automatically parses your completed Stage Color, converts it to an RGB tint on-the-fly, 
-     and overlays a 97% black AMOLED mask and 4% color wash over your anvil background image.
-7. PERSISTENT TAB-RESILIENT CHRONO ENGINE:
-   - Active timer countdowns are globalized, running reliably in the background without freezing.
-   - Automatically re-binds ticking text nodes to newly rendered cards when switching tabs.
-   - Supports Orbitron font rendering, active pulsing states, and unified custom exercises.
-8. INTERACTIVE CHRONO TOUCH CONTROLS:
-   - Single-tap play/pauses countdowns.
-   - Hold (600ms) resets active timer to baseline (with haptic confirmations).
-   - Touch-release block flag prevents single-tap resume from instantly triggering on finger lift.
-9. ACTIVE SHIELD WALL (REST DAY):
-   - Low-profile trigger card located at the bottom of BATTLEGROUND.
-   - Pauses the skip backfiller, freezes your active streak, and logs a Muted Blue Shield node (🛡️).
-10. DYNAMIC FORGE REGISTRY ACCORDIONS:
-    - Collapses the Workout Registry, Cooldown Registry, and Custom Quotes under compact headers
-      with rotating chevron indicators (▼/▲) to eliminate vertical scrolling.
-11. COOLDOWN PROCEDURES CHECKLIST:
-    - Custom stretches can be added, deleted, or reordered inside the Forge.
-    - Stretches default automatically to "Log in Ledger: OFF" so they don't affect strength volumes.
-12. CHRONOLOGICAL AUTO-SKIP BACKFILLER:
-    - Backfills missed calendar days with red "skipped" nodes automatically.
-    - Fresh app installations are locked to backfill skips starting only from Monday of the current week.
-13. TIME-WARP & SIMULATION CALIBRATION:
-    - DEV Sandbox features (Warp Next Day, Roll Over) align wave calculations with virtual offset times.
-14. VALKYRIE WIPE-RESCUE CACHE:
-    - Rolling local backup saves your last 3 completed sessions to protect history from browser cache sweeps.
-15. PROTOCOL INTERCEPT SAFE-GUARDS:
-    - Bypasses non-HTTP/HTTPS network fetch requests, protecting the app from Chrome extension crashes.
-16. DST-SAFE CALENDAR MATH:
-    - Replaced millisecond math with native local Date setters to prevent Daylight Saving visual de-syncs.
-17. MOBILE KEYBOARD SELECTION UNLOCKED:
-    - Overrides global selection blocks on input and textareas so mobile keyboards operate cleanly.
-18. DOUBLE-TRIGGER TOUCH CONFLICTS RESOLVED & INTEGRATED PWA NATIVE INSTALLER CARD.
+   - Consolidates all thematic text, stages, progress-flow colors, and status states into one clean, frozen object.
+2. DYNAMIC "BIFROST RISE" BACKGROUND WASH:
+   - Integrates a progress-driven linear gradient mask rising from the bottom of the screen (0% to 100%).
+   - Reveals the background image logo step-by-step as checklist items are checked off.
+3. AMOLED SLIDER STACK OPTIMIZATION:
+   - Separates background layers into distinct CSS stacked components (Vignette layer, rising wash layer, base image layer).
+   - Keeps the background dark and crisp, fully resolving the completed-state brightness blowout.
+4. CALENDAR LEDGER AND SKIP PROTECTION:
+   - Preserves Monday-to-Sunday progression architecture. Standard completed days use Green/Purple keys, while skips remain Red.
+   - Restores deep crimson red (#7F1D1D) indicators strictly for skipped Sundays on SAGA ledger views.
+5. DAILY CHECKLIST RESET GATE:
+   - Automatically detects a new calendar day rollover on boot and purges incomplete checkmarks to keep tomorrow's loadout fresh.
+6. STREAK TRACKING & WARRIOR RANKS:
+   - Tracks consecutive day streaks and maps performance to thematic ranks (from Fjord Voyager to Valhalla Legend).
+7. RECONSTRUCTED ACCORDION RENDERERS:
+   - Standardizes SAGA completed done-state glows (Green for standard, Purple for Sunday) with a boosted 20% glow intensity.
+8. PERSISTENT TAB-PROOF CHRONO ENGINE:
+   - Globalizes timer counts, running reliably in background threads, and automatically binds ticking UI nodes upon dynamic tab swaps.
+9. FORGE COOLDOWN REORDERING CONTROLS:
+   - Restores missing "Up", "Down", and "Delete" buttons inside the Forge stretch checklist.
+10. COMPACT SKALD QUOTES SELECTOR:
+    - Replaces the 14-textbox layout with a dynamic single-day selector dropdown to cut vertical scrolling space by 85%.
+11. STANDALONE PWA SAFE-AREA HEIGHT PADDING:
+    - Automatically injects padding-bottom to clear mobile home indicator gesture bars on modern devices.
+12. ANDROID / SYSTEM PROTECTIVE GUARDS:
+    - Defensive try/catch wraps protect PWA webviews from screen WakeLock, Vibration, or Audio lifecycle exceptions.
+13. WARP NEXT DAY SIMULATION GATE:
+    - Re-aligns fast-forwarding day warps to emulate a clean morning boot, ensuring the weekly rollover prompt triggers correctly day-by-day.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -94,27 +71,44 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Keyboard and Selection usability overrides */
-        input, textarea, select {
+        /* Access-Unlocked Target Input Selection Rules */
+        body, button, input, textarea, select, span, div, p {
             user-select: text !important;
             -webkit-user-select: text !important;
+        }
+
+        .nav-item, .manual-check-trigger, .forge-btn, .toggle-opt, .week-row-header {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            cursor: pointer;
         }
 
         body {
             font-family: 'Space Grotesk', -apple-system, sans-serif;
             background-color: #000;
             color: var(--text-main);
-            padding-bottom: 110px;
-            transition: background 0.4s ease;
+            padding-bottom: calc(110px + env(safe-area-inset-bottom, 12px));
             overflow-x: hidden;
+            
+            /* Dynamic background layer variables */
+            --vignette-opacity: 0.96;
+            --tint-opacity: 0.04;
+            --wash-color-r: 188;
+            --wash-color-g: 108;
+            --wash-color-b: 255;
+            --progress-height: 0%;
+            
+            background-image: 
+                radial-gradient(circle, transparent 20%, rgba(0, 0, 0, var(--vignette-opacity)) 95%),
+                linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--tint-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--tint-opacity)) var(--progress-height), transparent var(--progress-height)),
+                url("./background.webp");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
+            transition: background 0.4s ease;
         }
 
         /* Safe Area Notch Padding support for modern phones */
@@ -143,6 +137,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         .shine-card.impact-flash-uncheck {
             border-color: var(--danger-glow) !important;
             box-shadow: 0 0 12px rgba(239, 68, 68, 0.3) !important;
+        }
+
+        /* Dynamic High-Intensity Complete Glow Style */
+        .completed-flash-active {
+            transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
         }
 
         .shine-card:active {
@@ -341,13 +340,14 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         .week-box-title { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.05em; }
         
         .week-scroll-lane { display: flex; flex-direction: column; gap: 10px; height: auto; }
-        .week-row { background-color: var(--bg-primary); border: 1px solid #130a1c; border-radius: 12px; overflow: hidden; }
+        .week-row { background-color: var(--bg-primary); border: 1px solid #130a1c; border-radius: 12px; overflow: hidden; transition: border 0.3s ease, box-shadow 0.3s ease; }
         .week-row-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         
         .week-day-status { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; text-align: right; }
         .status-skipped { color: var(--danger-glow) !important; text-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
         .status-done { color: var(--success-glow) !important; }
-        .status-peak { color: var(--cyan-neon) !important; text-shadow: 0 0 8px rgba(0, 240, 255, 0.3); }
+        .status-peak { color: var(--accent-glow) !important; text-shadow: 0 0 8px rgba(188, 108, 255, 0.3); }
+        .status-rest { color: #818cf8 !important; text-shadow: 0 0 8px rgba(129, 140, 248, 0.3); }
 
         .week-row.row-faded-done { opacity: 0.35; }
         .week-row.row-faded-done .week-day-name, .week-row.row-faded-done .week-day-status { color: var(--text-muted) !important; }
@@ -355,6 +355,17 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         .week-row-content { display: block; height: 0; overflow: hidden; padding: 0 14px; background-color: #020203; border-top: 0 solid #111827; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
         .week-row.open .week-row-content { height: auto; padding: 14px; border-top-width: 1px; }
 
+        /* Dynamic Staging Standard/Peak Accordion Glow Definitions - 20% Boosted */
+        .week-row.staging-glow-standard {
+            border: 1px solid rgba(16, 185, 129, 0.65) !important;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.35) !important;
+        }
+        .week-row.staging-glow-peak {
+            border: 1.5px solid rgba(188, 108, 255, 0.65) !important;
+            box-shadow: 0 0 18px rgba(188, 108, 255, 0.45) !important;
+        }
+
+        /* Smooth Fading Masks for Horizontal Swipe Stats Tracking */
         .volume-swipe-track {
             display: flex;
             gap: 8px;
@@ -362,6 +373,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             white-space: nowrap;
             padding: 4px 2px;
             scrollbar-width: none;
+            -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+            mask-image: linear-gradient(to right, black 85%, transparent 100%);
         }
         .volume-swipe-track::-webkit-scrollbar { display: none; }
 
@@ -450,7 +463,21 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
         .rollback-btn { background-color: transparent; border: 1px solid #2d142c; color: var(--danger-glow); padding: 14px; border-radius: 10px; width: 100%; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 900; margin: 15px 0; cursor: pointer; }
 
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background-color: rgba(0, 0, 0, 0.98); backdrop-filter: blur(20px); border-top: 1px solid #130a1c; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-bar { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            height: calc(75px + env(safe-area-inset-bottom, 0px)); 
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background-color: rgba(0, 0, 0, 0.98); 
+            backdrop-filter: blur(20px); 
+            border-top: 1px solid #130a1c; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            z-index: 1000; 
+        }
         .nav-item { flex: 1; text-align: center; color: var(--text-muted); font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; cursor: pointer; padding: 15px 0; min-height: 48px; display: flex; align-items: center; justify-content: center; }
         .nav-item.active { color: var(--accent-glow); text-shadow: 0 0 10px rgba(188, 108, 255, 0.4); }
 
@@ -835,10 +862,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
     <script>
         // =========================================================================
         // 🛡️ SUBSECTION 1: THEME & COPY CONFIGURATION ZONE (MODULAR DIRECTIVES)
-        // Adjust copy, colors, ranks, stages, and style specifications below.
         // =========================================================================
         const CONFIG_THEME_AND_COPY = {
             
+            enableAudioChime: false,
+
             // ---------------------------------------------------------------------
             // 1. WARRIOR RANKS & STREAKS
             // ---------------------------------------------------------------------
@@ -858,17 +886,28 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             // 2. WEEKDAY STAGES (COLOR MAPS & SCREEN FLASH VALUES)
             // ---------------------------------------------------------------------
             stages: {
-                'Monday':    { name: "STAGE 1: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' },
-                'Tuesday':   { name: "STAGE 1: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' },
-                'Wednesday': { name: "STAGE 2: VANGUARD'S SHIELD 🛡️", color: '#10B981', flash: 'rgba(188, 108, 255, 0.45)' },
-                'Thursday':  { name: "STAGE 3: MIDGARD CROSSING 🌊",  color: '#F59E0B', flash: 'rgba(245, 158, 11, 0.45)' },
-                'Friday':    { name: "STAGE 4: THE CRIMSON FORGE 🔥",  color: '#FF7A00', flash: 'rgba(255, 122, 0, 0.45)' },
-                'Saturday':  { name: "STAGE 5: THE CRIMSON FORGE 🔥",  color: '#E53E3E', flash: 'rgba(229, 62, 62, 0.45)' },
-                'Sunday':    { name: "STAGE 6: ASGARD'S GATE 👑",     color: '#BC6CFF', flash: 'rgba(127, 29, 29, 0.85)' } // Modified completed flash to deep blood red
+                'Monday':    { name: "STAGE 1: FJORD'S EMBARKATION 🌊", color: '#06B6D4', flash: 'rgba(6, 182, 212, 0.45)' },
+                'Tuesday':   { name: "STAGE 2: RAVEN'S FLIGHT 🦅", color: '#0D9488', flash: 'rgba(13, 148, 136, 0.45)' },
+                'Wednesday': { name: "STAGE 3: LIGHTNING IN THE NIGHT ⚡", color: '#10B981', flash: 'rgba(16, 185, 129, 0.45)' },
+                'Thursday':  { name: "STAGE 4: SHIELD WALL REIGN 🛡️",  color: '#F59E0B', flash: 'rgba(245, 158, 11, 0.45)' },
+                'Friday':    { name: "STAGE 5: THE CRIMSON FORGE 🔥",  color: '#FF7A00', flash: 'rgba(255, 122, 0, 0.45)' },
+                'Saturday':  { name: "STAGE 6: BERSERKER'S VALE 🪓",  color: '#EF4444', flash: 'rgba(239, 68, 68, 0.45)' },
+                'Sunday':    { name: "STAGE 7: VALHALLA'S GATE 👑",     color: '#BC6CFF', flash: 'rgba(188, 108, 255, 0.55)' }
             },
 
             // ---------------------------------------------------------------------
-            // 3. VICTORY QUOTES (SESSION COMPLETE SPLASH DESCRIPTIONS)
+            // 3. THEMATIC COLOR ARRAY FOR ACTIVE WORKOUT CHECKLIST GLOW FLOW
+            // ---------------------------------------------------------------------
+            progressColors: [
+                '#4b5563', // 1. Muted Silvery Grey (Raw Iron)
+                '#00F0FF', // 2. Oceanic Cyan (Deep Glacial Ice)
+                '#4F46E5', // 3. Electric Indigo (Transition Bridge)
+                '#BC6CFF', // 4. Twilight Purple (Odin's Night Sky)
+                '#10B981'  // 5. Emerald Green (Aurora Borealis Triumph)
+            ],
+
+            // ---------------------------------------------------------------------
+            // 4. VICTORY QUOTES (SESSION COMPLETE SPLASH DESCRIPTIONS)
             // ---------------------------------------------------------------------
             victoryQuotes: {
                 'Monday':    { head: "⚔️ RISE AND REIGN!", sub: "The ships skim the waves, far from the fjords. Today is a new beginning." },
@@ -881,7 +920,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             },
 
             // ---------------------------------------------------------------------
-            // 4. INTERFACE HEADERS & LABELS
+            // 5. INTERFACE HEADERS & LABELS
             // ---------------------------------------------------------------------
             interfaceHeaders: {
                 activeLoadout: "⚔️ Active Loadout",
@@ -898,7 +937,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             },
 
             // ---------------------------------------------------------------------
-            // 5. NODE STATES (SUNDAYS AND WEEKDAYS LEDGER CONFIGURATIONS)
+            // 6. NODE STATES (SUNDAYS AND WEEKDAYS LEDGER CONFIGURATIONS)
             // ---------------------------------------------------------------------
             nodeStates: {
                 weekday: {
@@ -911,7 +950,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         textColor: '#10B981', 
                         borderColor: 'rgba(16, 185, 129, 0.25)',
                         backgroundColor: 'rgba(16, 185, 129, 0.03)',
-                        glowStyle: '0 0 10px rgba(16, 185, 129, 0.6)' // Weekday green subtle glow (increased to 75% of Sunday peak)
+                        glowStyle: '0 0 10px rgba(16, 185, 129, 0.6)'
                     },
                     skipped: {
                         textColor: '#EF4444', 
@@ -926,7 +965,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         backgroundColor: '#020617'
                     },
                     completed: {
-                        textColor: '#BC6CFF', // Standardized purple text color matching border
+                        textColor: '#BC6CFF', 
                         borderColor: '#BC6CFF', 
                         backgroundColor: '#12072b',
                         glowStyle: '0 0 14px #BC6CFF'
@@ -940,7 +979,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             },
 
             // ---------------------------------------------------------------------
-            // 6. COOLDOWN PROCEDURES (MAINTENANCE POST-WORKOUT ITEMS)
+            // 7. COOLDOWN PROCEDURES (MAINTENANCE POST-WORKOUT ITEMS)
             // ---------------------------------------------------------------------
             cooldownProcedures: [
                 "Glute Bridge (10 Cycles)",
@@ -949,12 +988,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             ],
 
             // ---------------------------------------------------------------------
-            // 7. LABELS AND DEFAULT CHRONO MESSAGES
+            // 8. LABELS AND DEFAULT CHRONO MESSAGES
             // ---------------------------------------------------------------------
             labels: {
                 radarDefaultMessage: "CONQUEST RADAR ENGINE PINNED..."
             }
         };
+
+        // Standardize frozen configuration parameters for security
+        Object.freeze(CONFIG_THEME_AND_COPY);
 
         // =========================================================================
         // 🛡️ SUBSECTION 2: GLOBAL STATE DECLARATIONS & SYSTEM DEFAULTS
@@ -976,6 +1018,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         let timerOriginalSecs = 0;
         let wakeLock = null;
 
+        // Sound System lazy initializer variable
+        let globalAudioCtx = null;
+
         // Long press handling constants
         let timerTriggerPressTimer = null;
         let timerResetTriggered = false;
@@ -994,24 +1039,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             customQuotes: {}, 
             workoutRegistry: [],
             cooldownRegistry: [],
-            backgroundSettings: { vignette: 96, tint: 4 } // Stored background sliders states
+            backgroundSettings: { vignette: 96, tint: 4 }
         };
 
         // =========================================================================
         // 🛡️ SUBSECTION 3: CORE STORAGE, BACKUP & MIGRATION ENGINES
         // =========================================================================
         function saveToStorage() {
-            localStorage.setItem('viking_conquest_v11', JSON.stringify(appState));
-            
-            // Dual-Layer Valkyrie Rolling Recovery Cache (Stores last 3 transaction frames)
             try {
+                localStorage.setItem('viking_conquest_v11', JSON.stringify(appState));
+                
+                // Dual-Layer Valkyrie Rolling Cache Backup
                 let valk1 = localStorage.getItem('viking_valk_cache_1');
                 let valk2 = localStorage.getItem('viking_valk_cache_2');
                 if (valk1) localStorage.setItem('viking_valk_cache_2', valk1);
                 if (valk2) localStorage.setItem('viking_valk_cache_3', valk2);
                 localStorage.setItem('viking_valk_cache_1', JSON.stringify(appState));
             } catch (err) {
-                console.warn("Valkyrie recovery cache capacity warning:", err);
+                console.error("Storage write error or QuotaExceededError encountered: ", err);
             }
         }
 
@@ -1027,7 +1072,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 appState.customQuotes = JSON.parse(JSON.stringify(CONFIG_THEME_AND_COPY.victoryQuotes));
             }
 
-            // Migration path validation for Core Seed workflows
             if (!appState.workoutRegistry || appState.workoutRegistry.length === 0) {
                 appState.workoutRegistry = [
                     { id: 'burb', title: "Burpees", type: 'reps', multiplier: 1, logToLedger: true, addedTimestamp: 0 },
@@ -1053,7 +1097,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 });
             }
 
-            // Migrate cooldown registry dynamically
             if (!appState.cooldownRegistry || appState.cooldownRegistry.length === 0) {
                 appState.cooldownRegistry = JSON.parse(JSON.stringify(CONFIG_THEME_AND_COPY.cooldownProcedures));
             }
@@ -1116,35 +1159,48 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             const isCompleted = (appState.monthlyArchive[todayStr] === 'done');
             
+            // Get configuration parameters
             const vignetteVal = appState.backgroundSettings ? appState.backgroundSettings.vignette : 96;
             const tintVal = appState.backgroundSettings ? appState.backgroundSettings.tint : 4;
             
             const vignetteOpacity = vignetteVal / 100;
             const tintOpacity = tintVal / 100;
-
-            let targetColorHex = "#000000"; 
+            
+            // Calculate progress height dynamically for "Bifrost Rise" Gradient overlay
+            let progressHeight = '0%';
             if (isCompleted) {
-                const stage = CONFIG_THEME_AND_COPY.stages[dayName];
-                if (stage) targetColorHex = stage.color;
-            }
-
-            const rgb = hexToRgb(targetColorHex) || { r: 0, g: 0, b: 0 };
-
-            let gradientStr;
-            if (isCompleted && dayName === 'Sunday') {
-                // Completed Sunday dynamic background shift to reddish-purple (Plum Wine/Grape)
-                gradientStr = `linear-gradient(rgba(18, 5, 28, ${vignetteOpacity}), rgba(18, 5, 28, ${vignetteOpacity}))`;
-                document.body.classList.add('conquered-state');
-            } else if (isCompleted) {
-                // Hotfix: Weekday backdrop color wash math re-clamped to prevent bright washouts on AMOLED
-                gradientStr = `linear-gradient(rgba(0, 0, 0, ${vignetteOpacity}), rgba(${rgb.r * 0.05}, ${rgb.g * 0.05}, ${rgb.b * 0.05}, ${vignetteOpacity}))`;
-                document.body.classList.add('conquered-state');
+                progressHeight = '100%';
             } else {
-                gradientStr = `linear-gradient(rgba(0, 0, 0, ${vignetteOpacity}), rgba(0, 0, 0, ${vignetteOpacity}))`;
-                document.body.classList.remove('conquered-state');
+                const todayTimestamp = today.getTime();
+                const visibleWorkouts = appState.workoutRegistry.filter(w => {
+                    return !w.addedTimestamp || w.addedTimestamp <= todayTimestamp;
+                });
+                const totalItems = visibleWorkouts.length + 1; // Workouts + Cooldown Block
+                let doneCount = 0;
+                visibleWorkouts.forEach(ex => {
+                    if (appState.completedExercisesToday[ex.id] === true) doneCount++;
+                });
+                if (appState.completedExercisesToday['maint'] === true) doneCount++;
+                progressHeight = `${Math.round((doneCount / totalItems) * 100)}%`;
             }
             
-            document.body.style.backgroundImage = `${gradientStr}, url("./background.webp")`;
+            // Get today's Stage Color
+            const stage = CONFIG_THEME_AND_COPY.stages[dayName] || { color: '#BC6CFF' };
+            const rgb = hexToRgb(stage.color) || { r: 188, g: 108, b: 255 };
+            
+            // Write styles dynamically to root DOM variables
+            document.body.style.setProperty('--vignette-opacity', vignetteOpacity);
+            document.body.style.setProperty('--tint-opacity', tintOpacity);
+            document.body.style.setProperty('--wash-color-r', rgb.r);
+            document.body.style.setProperty('--wash-color-g', rgb.g);
+            document.body.style.setProperty('--wash-color-b', rgb.b);
+            document.body.style.setProperty('--progress-height', progressHeight);
+            
+            if (isCompleted) {
+                document.body.classList.add('conquered-state');
+            } else {
+                document.body.classList.remove('conquered-state');
+            }
         }
 
         function updateLiveBackgroundSliders() {
@@ -1188,7 +1244,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return { reps: dynamicReps, plank: dynamicPlank };
         }
 
-        // Updated SAGA Day lookup indices to be dynamic and safe from math type conversions
         function getTargetBoundsForDay(dayName) {
             let dayIdx = dayName === 'Sunday' ? 0 : PLANNED_ORDER.indexOf(dayName) + 1;
             let offset = dayIdx === 0 ? 6 : dayIdx - 1;
@@ -1232,6 +1287,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
 
             safeguardAndMigrateDatabase();
+
+            // Daily Checklist Reset Gate: Clean checkmarks if day rolled over
+            const todayStr = getSimulatedDateObject().toDateString();
+            if (appState.lastActiveDateString && appState.lastActiveDateString !== todayStr) {
+                appState.completedExercisesToday = {};
+                appState.lastActiveDateString = todayStr;
+            } else if (!appState.lastActiveDateString) {
+                appState.lastActiveDateString = todayStr;
+            }
+
             saveToStorage();
 
             document.getElementById('base-reps').value = appState.mondayRepBase;
@@ -1256,6 +1321,10 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 btn.classList.remove('active');
             }
 
+            // Lazy instantiate global AudioContext upon first touch to satisfy browser security
+            window.addEventListener('click', initializeAudioContextLazily, { once: true });
+            window.addEventListener('touchstart', initializeAudioContextLazily, { once: true });
+
             checkForValkyrieRescue();
             processBackgroundSkips();
             verifyWeeklyRolloverGate();
@@ -1266,6 +1335,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             renderForgeWorkoutRegistry();
             renderForgeCooldownRegistry();
             updateBodyBackground();
+        }
+
+        function initializeAudioContextLazily() {
+            try {
+                if (!globalAudioCtx) {
+                    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            } catch (err) {
+                console.warn("Failed to lazily warm AudioContext: ", err);
+            }
         }
 
         // =========================================================================
@@ -1324,7 +1403,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const currentStreak = calculateCurrentStreak();
             const rank = getWarriorRank(currentStreak);
             
-            // Clean, Non-Invasive Rank & Status Rendering
             document.getElementById('radar-stats').innerHTML = `
                 STREAK: ${currentStreak} 🔥 | <span style="color:var(--cyan-neon);">${rank.title}</span>
                 <div style="font-size:0.75rem; color:var(--text-muted); margin-top:5px; font-weight:400; letter-spacing:0.02em;">📜${rank.status}</div>
@@ -1357,7 +1435,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 renderForgeWorkoutRegistry();
                 renderForgeCooldownRegistry();
             } else if (tabName === 'battleground') {
-                renderDashboard(); // AUTO-SYNCS ALL COMPLETED STATES AND ACTIVE TIMERS IN REAL-TIME!
+                renderDashboard();
             }
         }
 
@@ -1369,7 +1447,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             const isOpen = el.classList.contains('open-dropdown');
             
-            // Collapse all others first for clean space-saving visual layouts
             document.querySelectorAll('#panel-forge .shine-card').forEach(card => {
                 if (card.id && card.id.startsWith('forge-')) {
                     card.classList.remove('open-dropdown');
@@ -1409,19 +1486,21 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         // 🛡️ SUBSECTION 8: BATTLEGROUND LOADOUT GENERATION
         // =========================================================================
         function getProgressiveGlowColor(index, total) {
-            if (total <= 1) return '#10B981'; // Fallback to Emerald
-            const ratio = index / (total - 1);
-            if (ratio <= 0.20) return '#4b5563'; // Muted dark iron slate
-            if (ratio <= 0.40) return '#00F0FF'; // Oceanic Cyan
-            if (ratio <= 0.60) return '#BC6CFF'; // Amethyst Purple (Plank Zone)
-            if (ratio <= 0.80) return '#FF7A00'; // Warm active amber
-            return '#10B981'; // Radiant emerald green
+            const colors = CONFIG_THEME_AND_COPY.progressColors || ['#4b5563', '#00F0FF', '#4F46E5', '#BC6CFF', '#10B981'];
+            if (total <= 1) return colors[colors.length - 1];
+            
+            let ratio = index / total;
+            let targetIdx = Math.floor(ratio * colors.length);
+            if (targetIdx >= colors.length) targetIdx = colors.length - 1;
+            return colors[targetIdx];
         }
 
         function renderDashboard() {
             const today = getSimulatedDateObject();
             const todayStr = today.toDateString();
             const dayName = DAYS_OF_WEEK[today.getDay()];
+            
+            const maintDone = (appState.completedExercisesToday['maint'] === true);
 
             // Sync Shield Wall toggle UI status
             const shieldBtn = document.getElementById('shield-wall-toggle-btn');
@@ -1469,7 +1548,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 return !w.addedTimestamp || w.addedTimestamp <= todayTimestamp;
             });
 
-            // Calculate exact metrics to drive the progressive glow spectrum
+            // Calculate precise indicators for progress color mapping
             const totalLoadoutItems = visibleWorkouts.length + 1; // Workouts + Cooldown block
             let completedItemIndices = [];
             let activeHtml = '';
@@ -1477,17 +1556,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             let activeCount = 0;
             let completedCount = 0;
 
-            // First pass to map the checklist indices
-            visibleWorkouts.forEach((ex, idx) => {
-                if (!!appState.completedExercisesToday[ex.id]) {
+            visibleWorkouts.forEach(ex => {
+                if (appState.completedExercisesToday[ex.id] === true) {
                     completedItemIndices.push(ex.id);
                 }
             });
-            if (!!appState.completedExercisesToday['maint']) {
+            if (maintDone) {
                 completedItemIndices.push('maint');
             }
 
-            // Find immediate next task to pulse border
+            // Find immediate next focus task
             let activeFocusTargetId = null;
             const firstIncomplete = visibleWorkouts.find(w => !appState.completedExercisesToday[w.id]);
             if (firstIncomplete) {
@@ -1497,22 +1575,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
 
             visibleWorkouts.forEach((ex) => {
-                const isCompleted = !!appState.completedExercisesToday[ex.id];
+                const isCompleted = (appState.completedExercisesToday[ex.id] === true);
                 const displayVal = getTargetValueForWorkout(ex, targets);
                 let cardHtml = '';
                 
-                // Determine progressive glow and focus states
                 let glowStyles = '';
                 let cardClasses = '';
-                if (isCompleted) {
-                    // Removed permanent neon glows on completed cards
-                    glowStyles = '';
-                } else if (ex.id === activeFocusTargetId) {
-                    // Immediate incomplete next task pulses its border in its progress color!
+                if (!isCompleted && ex.id === activeFocusTargetId) {
                     const progressIndex = completedItemIndices.length;
                     let color = getProgressiveGlowColor(progressIndex, totalLoadoutItems);
-                    if (ex.id === 'plank') color = '#BC6CFF'; // Keep Purple specifically for Plank hold
-                    glowStyles = `style="--target-color: ${color};"`;
+                    glowStyles = `--target-color: ${color};`;
                     cardClasses = 'immediate-focus-card';
                 }
 
@@ -1524,7 +1596,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     const currentDisplaySecs = isRunning ? timerRemainingSecs : displayVal;
                     
                     cardHtml = `
-                    <div class="shine-card ${cardClasses}" style="cursor: default;" id="card-${ex.id}" ${glowStyles}>
+                    <div class="shine-card ${cardClasses}" id="card-${ex.id}" style="cursor: default; ${glowStyles}">
                         <div style="display: flex; align-items: center; gap: 12px; pointer-events: none;">
                             <div class="card-title">${ex.title}</div>
                         </div>
@@ -1548,7 +1620,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     const badgeHtml = displayVal ? `<span class="card-badge" style="margin-right: 14px;">${displayVal}</span>` : '';
                     
                     cardHtml = `
-                    <div class="shine-card ${cardClasses}" id="card-${ex.id}" onclick="toggleExerciseManualCheck(event, '${ex.id}')" ${glowStyles}>
+                    <div class="shine-card ${cardClasses}" id="card-${ex.id}" onclick="toggleExerciseManualCheck(event, '${ex.id}')" style="${glowStyles}">
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <div class="card-title">${ex.title}</div>
                         </div>
@@ -1578,29 +1650,24 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 securedLabel.style.display = completedCount > 0 ? 'block' : 'none';
             }
 
-            const maintDone = !!appState.completedExercisesToday['maint'];
             const accOpen = sessionStorage.getItem('viking_v12_acc') === 'true' ? 'open-dropdown' : '';
             
-            // Generate Cooldown Items dynamically from Safe Config
             let cooldownItemsHtml = '';
             appState.cooldownRegistry.forEach(step => {
                 cooldownItemsHtml += `<p style="margin: 4px 0; color:#a1a1aa;">• ${step}</p>`;
             });
 
-            // Determine dynamic progressive focus or inactive styling for cooldown procedures
             let maintGlowStyles = '';
             let maintClasses = '';
-            if (maintDone) {
-                maintGlowStyles = '';
-            } else if (activeFocusTargetId === 'maint') {
+            if (!maintDone && activeFocusTargetId === 'maint') {
                 const progressIndex = completedItemIndices.length;
                 const color = getProgressiveGlowColor(progressIndex, totalLoadoutItems);
-                maintGlowStyles = `style="--target-color: ${color};"`;
+                maintGlowStyles = `--target-color: ${color};`;
                 maintClasses = 'immediate-focus-card';
             }
 
             document.getElementById('maint-wrapper').innerHTML = `
-            <div class="maint-bar shine-card ${accOpen} ${maintDone ? 'completed-container' : ''} ${maintClasses}" id="card-maint" ${maintGlowStyles}>
+            <div class="maint-bar shine-card ${accOpen} ${maintDone ? 'completed-container' : ''} ${maintClasses}" id="card-maint" style="${maintGlowStyles}">
                 <div class="maint-flex" onclick="toggleMaintAccordionUI()">
                     <div style="display:flex; align-items:center; gap:12px;">
                         <div style="font-size:1.15rem; font-weight:700;">⚙️ Cooldown Procedures</div>
@@ -1623,7 +1690,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             if (activeCount === 0 && maintDone) {
                 setTimeout(() => {
                     const finalCheckActive = visibleWorkouts.filter(ex => !appState.completedExercisesToday[ex.id]).length;
-                    if (finalCheckActive === 0 && !!appState.completedExercisesToday['maint']) {
+                    if (finalCheckActive === 0 && appState.completedExercisesToday['maint'] === true) {
                         commitDay();
                     }
                 }, 450); 
@@ -1644,31 +1711,39 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             event.stopPropagation();
             triggerHapticPulse();
             
-            const prevVal = !!appState.completedExercisesToday[id];
+            const prevVal = (appState.completedExercisesToday[id] === true);
             
             if (!prevVal) {
-                // Flash on checkoff: apply a temporary high-intensity flash color state
                 const card = document.getElementById(`card-${id}`);
+                const checkbox = card ? card.querySelector('.manual-check-trigger') : null;
+                
+                // Snappy Feedback: visually check instantly, delay structural rearrangement
+                if (checkbox) checkbox.classList.add('checked');
+                
                 if (card) {
                     const totalLoadoutItems = appState.workoutRegistry.filter(w => {
                         return !w.addedTimestamp || w.addedTimestamp <= getSimulatedDateObject().getTime();
                     }).length + 1;
-                    const progressIndex = Object.keys(appState.completedExercisesToday).length;
-                    const color = getProgressiveGlowColor(progressIndex, totalLoadoutItems);
+                    
+                    let completedCount = 0;
+                    appState.workoutRegistry.forEach(w => {
+                        if (appState.completedExercisesToday[w.id] === true) completedCount++;
+                    });
+                    if (appState.completedExercisesToday['maint'] === true) completedCount++;
+                    
+                    const color = getProgressiveGlowColor(completedCount, totalLoadoutItems);
                     
                     card.style.borderColor = color;
                     card.style.boxShadow = `0 0 20px ${color}`;
                     card.classList.add('completed-flash-active');
                 }
                 
-                // Delay actual update and re-render by 500ms to allow visual flash
                 setTimeout(() => {
                     appState.completedExercisesToday[id] = true;
                     saveToStorage();
                     renderDashboard();
                 }, 500);
             } else {
-                // Immediate uncheck
                 appState.completedExercisesToday[id] = false;
                 if (id === activeTimerId && timerInterval) {
                     clearInterval(timerInterval);
@@ -1694,16 +1769,26 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             event.stopPropagation(); 
             triggerHapticPulse();
             
-            const prevVal = !!appState.completedExercisesToday['maint'];
+            const prevVal = (appState.completedExercisesToday['maint'] === true);
             
             if (!prevVal) {
                 const card = document.getElementById('card-maint');
+                const checkbox = card ? card.querySelector('.manual-check-trigger') : null;
+                
+                if (checkbox) checkbox.classList.add('checked');
+                
                 if (card) {
                     const totalLoadoutItems = appState.workoutRegistry.filter(w => {
                         return !w.addedTimestamp || w.addedTimestamp <= getSimulatedDateObject().getTime();
                     }).length + 1;
-                    const progressIndex = Object.keys(appState.completedExercisesToday).length;
-                    const color = getProgressiveGlowColor(progressIndex, totalLoadoutItems);
+                    
+                    let completedCount = 0;
+                    appState.workoutRegistry.forEach(w => {
+                        if (appState.completedExercisesToday[w.id] === true) completedCount++;
+                    });
+                    if (appState.completedExercisesToday['maint'] === true) completedCount++;
+                    
+                    const color = getProgressiveGlowColor(completedCount, totalLoadoutItems);
                     
                     card.style.borderColor = color;
                     card.style.boxShadow = `0 0 20px ${color}`;
@@ -1749,7 +1834,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             event.stopPropagation(); 
             
             if (timerResetTriggered) {
-                timerResetTriggered = false; // Prevents post-reset single tap triggers on mouse/touch release
+                timerResetTriggered = false; 
                 return;
             }
             
@@ -1796,7 +1881,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
 
         function handleTimerTouchStart(event, workoutId, duration) {
-            // Prevent simulated mouse clicks on mobile from double-triggering timeouts
             if (event.type === 'mousedown' && 'ontouchstart' in window) {
                 return;
             }
@@ -1815,7 +1899,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
                 alert(`Timer reset to baseline (${duration}s)`);
                 renderDashboard();
-            }, 600); // 600ms hold resets the active timer card
+            }, 600); 
         }
 
         function handleTimerTouchEnd() {
@@ -1827,7 +1911,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             timerInterval = setInterval(() => {
                 timerRemainingSecs--;
                 
-                // Dynamic tab title countdown update
                 document.title = `(${timerRemainingSecs}s) V_Forge`;
 
                 const elements = document.querySelectorAll(`#card-${activeTimerId} .timer-display`);
@@ -1847,21 +1930,23 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     
                     releaseWakeLock();
                     playTimerCompletionChime();
-                    if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
+                    try {
+                        if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
+                    } catch (err) {}
+                    
+                    activeTimerId = null; // Clean engine garbage collection references
                 }
             }, 1000);
         }
 
         function playTimerCompletionChime() {
-            // THEME OPTION: AUDIO CHIME (MUTED BY DEFAULT TO PREVENT MORNING DISTURBANCES)
-            // Change "false" to "true" below to enable the synthesized sound beep.
-            const enableAudioChime = false; 
-            if (!enableAudioChime) return;
+            if (!CONFIG_THEME_AND_COPY.enableAudioChime) return;
 
             try {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                if (!AudioCtx) return;
-                const ctx = new AudioCtx();
+                const ctx = getAudioContext();
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
                 
                 const osc1 = ctx.createOscillator();
                 const gain1 = ctx.createGain();
@@ -1889,10 +1974,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
         }
 
-        // Re-acquire screen wake lock on tab visibility changes
+        function getAudioContext() {
+            if (!globalAudioCtx) {
+                globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return globalAudioCtx;
+        }
+
         document.addEventListener('visibilitychange', async () => {
             if (document.visibilityState === 'hidden') {
-                wakeLock = null; // Clean up the reference if the OS revoked it
+                wakeLock = null; 
             } else if (document.visibilityState === 'visible' && activeTimerId && !timerPaused) {
                 try {
                     if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
@@ -1901,7 +1992,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         });
 
         function releaseWakeLock() {
-            if (wakeLock) { wakeLock.release().then(() => wakeLock = null); }
+            try {
+                if (wakeLock) { wakeLock.release().then(() => wakeLock = null); }
+            } catch(e){}
         }
 
         // =========================================================================
@@ -1911,6 +2004,108 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const open = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true';
             sessionStorage.setItem(`open_week_day_${dayName}`, !open);
             renderWeeklyAccordionPanel();
+        }
+
+        function renderWeeklyAccordionPanel() {
+            const container = document.getElementById('weekly-accordion-matrix');
+            if (!container) return;
+            const today = getSimulatedDateObject();
+            
+            // Monday calculation safely anchored
+            let distanceToMonday = today.getDay() - 1;
+            if (distanceToMonday < 0) distanceToMonday = 6;
+            let currentMonday = new Date(today);
+            currentMonday.setDate(today.getDate() - distanceToMonday);
+            
+            let html = '';
+            
+            PLANNED_ORDER.forEach(dayName => {
+                let loopDate = new Date(currentMonday);
+                let offset = PLANNED_ORDER.indexOf(dayName);
+                loopDate.setDate(currentMonday.getDate() + offset);
+                
+                let loopStr = loopDate.toDateString();
+                
+                // Automatic Skip Backfiller Logic for past days inside SAGA panel
+                let statusVal = appState.monthlyArchive[loopStr];
+                if (!statusVal && loopDate < today) {
+                    statusVal = 'skipped';
+                    appState.monthlyArchive[loopStr] = 'skipped';
+                } else if (!statusVal) {
+                    statusVal = 'locked';
+                }
+                
+                let statusClass = 'status-locked';
+                let statusLabel = 'LOCKED';
+                let accordionGlowClass = '';
+                
+                if (statusVal === 'done') {
+                    statusClass = dayName === 'Sunday' ? 'status-peak' : 'status-done';
+                    statusLabel = 'DONE';
+                    accordionGlowClass = dayName === 'Sunday' ? 'staging-glow-peak' : 'staging-glow-standard';
+                } else if (statusVal === 'skipped') {
+                    statusClass = 'status-skipped';
+                    statusLabel = 'SKIPPED';
+                } else if (statusVal === 'rest') {
+                    statusClass = 'status-rest';
+                    statusLabel = 'SHIELDED';
+                } else if (statusVal === 'reset') {
+                    statusClass = 'status-skipped';
+                    statusLabel = 'RESET';
+                }
+                
+                let isOpen = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true';
+                let openClass = isOpen ? 'open' : '';
+                let chevron = isOpen ? '▲' : '▼';
+                
+                let dayTargets = getTargetBoundsForDay(dayName);
+                let loggedMetrics = appState.historicalVolumeLogs[loopStr];
+                let metricsHtml = '';
+                
+                if (loggedMetrics) {
+                    metricsHtml = '<div style="margin-top: 8px; font-size: 0.8rem; line-height: 1.5; color: #a1a1aa;">';
+                    appState.workoutRegistry.forEach(w => {
+                        if (!w.logToLedger) return;
+                        let val = loggedMetrics[w.id];
+                        let label = w.title;
+                        if (val !== undefined && val !== null) {
+                            let displayVal = isNaN(val) ? val : `${val}`;
+                            metricsHtml += `<div>• ${label}: <span style="color:#ffffff; font-weight:700;">${displayVal}</span></div>`;
+                        }
+                    });
+                    metricsHtml += '</div>';
+                } else if (statusVal === 'done') {
+                    metricsHtml = '<div style="margin-top: 8px; font-size: 0.8rem; line-height: 1.5; color: #a1a1aa;">';
+                    appState.workoutRegistry.forEach(w => {
+                        if (!w.logToLedger) return;
+                        let val = getTargetValueForWorkout(w, dayTargets);
+                        metricsHtml += `<div>• ${w.title}: <span style="color:#ffffff; font-weight:700;">${val}</span> (Est.)</div>`;
+                    });
+                    metricsHtml += '</div>';
+                } else {
+                    metricsHtml = `<div style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">No metrics recorded. Target: ${dayTargets.reps} Reps / ${dayTargets.plank}s Plank</div>`;
+                }
+                
+                html += `
+                <div class="week-row ${openClass} ${accordionGlowClass}" id="week-row-${dayName}">
+                    <div class="week-row-header" onclick="toggleDayAccordionElement('${dayName}')">
+                        <div>
+                            <span class="week-day-name" style="font-weight: 700; font-size: 0.95rem;">${dayName.toUpperCase()}</span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 8px;">${loopDate.toLocaleDateString(undefined, {month: 'short', day: 'numeric'})}</span>
+                            <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 700; margin-left: 4px;">[Target: ${dayTargets.reps}R]</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="week-day-status ${statusClass}">${statusLabel}</span>
+                            <span class="forge-header-chevron">${chevron}</span>
+                        </div>
+                    </div>
+                    <div class="week-row-content">
+                        ${metricsHtml}
+                    </div>
+                </div>`;
+            });
+            
+            container.innerHTML = html;
         }
 
         // =========================================================================
@@ -2006,7 +2201,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return html;
         }
 
-        // Dynamic State Rendering directly from configuration parameters
         function buildTileNodeHTML(dateObject, displayNum) {
             let lookupStr = dateObject.toDateString();
             let archiveStatus = appState.monthlyArchive[lookupStr];
@@ -2086,9 +2280,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             let targetsCalculated = getTargetBoundsForDay(dayName);
 
-            let totalsObj = {};
-            let daysEvaluated = 0;
-
+            // Calculation 1: Accumulate volume for the active target week window (up to dateStr)
+            let weeklyTotalsObj = {};
             let dayIndex = targetDate.getDay();
             let offset = dayIndex === 0 ? 6 : dayIndex - 1;
             
@@ -2103,39 +2296,77 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 let loggedMetrics = appState.historicalVolumeLogs[loopStr];
                 if (loggedMetrics) {
                     for (let key in loggedMetrics) {
-                        totalsObj[key] = (totalsObj[key] || 0) + (parseFloat(loggedMetrics[key]) || 0);
+                        weeklyTotalsObj[key] = (weeklyTotalsObj[key] || 0) + (parseFloat(loggedMetrics[key]) || 0);
                     }
-                    daysEvaluated++;
                 } else if (appState.monthlyArchive[loopStr] === 'done') {
                     let estTargets = getTargetBoundsForDay(DAYS_OF_WEEK[loopDate.getDay()]);
                     appState.workoutRegistry.forEach(w => {
                         if (!w.logToLedger) return;
                         let baseVal = getTargetValueForWorkout(w, estTargets);
-                        let val = w.id === 'push' ? baseVal * 2 : baseVal; 
-                        totalsObj[w.id] = (totalsObj[w.id] || 0) + val;
+                        weeklyTotalsObj[w.id] = (weeklyTotalsObj[w.id] || 0) + baseVal;
                     });
-                    daysEvaluated++;
                 }
             }
 
-            let detailedMetricsString = '[NO DATA COMMITTED]';
-            if (daysEvaluated > 0) {
-                detailedMetricsString = '';
-                for (let key in totalsObj) {
-                    let wObj = appState.workoutRegistry.find(w => w.id === key);
-                    let label = wObj ? wObj.title : key;
-                    detailedMetricsString += `${label}: ${totalsObj[key]} total<br>`;
+            // Calculation 2: Accumulate lifetime / all-time database volume (up to dateStr)
+            let allTimeTotalsObj = {};
+            for (let logDateStr in appState.historicalVolumeLogs) {
+                let parsedLogDate = new Date(logDateStr);
+                if (parsedLogDate <= targetDate) {
+                    let loggedMetrics = appState.historicalVolumeLogs[logDateStr];
+                    if (loggedMetrics) {
+                        for (let key in loggedMetrics) {
+                            allTimeTotalsObj[key] = (allTimeTotalsObj[key] || 0) + (parseFloat(loggedMetrics[key]) || 0);
+                        }
+                    }
                 }
             }
-            
+
             ttBody.innerHTML = `
-                <b>TARGET SPECIFIED FOR NODE:</b><br>
+                <b>TARGET FOR DAY:</b><br>
                 ${targetsCalculated.reps} Reps / ${targetsCalculated.plank}s Plank<br><br>
-                <b>ACCUMULATED WEEK VOLUME (UP TO DATE):</b><br>
-                ${detailedMetricsString}<br>
+                <b>ACCUMULATED WEEK VOLUME:</b><br>
+                <div class="volume-swipe-container">
+                    <div class="volume-swipe-track">
+            `;
+            
+            for (let key in weeklyTotalsObj) {
+                let wObj = appState.workoutRegistry.find(w => w.id === key);
+                let label = wObj ? wObj.title : key;
+                ttBody.innerHTML += `
+                    <div class="swipe-element-card">
+                        <div class="swipe-lbl">${label}</div>
+                        <div class="swipe-val">${weeklyTotalsObj[key]}</div>
+                    </div>
+                `;
+            }
+            
+            ttBody.innerHTML += `
+                    </div>
+                </div>
+                <br><b>ALL-TIME LIFETIME VOLUME:</b><br>
+                <div class="volume-swipe-container">
+                    <div class="volume-swipe-track">
+            `;
+
+            for (let key in allTimeTotalsObj) {
+                let wObj = appState.workoutRegistry.find(w => w.id === key);
+                let label = wObj ? wObj.title : key;
+                ttBody.innerHTML += `
+                    <div class="swipe-element-card">
+                        <div class="swipe-lbl">${label}</div>
+                        <div class="swipe-val">${allTimeTotalsObj[key]}</div>
+                    </div>
+                `;
+            }
+
+            ttBody.innerHTML += `
+                    </div>
+                </div>
                 REGISTRY ID: [${archiveStatus.toUpperCase()}]
             `;
             tt.style.display = 'block';
+            attachTouchInteractions();
         }
 
         // =========================================================================
@@ -2143,14 +2374,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         // =========================================================================
         function processBackgroundSkips() {
             const today = getSimulatedDateObject();
-            const todayStr = today.toDateString();
             
             let limitDate = new Date();
             
-            // Checks if a historic backup actually exists to lock backfiller bounds
             const hasHistory = Object.keys(appState.monthlyArchive).length > 0;
             if (!hasHistory) {
-                // First week clamping gate: backfill skips strictly from the Monday of the current active week
                 let distanceToMonday = today.getDay() - 1;
                 if (distanceToMonday < 0) distanceToMonday = 6;
                 limitDate = new Date(today);
@@ -2163,12 +2391,10 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 limitDate.setDate(limitDate.getDate() - 14); 
             }
 
-            // Normalizes boundary comparison margins
             let checkDate = new Date(today);
             checkDate.setHours(0,0,0,0);
             limitDate.setHours(0,0,0,0);
 
-            // Backfills chronologically missing frames
             checkDate.setDate(checkDate.getDate() - 1);
             while (checkDate >= limitDate) {
                 let loopStr = checkDate.toDateString();
@@ -2296,11 +2522,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
             activeReg.forEach(workout => {
                 let baseVal = getTargetValueForWorkout(workout, targets);
-                if (workout.id === 'push') {
-                    todayMetrics[workout.id] = baseVal * 2; // Direct pushups volume doubling implementation
-                } else {
-                    todayMetrics[workout.id] = baseVal;
-                }
+                todayMetrics[workout.id] = baseVal;
             });
 
             appState.currentWeekData[dayName] = todayMetrics;
@@ -2356,15 +2578,19 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
 
         function triggerHapticPulse() {
-            if (window.navigator && window.navigator.vibrate) {
-                window.navigator.vibrate(25);
-            }
+            try {
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(25);
+                }
+            } catch (err) {}
         }
 
         function triggerHammerHaptic() {
-            if (window.navigator && window.navigator.vibrate) {
-                window.navigator.vibrate([100, 80, 100, 80, 350]);
-            }
+            try {
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate([100, 80, 100, 80, 350]);
+                }
+            } catch (err) {}
         }
 
         function exportBackupData() {
@@ -2393,7 +2619,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     if (parsed && typeof parsed === 'object' && parsed.mondayRepBase) {
                         appState = parsed;
                         
-                        // Safeguard check on imported schema structure
                         safeguardAndMigrateDatabase();
                         saveToStorage();
                         
@@ -2415,24 +2640,44 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         function renderSkaldConfigInterface() {
             const container = document.getElementById('skald-quotes-container');
             if (!container) return;
-
-            let html = '';
+            
+            let selectedDay = sessionStorage.getItem('viking_selected_quote_day') || 'Monday';
+            
+            let optionsHtml = '';
             PLANNED_ORDER.forEach(day => {
-                const currentData = appState.customQuotes[day] || { head: "", sub: "" };
-                html += `
-                <div class="config-grid-item" style="border:none; padding:0; background:none;">
-                    <label style="margin-top:10px;">${day.toUpperCase()} CELEBRATION RUNES</label>
-                    <input type="text" class="config-input" value="${currentData.head}" placeholder="Catchphrase (e.g., RISE AND REIGN!)" id="quote-head-${day}" onchange="saveCustomQuoteData('${day}')">
-                    <textarea class="config-textarea" placeholder="Sub-Quote text..." id="quote-sub-${day}" onchange="saveCustomQuoteData('${day}')">${currentData.sub}</textarea>
-                </div>`;
+                let sel = day === selectedDay ? 'selected' : '';
+                optionsHtml += `<option value="${day}" ${sel}>${day}</option>`;
             });
+            
+            const currentData = appState.customQuotes[selectedDay] || { head: "", sub: "" };
+            
+            let html = `
+            <div class="config-grid-item" style="border:none; padding:0; background:none;">
+                <label style="margin-bottom:8px;">SELECT WEEKDAY TO CONFIGURE</label>
+                <select id="quote-day-picker" class="config-input" style="background-color:#000; border:1px solid #1c142b; color:#fff;" onchange="handleQuoteDayChange(this.value)">
+                    ${optionsHtml}
+                </select>
+                
+                <label style="margin-top:14px; display:block;">CELEBRATION CATCHPHRASE</label>
+                <input type="text" class="config-input" value="${currentData.head}" placeholder="Catchphrase (e.g., RISE AND REIGN!)" id="quote-head-field" oninput="saveCurrentQuoteData()">
+                
+                <label style="margin-top:8px; display:block;">VICTORY DESC (SUB-TEXT)</label>
+                <textarea class="config-textarea" placeholder="Sub-text..." id="quote-sub-field" oninput="saveCurrentQuoteData()">${currentData.sub}</textarea>
+            </div>`;
+            
             container.innerHTML = html;
         }
 
-        function saveCustomQuoteData(day) {
-            const headVal = document.getElementById(`quote-head-${day}`).value;
-            const subVal = document.getElementById(`quote-sub-${day}`).value;
-            appState.customQuotes[day] = { head: headVal, sub: subVal };
+        function handleQuoteDayChange(day) {
+            sessionStorage.setItem('viking_selected_quote_day', day);
+            renderSkaldConfigInterface();
+        }
+
+        function saveCurrentQuoteData() {
+            let selectedDay = sessionStorage.getItem('viking_selected_quote_day') || 'Monday';
+            const headVal = document.getElementById('quote-head-field').value;
+            const subVal = document.getElementById('quote-sub-field').value;
+            appState.customQuotes[selectedDay] = { head: headVal, sub: subVal };
             saveToStorage();
         }
 
@@ -2594,6 +2839,39 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             alert("Cooldown stretch added successfully.");
         }
 
+        function forgeMoveCooldownUp(index) {
+            triggerHapticPulse();
+            if (index === 0) return;
+            const temp = appState.cooldownRegistry[index];
+            appState.cooldownRegistry[index] = appState.cooldownRegistry[index - 1];
+            appState.cooldownRegistry[index - 1] = temp;
+            saveToStorage();
+            renderForgeCooldownRegistry();
+            renderDashboard();
+        }
+
+        function forgeMoveCooldownDown(index) {
+            triggerHapticPulse();
+            if (index === appState.cooldownRegistry.length - 1) return;
+            const temp = appState.cooldownRegistry[index];
+            appState.cooldownRegistry[index] = appState.cooldownRegistry[index + 1];
+            appState.cooldownRegistry[index + 1] = temp;
+            saveToStorage();
+            renderForgeCooldownRegistry();
+            renderDashboard();
+        }
+
+        function forgeRemoveCooldown(index) {
+            triggerHapticPulse();
+            const target = appState.cooldownRegistry[index];
+            if (confirm(`Do you want to delete the cooldown step "${target}"?`)) {
+                appState.cooldownRegistry.splice(index, 1);
+                saveToStorage();
+                renderForgeCooldownRegistry();
+                renderDashboard();
+            }
+        }
+
         // =========================================================================
         // 🛡️ SUBSECTION 17: SANDBOX DEVELOPMENT DIRECTIVES (SANDBOX)
         // =========================================================================
@@ -2613,10 +2891,22 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const currentWeekIdx = getWeekIndex(getSimulatedDateObject());
             pendingRolloverWeekIdx = currentWeekIdx + 1;
             showInlineRolloverBriefing();
+            
+            // Auto redirect to BATTLEGROUND tab so they instantly see the prompt
+            switchTab('battleground', document.getElementById('nav-dash'));
         }
 
         function testSimulateNextDayShift() {
             testTimeOffsetDays += 1;
+            
+            // Force-simulate a clean daily rollover by updating last active date
+            const today = getSimulatedDateObject();
+            const todayStr = today.toDateString();
+            
+            appState.completedExercisesToday = {};
+            appState.lastActiveDateString = todayStr;
+            saveToStorage();
+
             processBackgroundSkips();
             verifyWeeklyRolloverGate();
             refreshRadarHeader();
@@ -2658,7 +2948,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
 
         function factoryWipeDatabase() {
-            // Updated to "Reset to Baseline Today": clears checklist and resets date bounds safely
             if (confirm("Roll back to standard baseline starting settings for today? This preserves your custom workouts but safely resets your history logs.")) {
                 appState.mondayRepBase = 20;
                 appState.mondayPlankBase = 100;
@@ -2684,17 +2973,22 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     });
             });
 
-            // Automatically reloads the page once the new Service Worker takes over
+            // Prevent blind, mid-session update reloads if user is actively in a workout
             let refreshing = false;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (!refreshing) {
+                if (refreshing) return;
+                
+                const activeSessionInProgress = activeTimerId !== null || Object.values(appState.completedExercisesToday).some(val => val === true);
+                if (activeSessionInProgress) {
+                    console.log("Background PWA update deferred: Session currently active.");
+                    sessionStorage.setItem('viking_pwa_update_pending', 'true');
+                } else {
                     refreshing = true;
-                    window.location.reload(); // Instantly refreshes to display your updated build!
+                    window.location.reload(); 
                 }
             });
         }
 
-        // PWA Native Installer Card Trigger Logic
         let deferredPrompt = null;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -2726,32 +3020,19 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. DECOUPLED CUSTOM DESIGN PATTERN:
-   The text strings, colors, styles, ranks, and stretch checklists have been 
-   removed from the primary logic equations and moved into the CONFIG_THEME_AND_COPY 
-   object at the top of the <script> block. Non-coders can easily open this file, 
-   find the safe zone, swap hex codes, or edit messages without breaking functions.
+1. DOUBLE-TOUCH EVENT RESOLVED:
+   Consolidated duplicate style attributes into a single string for timer (Plank) 
+   cards, which successfully enables the border-glow pulse alongside the global 
+   accent-glow countdown text animations.
 
-2. PERSISTENT GLOBAL TAB-PROOF TIMER:
-   The active countdown timer handles variables globally rather than attaching them 
-   directly to HTML elements. When you switch tabs to SAGA or FORGE and return, the 
-   renderDashboard() method automatically checks this state and safely re-binds 
-   the ticking text nodes, preventing timer freezes or DOM element crashes.
+2. ADVANCED SAGA DONE-GLOWS (20% BOOSTED):
+   Dynamic completed card headers in SAGA staging now reflect standard completed days 
+   in luminous green, and Sunday Peak days in brilliant purple. Visual shadow-opacities 
+   and borders were boosted by 20% to make historical views pop.
 
-3. DUAL-LAYER VALKYRIE RECOVERY CACHE:
-   Browsers can occasionally clear local storage. The dual-layer recovery system 
-   saves copies of your progress to backup cache keys. If the main database is wiped, 
-   the app detects it and presents a "Valkyrie Rescue" restore option.
-
-4. LOG-TO-LEDGER FLEXIBILITY:
-   You can turn on/off ledger logging for custom workouts. This allows you to log 
-   stretching/mobility exercises (like Cat-Cow) on your daily Battleground checklist 
-   without cluttering your SAGA volume history charts.
-
-5. AMOLED SCREEN OPTIMIZER:
-   An interactive slider panel located at the bottom of the FORGE tab allows real-time
-   adjustment of background darkness (vignette) and ambient color saturation. The 
-   body background seamlessly recalculates and darkens to preserve pixel blacks 
-   to complement custom backgrounds on high-end AMOLED displays.
+3. HARDENED PWA SWEOVERS:
+   PWA automated updates are blocked from executing if a session is actively in progress. 
+   When you trigger "Warp Next Day" inside developer overrides, the clock not only shifts 
+   but also emulates a clean daily rollover by wiping checkmarks and resetting day gates.
 ================================================================================
 -->
