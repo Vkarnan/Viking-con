@@ -197,7 +197,7 @@ CORE APP CAPABILITIES:
         /* GPU Pre-rendering Hinting */
         .breath-flicker-wrapper, .flame-svg, .wave-svg, .ember-particle {
             will-change: transform, opacity;
-            transform: translateZ(0); /* Force hardware accelerated layer composition */
+            transform: translate3d(0, 0, 0); /* Forces high-speed GPU layer composition */
         }
 
         /* PROCEDURAL HEAT WAVE DISTORTION WRAPPER */
@@ -244,16 +244,16 @@ CORE APP CAPABILITIES:
         .front-sway { animation: layer-sway-front 4.2s ease-in-out infinite; }
 
         @keyframes layer-sway-back {
-            0%, 100% { transform: translateX(-12px); }
-            50% { transform: translateX(12px); }
+            0%, 100% { transform: translate3d(-12px, 0, 0); }
+            50% { transform: translate3d(12px, 0, 0); }
         }
         @keyframes layer-sway-mid {
-            0%, 100% { transform: translateX(16px); }
-            50% { transform: translateX(-16px); }
+            0%, 100% { transform: translate3d(16px, 0, 0); }
+            50% { transform: translate3d(-16px, 0, 0); }
         }
         @keyframes layer-sway-front {
-            0%, 100% { transform: translateX(-20px); }
-            50% { transform: translateX(20px); }
+            0%, 100% { transform: translate3d(-20px, 0, 0); }
+            50% { transform: translate3d(20px, 0, 0); }
         }
 
         /* SEAMLESS LOOPING JAGGED FLAME & WAVE SVGS */
@@ -266,7 +266,6 @@ CORE APP CAPABILITIES:
             transform-origin: bottom;
         }
 
-        /* Water Theme completed visual height adjustment */
         body.theme-water .wave-svg {
             height: 100% !important;
             bottom: -2px;
@@ -316,40 +315,41 @@ CORE APP CAPABILITIES:
             mix-blend-mode: screen;
         }
 
+        /* High-Performance 3D translation offsets create seamless transitions upon reset loops */
         @keyframes wave-drift-back {
-            0% { transform: translateX(-50%) translateY(0) scaleY(1); }
-            50% { transform: translateX(-25%) translateY(-4px) scaleY(1.08); }
-            100% { transform: translateX(0) translateY(0) scaleY(1); }
+            0% { transform: translate3d(-50%, 0, 0) scaleY(1); }
+            50% { transform: translate3d(-25%, -6px, 0) scaleY(1.08); }
+            100% { transform: translate3d(0%, 0, 0) scaleY(1); }
         }
 
         @keyframes wave-drift-mid {
-            0% { transform: translateX(0) translateY(2px) rotate(0deg) scaleY(1.05); }
-            50% { transform: translateX(-25%) translateY(-6px) rotate(-1.5deg) scaleY(0.95); }
-            100% { transform: translateX(-50%) translateY(2px) rotate(0deg) scaleY(1.05); }
+            0% { transform: translate3d(0%, 2px, 0) rotate(0deg) scaleY(1.05); }
+            50% { transform: translate3d(-25%, -8px, 0) rotate(-1.5deg) scaleY(0.95); }
+            100% { transform: translate3d(-50%, 2px, 0) rotate(0deg) scaleY(1.05); }
         }
 
         @keyframes wave-drift-front {
-            0% { transform: translateX(0) translateY(-2px) rotate(0deg); }
-            50% { transform: translateX(-25%) translateY(4px) rotate(1.2deg); }
-            100% { transform: translateX(-50%) translateY(-2px) rotate(0deg); }
+            0% { transform: translate3d(0%, -2px, 0) rotate(0deg); }
+            50% { transform: translate3d(-25%, 6px, 0) rotate(1.2deg); }
+            100% { transform: translate3d(-50%, -2px, 0) rotate(0deg); }
         }
 
         @keyframes drift-normal-front {
-            0% { transform: translateX(0) translateY(1px); }
-            50% { transform: translateX(-25%) translateY(-3px); }
-            100% { transform: translateX(-50%) translateY(1px); }
+            0% { transform: translate3d(0, 1px, 0); }
+            50% { transform: translate3d(-25%, -3px, 0); }
+            100% { transform: translate3d(-50%, 1px, 0); }
         }
 
         @keyframes drift-normal-mid {
-            0% { transform: translateX(0) translateY(-2px); }
-            50% { transform: translateX(-25%) translateY(2px); }
-            100% { transform: translateX(-50%) translateY(-2px); }
+            0% { transform: translate3d(0, -2px, 0); }
+            50% { transform: translate3d(-25%, 2px, 0); }
+            100% { transform: translate3d(-50%, -2px, 0); }
         }
 
         @keyframes drift-reverse-back {
-            0% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-25%) translateY(-4px); }
-            100% { transform: translateX(0) translateY(0); }
+            0% { transform: translate3d(-50%, 0, 0); }
+            50% { transform: translate3d(-25%, -4px, 0); }
+            100% { transform: translate3d(0, 0, 0); }
         }
 
         /* CLASS TOGGLERS FOR WATER VS FIRE THEMES */
@@ -365,9 +365,9 @@ CORE APP CAPABILITIES:
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             pointer-events: none;
-            z-index: 2000; /* Raised to be visible across all tabs overlaying everything */
+            z-index: 2000; /* Visible globally across all tab panels */
             overflow: hidden;
-            contain: strict; /* Completely locks the particle layer from triggering layout shifts elsewhere */
+            contain: strict;
         }
 
         .ember-particle {
@@ -384,7 +384,7 @@ CORE APP CAPABILITIES:
 
         @keyframes ascend-ember {
             0% {
-                transform: translateY(0) translateX(0) scale(0.6);
+                transform: translate3d(0, 0, 0) scale(0.6);
                 opacity: 0;
             }
             15% {
@@ -394,7 +394,7 @@ CORE APP CAPABILITIES:
                 opacity: var(--ember-target-opacity, 0.8);
             }
             100% {
-                transform: translateY(var(--ascend-distance, -100vh)) translateX(var(--drift-offset, 30px)) scale(0);
+                transform: translate3d(var(--drift-offset, 30px), var(--ascend-distance, -100vh), 0) scale(0);
                 opacity: 0;
             }
         }
@@ -1125,25 +1125,26 @@ CORE APP CAPABILITIES:
             <path d="M 0,120 L 0,85 C 50,45 100,45 150,85 C 200,125 250,125 300,85 C 350,45 400,45 450,85 C 500,125 550,125 600,85 C 650,45 700,45 750,85 C 800,125 850,125 900,85 C 950,45 1000,45 1050,85 L 1200,85 L 1200,120 L 0,120 Z" />
         </svg>
         
-        <!-- Upgraded Realistic Campfire Progress State -->
+        <!-- Upgraded Campfire & Water Progress Gradient Definitions -->
         <div class="breath-flicker-wrapper">
             <div class="sway-container back-sway">
                 <svg class="flame-svg flame-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
                     <defs>
+                        <!-- High-Visibility Gradient stops protect wave tips from blacking out -->
                         <linearGradient id="gradient-back" x1="0%" y1="100%" x2="0%" y2="0%">
                             <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
-                            <stop offset="40%" stop-color="var(--stage-color)" stop-opacity="0.65"/>
-                            <stop offset="100%" stop-color="transparent" stop-opacity="0" />
+                            <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
+                            <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
                         </linearGradient>
                         <linearGradient id="gradient-mid" x1="0%" y1="100%" x2="0%" y2="0%">
                             <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
-                            <stop offset="45%" stop-color="var(--stage-color)" stop-opacity="0.75" />
-                            <stop offset="100%" stop-color="transparent" stop-opacity="0" />
+                            <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
+                            <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
                         </linearGradient>
                         <linearGradient id="gradient-front" x1="0%" y1="100%" x2="0%" y2="0%">
                             <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
-                            <stop offset="40%" stop-color="var(--stage-color)" stop-opacity="0.8" />
-                            <stop offset="100%" stop-color="transparent" stop-opacity="0" />
+                            <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
+                            <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
                         </linearGradient>
                     </defs>
                     <path d="M 0,120 L 0,85 L 40,15 L 45,15 L 80,95 L 100,70 L 105,70 L 130,95 L 170,5 L 175,5 L 210,100 L 235,50 L 240,50 L 275,95 L 320,30 L 325,30 L 370,102 L 400,75 L 405,75 L 440,90 L 490,10 L 495,10 L 535,95 L 570,45 L 575,45 L 600,85 L 600,85 L 640,15 L 645,15 L 680,95 L 700,70 L 705,70 L 730,95 L 770,5 L 775,5 L 810,100 L 835,50 L 840,50 L 875,95 L 920,30 L 925,30 L 970,102 L 1000,75 L 1005,75 L 1040,90 L 1090,10 L 1095,10 L 1135,95 L 1170,45 L 1175,45 L 1200,85 L 1200,120 L 0,120 Z" />
@@ -1388,7 +1389,7 @@ CORE APP CAPABILITIES:
         <div class="nav-item" id="nav-arch" onclick="switchTab('saga', this)">SAGA</div>
         <div class="nav-item" id="nav-set" onclick="switchTab('forge', this)">FORGE</div>
     </nav>
-<!-- END OF PART 4 OF 9 -->
+<!-- END OF PART 4 OF 9 --><!-- END OF PART 4 OF 9 -->
 <!-- BREADCRUMB CONNECTOR [Part 4 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 4 -->
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 5 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 5 WILL DEFINE THE CORE GLOBAL STATES, CONSTRUCTORS, CONFIGS, AND INITIALIZERS -->
@@ -1636,7 +1637,7 @@ CORE APP CAPABILITIES:
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 6 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 6 WILL DEFINE CORE JS VISUAL RENDERS, DOUBLE-DENSITY EMBERS & PWA INTERACTION HOOKS -->
 <!-- CONNECTOR PART 5 -> PART 6 -->
-<!-- START OF PART 6 OF 7: CORE JS VISUAL RENDERS, DOUBLE-DENSITY EMBERS & PWA INTERACTION HOOKS -->
+<!-- START OF PART 6 OF 9: CORE JS VISUAL RENDERS, DYNAMIC EMBERS & DYNAMIC WAVE CODES -->
     <script>
         // =========================================================================
         // 🛡️ SUBSECTION 4: SIMULATION DATE, COLOR & BACKDROP CALCULATORS
@@ -1654,6 +1655,29 @@ CORE APP CAPABILITIES:
             } : null;
         }
 
+        // Trochoidal SVG Path Generator: Draws sharp peaking crests and wide solid troughs
+        function drawTrochoidalPath(amp, freq, baseHeight) {
+            let path = `M 0 120 L 0 ${baseHeight} `;
+            let totalWidth = 2400; // 200% width for horizontal translation loop continuity
+            let step = totalWidth / (freq * 4);
+            
+            for (let i = 0; i < freq * 4; i++) {
+                let x = (i + 1) * step;
+                let isPeak = (i % 2 === 0);
+                
+                let targetY = isPeak ? (baseHeight - amp) : (baseHeight + amp * 0.25);
+                
+                let controlX1 = x - step * 0.5;
+                let controlY1 = isPeak ? (baseHeight + amp * 0.2) : (baseHeight - amp * 0.35);
+                let controlX2 = x - step * 0.25;
+                let controlY2 = targetY;
+                
+                path += `C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${x} ${targetY} `;
+            }
+            path += `L ${totalWidth} 120 Z`;
+            return path;
+        }
+
         function updateBodyBackground() {
             const today = getSimulatedDateObject();
             const todayStr = today.toDateString();
@@ -1667,7 +1691,6 @@ CORE APP CAPABILITIES:
             const vignetteOpacity = vignetteVal / 100;
             const washOpacity = washVal / 100;
             
-            let progressHeight = '0%';
             let progressFloat = 0;
             const todayTimestamp = today.getTime();
             const visibleWorkouts = appState.workoutRegistry.filter(w => {
@@ -1681,11 +1704,9 @@ CORE APP CAPABILITIES:
             if (appState.completedExercisesToday['maint'] === true) doneCount++;
             
             if (isCompleted) {
-                progressHeight = '100%';
                 progressFloat = 1.0;
             } else {
                 progressFloat = doneCount / totalItems;
-                progressHeight = `${Math.round(progressFloat * 100)}%`;
             }
             
             const stage = CONFIG_THEME_AND_COPY.stages[dayName] || { color: '#BC6CFF' };
@@ -1701,6 +1722,9 @@ CORE APP CAPABILITIES:
             document.body.style.setProperty('--stage-color-translucent', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`);
             document.body.style.setProperty('--stage-color', stage.color);
 
+            // Solidity base opacity write
+            document.body.style.setProperty('--wave-base-opacity', 0.59); // Latched to your calibrated simulator snapshot
+
             document.body.classList.remove('theme-water', 'theme-fire');
             document.body.classList.add(`theme-${appState.activeVisualTheme || 'water'}`);
 
@@ -1709,6 +1733,40 @@ CORE APP CAPABILITIES:
             } else {
                 document.body.classList.remove('conquered-state');
             }
+
+            // DYNAMIC PROGRESSION & ACCELERATION CALIBRATION
+            let baseHeight = 120;
+            let amp = 8.4; // 28px completed crest scaled for 120 viewBox (28 * 0.3)
+            let freq = 4;  // Calibrated 4 Waves from your completed snapshot
+            let speed = 8; // Calibrated 8s cycle from your completed snapshot
+
+            if (!isCompleted) {
+                // Bifrost Rise Engine: Accelerates speed (12s to 3s) and Wavelength (1 to 10) as progress grows
+                speed = 12 - (progressFloat * 9);
+                freq = Math.round(1 + (progressFloat * 9));
+                baseHeight = 120 - (progressFloat * 90); // Rises from bottom 120px to 30px
+                amp = 3 + (progressFloat * 5.4); // Amplitude grows as excitement builds
+            } else {
+                baseHeight = 120 - (0.28 * 120); // 28% completed vertical clamp
+            }
+
+            // Redraw trochoidal paths on-the-fly across active and completed layers
+            const backPath = drawTrochoidalPath(amp * 0.7, freq, baseHeight);
+            const midPath = drawTrochoidalPath(amp * 1.0, freq, baseHeight);
+            const frontPath = drawTrochoidalPath(amp * 1.3, freq, baseHeight);
+
+            document.querySelectorAll('.wave-back path').forEach(p => p.setAttribute('d', backPath));
+            document.querySelectorAll('.wave-mid path').forEach(p => p.setAttribute('d', midPath));
+            document.querySelectorAll('.wave-front path').forEach(p => p.setAttribute('d', frontPath));
+
+            // Dynamically speed-up overlapping keyframe translations based on progress
+            const midSpeed = speed;
+            const backSpeed = Math.round(speed * 1.45);
+            const frontSpeed = Math.round(speed * 0.68);
+
+            document.querySelectorAll('.wave-back').forEach(el => el.style.animation = `wave-drift-back ${backSpeed}s ease-in-out infinite`);
+            document.querySelectorAll('.wave-mid').forEach(el => el.style.animation = `wave-drift-mid ${midSpeed}s ease-in-out infinite`);
+            document.querySelectorAll('.wave-front').forEach(el => el.style.animation = `wave-drift-front ${frontSpeed}s ease-in-out infinite`);
 
             currentProgressValue = progressFloat;
             adjustEmberSpawnerCycle();
@@ -1722,7 +1780,7 @@ CORE APP CAPABILITIES:
             const theme = appState.activeVisualTheme || 'water';
             const isCompleted = document.body.classList.contains('conquered-state');
 
-            // Enforce a strict ceiling of 32 active particle nodes to prevent memory leaks
+            // Capped at 32 active nodes to prevent browser memory leaks
             if (emberField) {
                 const activeParticles = emberField.getElementsByClassName('ember-particle');
                 if (activeParticles.length >= 32) {
@@ -1733,7 +1791,7 @@ CORE APP CAPABILITIES:
             const particle = document.createElement('div');
             particle.classList.add('ember-particle');
 
-            // Dynamic Tinting: Bind ember color/glow strictly to the live CSS Stage variable
+            // Stage Color Coupling: Embers dynamically lock to stage color (Orange on Friday, Purple on Sunday)
             particle.style.backgroundColor = 'var(--stage-color)';
             particle.style.boxShadow = '0 0 8px var(--stage-color)';
 
@@ -1749,8 +1807,6 @@ CORE APP CAPABILITIES:
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 particle.style.left = `${leftPosition}%`;
-                particle.style.backgroundColor = 'rgba(0, 240, 255, 0.4)';
-                particle.style.boxShadow = '0 0 10px rgba(0, 240, 255, 0.25)';
                 particle.style.borderRadius = '50%';
                 particle.style.setProperty('--ascend-distance', `-${ascendDistance}vh`);
                 particle.style.setProperty('--drift-offset', `${driftOffset}px`);
@@ -1799,11 +1855,9 @@ CORE APP CAPABILITIES:
             const theme = appState.activeVisualTheme || 'water';
             const isCompleted = document.body.classList.contains('conquered-state');
 
-            // Embers float globally across all tabs
             if (theme === 'water') {
                 if (!isCompleted) return;
                 emberInterval = setInterval(() => {
-                    // Double density: Spawn 4 embers per cycle
                     for (let i = 0; i < 4; i++) {
                         spawnIndividualEmber();
                     }
@@ -1817,7 +1871,6 @@ CORE APP CAPABILITIES:
                 }
 
                 emberInterval = setInterval(() => {
-                    // Double density: Spawn 4 embers per cycle
                     for (let i = 0; i < 4; i++) {
                         spawnIndividualEmber();
                     }
@@ -1854,7 +1907,6 @@ CORE APP CAPABILITIES:
             updateBodyBackground();
         }
 
-        // Global dismiss listener for tooltips
         document.addEventListener('pointerdown', (e) => {
             const tt = document.getElementById('touch-tooltip');
             if (tt && tt.classList.contains('visible')) {
@@ -1912,8 +1964,7 @@ CORE APP CAPABILITIES:
             }
         }
     </script>
-<!-- END OF PART 6 OF 7 -->
-
+<!-- END OF PART 6 OF 9 -->
 <!-- BREADCRUMB CONNECTOR [Part 6 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 6 -->
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 7 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 7 WILL DEFINE JS RENDERS, MULTI-ACTIVE ACCURACY TIMERS, WAKE LOCK, AND ACCORDIONS -->
@@ -2503,7 +2554,6 @@ CORE APP CAPABILITIES:
         }
     </script>
 <!-- END OF PART 7 OF 9 -->
-
 <!-- BREADCRUMB CONNECTOR [Part 7 of 9]: PASTE THIS BLOCK DIRECTLY BELOW PART 7 -->
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 8 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 8 WILL DEFINE SAGA ACCORDIONS, COLLISION-PROOF TOOLTIPS, AND HISTORICAL GRIDS -->
