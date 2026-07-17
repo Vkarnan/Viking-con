@@ -1,7 +1,7 @@
 <!-- START OF PART 1: HTML SHELL & STYLESHEET CORE -->
 <!--
-TITLE: V_Forge - Master Unified Edition (Build v3.9.0 - Fluid Waves, Dynamic Embers & Wake Lock Core)
-DATE/TIME (IST): July 17, 2026 - 02:52 PM IST
+TITLE: V_Forge - Master Unified Edition (Build v3.9.5 - Preloaded Bootstrap & Trochoidal Wave Physics)
+DATE/TIME (IST): July 17, 2026 - 05:37 PM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES:
@@ -100,6 +100,17 @@ CORE APP CAPABILITIES:
             transition: background 0.4s ease;
         }
 
+        /* ------------------------------------------------------------- */
+        /* PRELOAD-BOOTSTRAP PREVENT TRANSITION FLASH SYSTEM             */
+        /* ------------------------------------------------------------- */
+        body.preload-no-transition,
+        body.preload-no-transition *,
+        body.preload-no-transition #bifrost-wash-layer,
+        body.preload-no-transition #conquered-wash-overlay {
+            transition: none !important;
+            animation: none !important;
+        }
+
         /* Transition state into Stage Colors upon Completed State Active */
         body.conquered-state {
             --header-accent: var(--stage-color);
@@ -126,7 +137,7 @@ CORE APP CAPABILITIES:
             overflow: visible;
             transform-origin: bottom;
             contain: paint layout; /* Isolates the layer entirely from scroll repaints to eliminate stutters */
-            transform: translateY(calc(100vh - (10vh + var(--fire-progress) * 85vh)));
+            transform: translate3d(0, calc(100vh - (10vh + var(--fire-progress) * 85vh)), 0);
             background: linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--wash-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0) 50%);
             mix-blend-mode: screen; 
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
@@ -150,17 +161,17 @@ CORE APP CAPABILITIES:
             pointer-events: none;
             z-index: -1;
             transform-origin: bottom;
-            transform: translateY(0);
+            transform: translate3d(0, 0, 0);
             transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             overflow: visible;
         }
         
-        /* Water Theme Completed State Wave Height Clamped to 26% to 28% elegant baseline */
+        /* Water Theme Completed State Wave Height Clamped to 28% elegant baseline */
         body.theme-water #conquered-wash-overlay {
             height: 28vh !important;
             bottom: 0;
             top: auto;
-            transform: translateY(0) !important;
+            transform: translate3d(0, 0, 0) !important;
             background-image: linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.7) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.2) 60%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0) 100%) !important;
             transition: opacity 0.4s ease;
         }
@@ -170,25 +181,25 @@ CORE APP CAPABILITIES:
             height: 40vh !important;
             bottom: 0;
             top: auto;
-            transform: translateY(0) !important;
+            transform: translate3d(0, 0, 0) !important;
             background-image: radial-gradient(circle at 50% 100%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, transparent 70%) !important;
             transition: opacity 0.4s ease;
         }
 
+        /* Flame Sizing Reduction: Scaled down by 30% to 160px for clean completed screens */
         body.theme-fire #conquered-wash-overlay .flame-svg {
-            height: 230px !important;
+            height: 160px !important;
             bottom: 0;
         }
 
         body.conquered-state #conquered-wash-overlay {
             opacity: 0.90; 
-            transform: translateY(0);
+            transform: translate3d(0, 0, 0);
         }
         body.conquered-state #bifrost-wash-layer {
             opacity: 0 !important; 
         }
 <!-- END OF PART 1 -->
-
 <!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW PART 1 -->
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 2 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 2 WILL DEFINE ENGINE STYLESHEETS, KEYFRAMES, ANIMATIONS, AND CARD MODULES -->
@@ -403,7 +414,7 @@ CORE APP CAPABILITIES:
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 3 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 3 WILL DEFINE CARDS, PORTAL UI ELEMENTS, TOOLTIPS, AND WORKOUT GRID ACTIONS -->
 <!-- CONNECTOR PART 2 -> PART 3 -->
-<!-- START OF PART 3 OF 7: UI STYLES, LAYOUT DECK & DIALOGS -->
+<!-- START OF PART 3 OF 9: UI STYLES, LAYOUT DECK & DIALOGS -->
         .target-wrapper { 
             padding: calc(25px + env(safe-area-inset-top, 0px)) 20px 5px 20px; 
         }
@@ -645,7 +656,24 @@ CORE APP CAPABILITIES:
             margin-bottom: 16px; 
             text-transform: uppercase;
             transition: text-shadow 0.6s ease-in-out, color 0.6s ease-in-out;
+            /* 1.5-second breathing victory pulsing animation mapped globally */
+            animation: conquer-message-pulse 1.8s infinite alternate ease-in-out;
+            will-change: transform, text-shadow, opacity;
         }
+
+        @keyframes conquer-message-pulse {
+            0% {
+                text-shadow: 0 0 10px var(--stage-color), 0 0 20px var(--stage-color-translucent);
+                transform: scale(0.99);
+                opacity: 0.93;
+            }
+            100% {
+                text-shadow: 0 0 22px var(--stage-color), 0 0 45px var(--stage-color), 0 0 60px var(--stage-color-translucent);
+                transform: scale(1.01);
+                opacity: 1.0;
+            }
+        }
+
         .conquered-sub { 
             font-size: 0.95rem; 
             color: #a1a1aa; 
@@ -927,13 +955,6 @@ CORE APP CAPABILITIES:
             transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.5s ease;
         }
         
-        @keyframes lens-flare-bloom {
-            0% { opacity: 0; transform: scale(0.5); filter: brightness(1.3); }
-            12% { opacity: 1; transform: scale(1.1); filter: brightness(1.6); }
-            35% { opacity: 1; transform: scale(1.4); filter: brightness(1.1); }
-            100% { opacity: 0; transform: scale(2.4); filter: brightness(1.0); }
-        }
-        
         .flash-active-cinematic {
             animation: lens-flare-bloom 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
         }
@@ -1057,22 +1078,37 @@ CORE APP CAPABILITIES:
         }
     </style>
 </head>
-<!-- END OF PART 3 OF 7 -->
-
+<!-- END OF PART 3 OF 9 -->
 <!-- BREADCRUMB CONNECTOR [Part 3 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 3 -->
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 4 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 4 WILL DEFINE THE COMPLETE STRUCTURAL HTML DOM STRUCTURE -->
 <!-- CONNECTOR PART 3 -> PART 4 -->
 <!-- START OF PART 4 OF 9: STRUCTURAL HTML DOM STRUCTURE -->
-<body class="theme-water">
+<body class="theme-water preload-no-transition">
 
-    <!-- PROCEDURAL FLUID MORPHING FILTER DEFINITION -->
+    <!-- GLOBAL COMPRESSED DEFINITIONS (Protects wave gradients from display:none suppression) -->
     <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
         <defs>
             <filter id="campfire-turbulence" x="-20%" y="-20%" width="140%" height="140%">
                 <feTurbulence type="fractalNoise" baseFrequency="0.015 0.04" numOctaves="3" result="noise" />
                 <feDisplacementMap in="SourceGraphic" in2="noise" scale="35" xChannelSelector="R" yChannelSelector="G" />
             </filter>
+            <!-- High-Visibility Gradient stops protect wave tips from blacking out -->
+            <linearGradient id="gradient-back" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
+                <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
+                <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
+            </linearGradient>
+            <linearGradient id="gradient-mid" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
+                <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
+                <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
+            </linearGradient>
+            <linearGradient id="gradient-front" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
+                <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
+                <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
+            </linearGradient>
         </defs>
     </svg>
 
@@ -1083,13 +1119,13 @@ CORE APP CAPABILITIES:
     <div id="conquered-wash-overlay">
         <!-- Upgraded wave SVG layouts with steep trochoidal cresting paths for realistic churning -->
         <svg class="wave-svg wave-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M 0,120 L 0,80 C 100,50 200,50 300,80 C 400,110 500,110 600,80 C 700,50 800,50 900,80 C 1000,110 1100,110 1200,80 L 1200,120 L 0,120 Z" />
+            <path d="" />
         </svg>
         <svg class="wave-svg wave-mid" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M 0,120 L 0,75 C 75,35 150,35 225,75 C 300,115 375,115 450,75 C 525,35 600,35 675,75 C 750,115 825,115 900,75 C 975,35 1050,35 1125,75 L 1200,75 L 1200,120 L 0,120 Z" />
+            <path d="" />
         </svg>
         <svg class="wave-svg wave-front" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M 0,120 L 0,85 C 50,45 100,45 150,85 C 200,125 250,125 300,85 C 350,45 400,45 450,85 C 500,125 550,125 600,85 C 650,45 700,45 750,85 C 800,125 850,125 900,85 C 950,45 1000,45 1050,85 L 1200,85 L 1200,120 L 0,120 Z" />
+            <path d="" />
         </svg>
         
         <!-- Upgraded Realistic Completed Campfire Overlays -->
@@ -1116,37 +1152,19 @@ CORE APP CAPABILITIES:
     <div id="bifrost-wash-layer">
         <!-- Upgraded inline SVG waves with hardware properties for fluid, lag-free scaling -->
         <svg class="wave-svg wave-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M 0,120 L 0,80 C 100,50 200,50 300,80 C 400,110 500,110 600,80 C 700,50 800,50 900,80 C 1000,110 1100,110 1200,80 L 1200,120 L 0,120 Z" />
+            <path d="" />
         </svg>
         <svg class="wave-svg wave-mid" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M 0,120 L 0,75 C 75,35 150,35 225,75 C 300,115 375,115 450,75 C 525,35 600,35 675,75 C 750,115 825,115 900,75 C 975,35 1050,35 1125,75 L 1200,75 L 1200,120 L 0,120 Z" />
+            <path d="" />
         </svg>
         <svg class="wave-svg wave-front" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M 0,120 L 0,85 C 50,45 100,45 150,85 C 200,125 250,125 300,85 C 350,45 400,45 450,85 C 500,125 550,125 600,85 C 650,45 700,45 750,85 C 800,125 850,125 900,85 C 950,45 1000,45 1050,85 L 1200,85 L 1200,120 L 0,120 Z" />
+            <path d="" />
         </svg>
         
-        <!-- Upgraded Campfire & Water Progress Gradient Definitions -->
+        <!-- Upgraded Campfire Progress State -->
         <div class="breath-flicker-wrapper">
             <div class="sway-container back-sway">
                 <svg class="flame-svg flame-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                    <defs>
-                        <!-- High-Visibility Gradient stops protect wave tips from blacking out -->
-                        <linearGradient id="gradient-back" x1="0%" y1="100%" x2="0%" y2="0%">
-                            <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
-                            <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
-                            <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
-                        </linearGradient>
-                        <linearGradient id="gradient-mid" x1="0%" y1="100%" x2="0%" y2="0%">
-                            <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
-                            <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
-                            <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
-                        </linearGradient>
-                        <linearGradient id="gradient-front" x1="0%" y1="100%" x2="0%" y2="0%">
-                            <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
-                            <stop offset="85%" stop-color="var(--stage-color)" stop-opacity="var(--wave-base-opacity, 0.9)"/>
-                            <stop offset="100%" stop-color="var(--stage-color)" stop-opacity="0.25" />
-                        </linearGradient>
-                    </defs>
                     <path d="M 0,120 L 0,85 L 40,15 L 45,15 L 80,95 L 100,70 L 105,70 L 130,95 L 170,5 L 175,5 L 210,100 L 235,50 L 240,50 L 275,95 L 320,30 L 325,30 L 370,102 L 400,75 L 405,75 L 440,90 L 490,10 L 495,10 L 535,95 L 570,45 L 575,45 L 600,85 L 600,85 L 640,15 L 645,15 L 680,95 L 700,70 L 705,70 L 730,95 L 770,5 L 775,5 L 810,100 L 835,50 L 840,50 L 875,95 L 920,30 L 925,30 L 970,102 L 1000,75 L 1005,75 L 1040,90 L 1090,10 L 1095,10 L 1135,95 L 1170,45 L 1175,45 L 1200,85 L 1200,120 L 0,120 Z" />
                 </svg>
             </div>
@@ -1389,7 +1407,7 @@ CORE APP CAPABILITIES:
         <div class="nav-item" id="nav-arch" onclick="switchTab('saga', this)">SAGA</div>
         <div class="nav-item" id="nav-set" onclick="switchTab('forge', this)">FORGE</div>
     </nav>
-<!-- END OF PART 4 OF 9 --><!-- END OF PART 4 OF 9 -->
+<!-- END OF PART 4 OF 9 -->
 <!-- BREADCRUMB CONNECTOR [Part 4 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 4 -->
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 5 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 5 WILL DEFINE THE CORE GLOBAL STATES, CONSTRUCTORS, CONFIGS, AND INITIALIZERS -->
@@ -1924,6 +1942,9 @@ CORE APP CAPABILITIES:
             return realNow;
         }
 
+        // =========================================================================
+        // 🛡️ SUBSECTION 11: HISTORICAL LEDGER CALENDAR STACK
+        // =========================================================================
         function getWeekIndex(dateObj) {
             const temp = new Date(Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()));
             const day = temp.getUTCDay();
@@ -1965,10 +1986,6 @@ CORE APP CAPABILITIES:
         }
     </script>
 <!-- END OF PART 6 OF 9 -->
-<!-- BREADCRUMB CONNECTOR [Part 6 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 6 -->
-<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 7 DIRECTLY AFTER THIS CONNECTOR -->
-<!-- PART 7 WILL DEFINE JS RENDERS, MULTI-ACTIVE ACCURACY TIMERS, WAKE LOCK, AND ACCORDIONS -->
-<!-- CONNECTOR PART 6 -> PART 7 -->
 <!-- START OF PART 7 OF 9: INITAPP, STREAKS, TAB SWITCHERS, AND DASHBOARD RENDERS -->
     <script>
         // =========================================================================
@@ -2049,6 +2066,11 @@ CORE APP CAPABILITIES:
             renderForgeCooldownRegistry();
             updateBodyBackground();
             registerServiceWorker(); // Offline PWA Caching Hook
+
+            // Suppress initial transition flash on load; release once first-paint settles
+            setTimeout(() => {
+                document.body.classList.remove('preload-no-transition');
+            }, 50);
         }
 
         // =========================================================================
@@ -3268,6 +3290,14 @@ CORE APP CAPABILITIES:
 
         function executeTimerSequence(event, id, originalSecs) {
             event.stopPropagation();
+            
+            // Decouple click from long-press resets: Exit immediately if reset just occurred
+            if (timerResetTriggered) {
+                event.preventDefault();
+                timerResetTriggered = false;
+                return;
+            }
+
             triggerHapticPulse();
 
             // Single-Active Timer Guard
@@ -3329,7 +3359,7 @@ CORE APP CAPABILITIES:
                             trigger.querySelector('.timer-display').innerText = `${timerRemainingSecs}s`;
                             document.title = `[${timerRemainingSecs}s] V_Forge`;
                         }
-                    }, 250); // High-frequency polling prevent gaps
+                    }, 250); // High-frequency polling prevents gaps
                 }
             } else {
                 // Initialize clean countdown ticker
@@ -3453,6 +3483,7 @@ CORE APP CAPABILITIES:
             downloadAnchorNode.remove();
         }
 
+        // Defensive Schema Importer & Data Migration Engine
         function importBackupData() {
             triggerHapticPulse();
             document.getElementById('import-file-input').click();
@@ -3696,6 +3727,9 @@ CORE APP CAPABILITIES:
             renderDashboard();
         }
 
+        // =========================================================================
+        // 🛡️ SUBSECTION 18: SANDBOX DEVELOPMENT DIRECTIVES (SANDBOX)
+        // =========================================================================
         function forgeMoveCooldownDown(index) {
             triggerHapticPulse();
             if (index === appState.cooldownRegistry.length - 1) return;
@@ -3718,9 +3752,6 @@ CORE APP CAPABILITIES:
             }
         }
 
-        // =========================================================================
-        // 🛡️ SUBSECTION 18: SANDBOX DEVELOPMENT DIRECTIVES (SANDBOX)
-        // =========================================================================
         function testInjectSkipDay() {
             let yesterday = getSimulatedDateObject();
             yesterday.setDate(yesterday.getDate() - 1);
@@ -3821,14 +3852,14 @@ CORE APP CAPABILITIES:
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. EVENT-DRIVEN COMPOSITION:
-   This final script initializes page-rendering setups, tracks accurate delta countdowns, 
-   secures wake locks to keep your phone display alive, and cleanly flushes history 
-   records directly to LocalStorage upon completion.
+1. DECOUPLED EVENT BOUNDARIES:
+   This final script resolves the click/reset timer race condition, enforces reliable 
+   background-proof delta countdown ticking, and registers a post-load Service Worker 
+   for complete offline PWA deployment.
 
-2. LEAK-FREE COMPUTATIONAL DESIGN:
-   By coupling particles, tooltips, and timers directly to GPU-composited layers and 
-   hardware event bindings, visual transitions remain perfectly responsive.
+2. LEAK-FREE HARDWARE CONTAINMENT:
+   By coupling WakeLocks to active countdown cycles and clearing animation frames on 
+   suspend, battery consumption remains minimal during long exercise sessions.
 ================================================================================
 -->
 <!-- END OF PART 9 OF 9 -->
