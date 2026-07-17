@@ -1,26 +1,20 @@
-<!-- START OF PART 1: HTML SHELL & STYLESHEET -->
+<!-- START OF PART 1: HTML SHELL & STYLESHEET CORE -->
 <!--
-TITLE: V_Forge - Master Unified Edition (Build v3.8.0 - Specular Transition & Unified Aura Baseline)
-DATE/TIME (IST): July 17, 2026 - 01:00 PM IST
+TITLE: V_Forge - Master Unified Edition (Build v3.9.0 - Fluid Waves, Dynamic Embers & Wake Lock Core)
+DATE/TIME (IST): July 17, 2026 - 02:52 PM IST
 AUTHOR: VKT & Oracle
 
-CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
+CORE APP CAPABILITIES:
 1. PERSISTENT SYSTEM THEME SELECTION:
-   - Saves active visual environment selection (Water vs. Fire) dynamically in local storage, persistent across reloads.
+   - Dynamic, persistent visual environments (Water vs. Fire) saved directly in local storage.
 2. DYNAMIC WARRIOR RADAR STATS CORE:
-   - Displays dynamic Warrior Rank, scroll narrative lore (scroll emoji prepended), and streak days on a single line on mobile.
-3. DUAL-PHASE ACTIVE & COMPLETED STYLE DECOUPLING:
-   - Segregates progressive wash layers and completed overlays into independent DOM structures.
-   - Employs a visual stage-colored radial gradient 'lens bloom' victory flash to completely mask background layer swaps.
-4. SMOOTH PROGRESSIVE COMPOSITING:
-   - Moves progress container animation to Y-axis translations to avoid layout reflows on height changes.
-   - Active progress wave baseline sitting precisely at 10vh to stay completely behind the navigation bar without peeking.
-   - Water: Replaces solid base colors with soft translucent gradient sways and moving waves. Height clamped to 26vh–28vh to remove hollow gaps.
-   - Fire: Lowered to 32vh–35vh with proportional aspect-ratio scaling.
-5. HARDWARE ACCELERATED PARTICLE PROPULSION:
-   - Spawns exactly 2 particles per interval, traveling all the way to the top of the viewport across all tab panels.
-   - Implements native browser 'animationend' tracking on embers for clean DOM garbage collection.
-   - Integrates paint containment (contain: paint) to prevent scroll stutters on background animations.
+   - Live date display, streak metrics, and warrior ranks mapped to the active Stage color.
+3. INLINE SVG MULTI-LAYERED WAVE SYSTEM:
+   - Replaces buggy, jerky CSS masks with a highly robust inline SVG wave engine with smooth GPU translations.
+4. VOLUMETRIC GLOW COMPOSITING:
+   - Transparent radial gradient stops eliminate harsh black border blocks, revealing glowing background illustrations.
+5. SCREEN KEEP-AWAKE LOCK & CLOCK SYNCHRONIZATION:
+   - Automates Screen Wake Lock API requests during countdowns and synchronizes all logging calculations to a simulated clock.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -58,7 +52,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             --steel-dark: #09090b;
 
             /* Dynamic Theme Variables */
-            --header-accent: #BC6CFF; /* Standard Purple default */
+            --header-accent: #BC6CFF;
             --header-glow-intensity: 0 0 10px rgba(188, 108, 255, 0.4);
         }
 
@@ -80,7 +74,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             -webkit-user-select: text !important;
         }
 
-        /* Typography */
+        /* Typography & Core Vignette */
         body {
             font-family: 'Space Grotesk', -apple-system, sans-serif;
             background-color: #000;
@@ -113,7 +107,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             background-image: 
                 linear-gradient(rgba(0, 0, 0, var(--vignette-opacity)), rgba(0, 0, 0, var(--vignette-opacity))),
-                radial-gradient(circle at 50% 80%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, #000000 70%), 
+                radial-gradient(circle at 50% 80%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, transparent 70%), 
                 url('./background.webp') !important;
             background-size: cover !important;
             background-position: center !important;
@@ -131,8 +125,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             z-index: -1; 
             overflow: visible;
             transform-origin: bottom;
-            contain: paint; /* Isolates the layer entirely from scroll repaints to eliminate stutters */
-            /* Baseline at 0% progress stays completely behind navigation bar (10vh) */
+            contain: paint layout; /* Isolates the layer entirely from scroll repaints to eliminate stutters */
             transform: translateY(calc(100vh - (10vh + var(--fire-progress) * 85vh)));
             background: linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--wash-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0) 50%);
             mix-blend-mode: screen; 
@@ -151,8 +144,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             position: fixed;
             bottom: 0; left: 0; right: 0;
             height: 100vh;
-            contain: paint; /* GPU paint containment isolation */
-            background-image: radial-gradient(circle at 50% 100%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, #000000 75%);
+            contain: paint layout; /* GPU paint containment isolation */
+            background-image: radial-gradient(circle at 50% 100%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, transparent 75%);
             opacity: 0;
             pointer-events: none;
             z-index: -1;
@@ -168,8 +161,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             bottom: 0;
             top: auto;
             transform: translateY(0) !important;
-            /* Filled volumetric water blending background vertical gradient to remove hollow black gaps */
-            background-image: linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.5) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.1) 60%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0) 100%) !important;
+            background-image: linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.7) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.2) 60%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0) 100%) !important;
             transition: opacity 0.4s ease;
         }
 
@@ -179,36 +171,33 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             bottom: 0;
             top: auto;
             transform: translateY(0) !important;
-            background-image: radial-gradient(circle at 50% 100%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, #000000 70%) !important;
+            background-image: radial-gradient(circle at 50% 100%, var(--stage-color-translucent, rgba(188,108,255,0.18)) 0%, transparent 70%) !important;
             transition: opacity 0.4s ease;
         }
 
         body.theme-fire #conquered-wash-overlay .flame-svg {
-            height: 230px !important; /* Raised proportional height to prevent squishing and rise above nav */
+            height: 230px !important;
             bottom: 0;
         }
 
-        body.theme-water #conquered-wash-overlay .bifrost-wave-back,
-        body.theme-water #conquered-wash-overlay .bifrost-wave-front,
-        body.theme-water #conquered-wash-overlay .bifrost-river-glint {
-            background-color: rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.4) !important;
-            mix-blend-mode: screen;
-        }
-
         body.conquered-state #conquered-wash-overlay {
-            opacity: var(--wash-opacity, 0.20); 
+            opacity: 0.90; 
             transform: translateY(0);
         }
         body.conquered-state #bifrost-wash-layer {
             opacity: 0 !important; 
         }
-<!-- CONNECTOR: PASTE PART 2 DIRECTLY BELOW THIS LINE -->
 <!-- END OF PART 1 -->
-<!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW THE END OF PART 1 -->
-<!-- START OF PART 2: THE COMPONENT STYLES AND FIRST LAYOUT ELEMENTS -->
+
+<!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW PART 1 -->
+<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 2 DIRECTLY AFTER THIS CONNECTOR -->
+<!-- PART 2 WILL DEFINE ENGINE STYLESHEETS, KEYFRAMES, ANIMATIONS, AND CARD MODULES -->
+<!-- CONNECTOR PART 1 -> PART 2 -->
+<!-- START OF PART 2: COMPONENT ANIMATIONS, HARDWARE ENGINE & ACTIVE WAVE STYLES -->
         /* GPU Pre-rendering Hinting */
-        .breath-flicker-wrapper, .flame-svg, .bifrost-wave-back, .bifrost-wave-front, .bifrost-river-glint, .ember-particle {
+        .breath-flicker-wrapper, .flame-svg, .wave-svg, .ember-particle {
             will-change: transform, opacity;
+            transform: translateZ(0); /* Force hardware accelerated layer composition */
         }
 
         /* PROCEDURAL HEAT WAVE DISTORTION WRAPPER */
@@ -267,8 +256,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             50% { transform: translateX(20px); }
         }
 
-        /* SEAMLESS LOOPING JAGGED FLAME SVGS */
-        .flame-svg {
+        /* SEAMLESS LOOPING JAGGED FLAME & WAVE SVGS */
+        .flame-svg, .wave-svg {
             position: absolute;
             bottom: -2px;
             left: 0;
@@ -277,101 +266,58 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             transform-origin: bottom;
         }
 
-        .flame-back {
+        /* Water Theme completed visual height adjustment */
+        body.theme-water .wave-svg {
+            height: 100% !important;
+            bottom: -2px;
+        }
+
+        /* SVG Color Gradients Bindings */
+        .flame-back, .wave-back {
             fill: url(#gradient-back);
             filter: brightness(0.55) contrast(1.1);
-            animation: flame-drift-reverse-back 18s linear infinite;
+            animation: drift-reverse-back 18s linear infinite;
             mix-blend-mode: normal; 
         }
 
-        .flame-mid {
+        .flame-mid, .wave-mid {
             fill: url(#gradient-mid);
             filter: brightness(0.9) saturate(1.1);
-            animation: flame-drift-normal-mid 12s linear infinite;
+            animation: drift-normal-mid 12s linear infinite;
             mix-blend-mode: screen; 
         }
 
-        .flame-front {
+        .flame-front, .wave-front {
             fill: url(#gradient-front);
             filter: brightness(1.6) saturate(1.35);
-            animation: flame-drift-normal-front 8.5s linear infinite;
+            animation: drift-normal-front 8.5s linear infinite;
             mix-blend-mode: screen; 
         }
 
-        @keyframes flame-drift-normal-front {
+        @keyframes drift-normal-front {
             0% { transform: translateX(0) translateY(1px); }
             50% { transform: translateX(-25%) translateY(-3px); }
             100% { transform: translateX(-50%) translateY(1px); }
         }
 
-        @keyframes flame-drift-normal-mid {
+        @keyframes drift-normal-mid {
             0% { transform: translateX(0) translateY(-2px); }
             50% { transform: translateX(-25%) translateY(2px); }
             100% { transform: translateX(-50%) translateY(-2px); }
         }
 
-        @keyframes flame-drift-reverse-back {
+        @keyframes drift-reverse-back {
             0% { transform: translateX(-50%) translateY(0); }
             50% { transform: translateX(-25%) translateY(-4px); }
             100% { transform: translateX(0) translateY(0); }
         }
 
         /* CLASS TOGGLERS FOR WATER VS FIRE THEMES */
-        body.theme-fire .bifrost-wave-back,
-        body.theme-fire .bifrost-wave-front,
-        body.theme-fire .bifrost-river-glint {
+        body.theme-fire .wave-svg {
             display: none !important;
         }
-        body.theme-water .sway-container {
+        body.theme-water .flame-svg {
             display: none !important;
-        }
-
-        /* Dynamic SVG Mask Wave Elements (Moving Wave Flows) */
-        .bifrost-wave-back, .bifrost-wave-front, .bifrost-river-glint {
-            position: absolute;
-            top: -39px; 
-            left: 0;
-            width: 200%;
-            height: 40px;
-            background-color: rgb(var(--wash-color-r, 188), var(--wash-color-g, 108), var(--wash-color-b, 255));
-            mask-repeat: repeat-x;
-            -webkit-mask-repeat: repeat-x;
-            mask-size: 50% 100%;
-            -webkit-mask-size: 50% 100%;
-            transition: opacity 1.2s ease, animation-duration 1.2s ease, transform 1.2s ease;
-        }
-
-        /* Restored Water Loop Transitions */
-        @keyframes bifrost-wave-drift-normal {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(-25%); }
-            100% { transform: translateX(-50%); }
-        }
-
-        @keyframes bifrost-wave-drift-reverse {
-            0% { transform: translateX(-50%); }
-            50% { transform: translateX(-25%); }
-            100% { transform: translateX(0); }
-        }
-
-        body.theme-water .bifrost-wave-back {
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,80 C150,130 350,10 500,80 C650,150 850,-10 1000,80 C1150,150 1300,10 1500,80 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,80 C150,130 350,10 500,80 C650,150 850,-10 1000,80 C1150,150 1300,10 1500,80 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            animation: bifrost-wave-drift-reverse 16s linear infinite;
-        }
-        body.theme-water .bifrost-wave-front {
-            opacity: 0.85;
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C150,120 350,0 500,60 C650,120 850,0 1000,60 C1150,120 1300,0 1500,60 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,60 C150,120 350,0 500,60 C650,120 850,0 1000,60 C1150,120 1300,0 1500,60 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            animation: bifrost-wave-drift-normal 10s linear infinite;
-        }
-        body.theme-water .bifrost-river-glint {
-            opacity: 0.95;
-            filter: brightness(1.6);
-            mix-blend-mode: color-dodge;
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M50,45 A6,6 0 1,1 50,57 A6,6 0 1,1 50,45 M250,25 A5,5 0 1,1 250,35 A5,5 0 1,1 250,25 M450,55 A7,7 0 1,1 450,69 A7,7 0 1,1 450,55 M650,35 A4,4 0 1,1 650,43 A4,4 0 1,1 650,35 M850,65 A6,6 0 1,1 850,77 A6,6 0 1,1 850,65 M1050,15 A5,5 0 1,1 1050,25 A5,5 0 1,1 1050,15 L1500,120 L0,120 Z' fill='%23000'/%3E%3C/svg%3E");
-            animation: bifrost-wave-drift-normal 7s linear infinite;
         }
 
         /* Fireplace Embers Container with Layout Containment for zero-lag mobile scrolling */
@@ -379,7 +325,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             pointer-events: none;
-            z-index: 10;
+            z-index: 2000; /* Raised to be visible across all tabs overlaying everything */
             overflow: hidden;
             contain: strict; /* Completely locks the particle layer from triggering layout shifts elsewhere */
         }
@@ -412,10 +358,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 opacity: 0;
             }
         }
-<!-- CONNECTOR: PASTE PART 3 DIRECTLY BELOW THIS LINE -->
 <!-- END OF PART 2 -->
-<!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW THE END OF PART 2 -->
-<!-- START OF PART 3: THE COMPONENT STYLES AND FIRST LAYOUT ELEMENTS -->
+
+<!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW PART 2 -->
+<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 3 DIRECTLY AFTER THIS CONNECTOR -->
+<!-- PART 3 WILL DEFINE CARDS, PORTAL UI ELEMENTS, TOOLTIPS, AND WORKOUT GRID ACTIONS -->
+<!-- CONNECTOR PART 2 -> PART 3 -->
+<!-- START OF PART 3 OF 7: UI STYLES, LAYOUT DECK & DIALOGS -->
         .target-wrapper { 
             padding: calc(25px + env(safe-area-inset-top, 0px)) 20px 5px 20px; 
         }
@@ -479,11 +428,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
         .delta-subtext {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.64rem; /* Scaled down to prevent mobile double wrapping */
+            font-size: 0.64rem;
             color: var(--text-muted);
             letter-spacing: 0.05em;
             line-height: 1.4;
-            white-space: nowrap; /* Single line alignment safeguard */
+            white-space: nowrap;
             transition: text-shadow 0.6s ease-in-out, color 0.6s ease-in-out;
         }
 
@@ -508,7 +457,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             position: relative;
         }
 
-        /* Sharp, glowing horizontal laser flare capsule (Point 6) */
+        /* Sharp, glowing horizontal laser flare capsule */
         .progress-bar::after {
             content: '';
             position: absolute;
@@ -569,11 +518,12 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             padding: 6px 12px;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.15s, border-color 0.15s;
+            transition: background 0.15s, border-color 0.15s, transform 0.1s ease;
             flex-shrink: 0; 
         }
         .timer-interactive-trigger:active {
             background: #170b24;
+            transform: scale(0.95);
         }
 
         .timer-status-icon-svg {
@@ -773,7 +723,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border-top: 1px solid #130a1c;
         }
 
-        /* Floating Specular Glass Tooltip Card */
+        /* Floating Specular Glass Tooltip Card (Equipped with dynamic vertical flip) */
         .tooltip-deck { 
             position: fixed; 
             background: rgba(0, 0, 0, 0.82); 
@@ -782,7 +732,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border: 1px solid rgba(255, 255, 255, 0.12); 
             border-radius: 16px; 
             padding: 18px; 
-            z-index: 2000; 
+            z-index: 5000; 
             box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.22),
                         -5px -5px 25px rgba(0, 240, 255, 0.08),
                         5px 5px 25px rgba(188, 108, 255, 0.1),
@@ -811,6 +761,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             pointer-events: none;
             transition: border-color 0.4s ease;
         }
+        /* Top corners indicators (Default) */
         .tooltip-deck::before {
             top: 8px; left: 8px;
             border-top: 2px solid var(--target-color, #BC6CFF);
@@ -822,6 +773,21 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             border-bottom: 2px solid var(--target-color, #BC6CFF);
             border-right: 2px solid var(--target-color, #BC6CFF);
             border-bottom-right-radius: 8px;
+        }
+        /* Inverted layout indicators when tooltip is flipped downwards */
+        .tooltip-deck.flipped::before {
+            top: auto; bottom: 8px; left: 8px;
+            border-top: none;
+            border-left: 2px solid var(--target-color, #BC6CFF);
+            border-bottom: 2px solid var(--target-color, #BC6CFF);
+            border-bottom-left-radius: 8px;
+        }
+        .tooltip-deck.flipped::after {
+            bottom: auto; top: 8px; right: 8px;
+            border-bottom: none;
+            border-right: 2px solid var(--target-color, #BC6CFF);
+            border-top: 2px solid var(--target-color, #BC6CFF);
+            border-top-right-radius: 8px;
         }
 
         .tooltip-title { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; color: var(--accent-glow); margin-bottom: 6px; }
@@ -877,7 +843,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             justify-content: space-around; 
             align-items: center; 
             z-index: 1000; 
-            /* Subtle Dynamic Stage Top Glow behind the frosted glass navigation menu */
             box-shadow: 0 -3px 12px rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.25);
         }
         .nav-item { flex: 1; text-align: center; color: var(--text-muted); font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; cursor: pointer; padding: 15px 0; min-height: 48px; display: flex; align-items: center; justify-content: center; }
@@ -1041,7 +1006,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             transition: transform 0.1s ease;
         }
 
-        /* Focus pulse configuration */
+        /* Focus pulse configuration (Smooth Highlight Transitions) */
         @keyframes immediate-target-pulse {
             0% { border-color: var(--target-color); box-shadow: 0 0 4px var(--target-color); }
             50% { border-color: var(--target-color); box-shadow: 0 0 14px var(--target-color); }
@@ -1053,10 +1018,13 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
     </style>
 </head>
-<!-- CONNECTOR: PASTE PART 4 DIRECTLY BELOW THIS LINE -->
-<!-- END OF PART 3 -->
-<!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW THE END OF PART 3 -->
-<!-- START OF PART 4: THE STRUCTURAL HTML LAYOUT -->
+<!-- END OF PART 3 OF 7 -->
+
+<!-- BREADCRUMB CONNECTOR [Part 3 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 3 -->
+<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 4 DIRECTLY AFTER THIS CONNECTOR -->
+<!-- PART 4 WILL DEFINE THE COMPLETE STRUCTURAL HTML DOM STRUCTURE -->
+<!-- CONNECTOR PART 3 -> PART 4 -->
+<!-- START OF PART 4 OF 7: STRUCTURAL HTML DOM STRUCTURE -->
 <body class="theme-water">
 
     <!-- PROCEDURAL FLUID MORPHING FILTER DEFINITION -->
@@ -1074,10 +1042,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
     <!-- DECOUPLED CONQUERED SCREEN OVERLAY -->
     <div id="conquered-wash-overlay">
-        <!-- Waves aligned and styled to rise gracefully in completed water state -->
-        <div class="bifrost-wave-back"></div>
-        <div class="bifrost-wave-front"></div>
-        <div class="bifrost-river-glint"></div>
+        <!-- Replaced buggy flat divs with dynamic Inline SVG Wave layers matching flame animations -->
+        <svg class="wave-svg wave-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M 0,120 L 0,50 Q 150,90 300,50 T 600,50 T 900,50 T 1200,50 L 1200,120 Z" />
+        </svg>
+        <svg class="wave-svg wave-mid" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M 0,120 L 0,60 Q 150,30 300,60 T 600,60 T 900,60 T 1200,60 L 1200,120 Z" />
+        </svg>
+        <svg class="wave-svg wave-front" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M 0,120 L 0,70 Q 150,110 300,70 T 600,70 T 900,70 T 1200,70 L 1200,120 Z" />
+        </svg>
         
         <!-- Upgraded Realistic Completed Campfire Overlays -->
         <div class="breath-flicker-wrapper">
@@ -1101,9 +1075,16 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 
     <!-- BIFROST ACTIVE PROGRESS LAYER -->
     <div id="bifrost-wash-layer">
-        <div class="bifrost-wave-back"></div>
-        <div class="bifrost-wave-front"></div>
-        <div class="bifrost-river-glint"></div>
+        <!-- Upgraded inline SVG waves with hardware properties for fluid, lag-free scaling -->
+        <svg class="wave-svg wave-back" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M 0,120 L 0,50 Q 150,90 300,50 T 600,50 T 900,50 T 1200,50 L 1200,120 Z" />
+        </svg>
+        <svg class="wave-svg wave-mid" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M 0,120 L 0,60 Q 150,30 300,60 T 600,60 T 900,60 T 1200,60 L 1200,120 Z" />
+        </svg>
+        <svg class="wave-svg wave-front" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M 0,120 L 0,70 Q 150,110 300,70 T 600,70 T 900,70 T 1200,70 L 1200,120 Z" />
+        </svg>
         
         <!-- Upgraded Realistic Campfire Progress State -->
         <div class="breath-flicker-wrapper">
@@ -1113,17 +1094,17 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         <linearGradient id="gradient-back" x1="0%" y1="100%" x2="0%" y2="0%">
                             <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
                             <stop offset="40%" stop-color="var(--stage-color)" stop-opacity="0.65"/>
-                            <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                            <stop offset="100%" stop-color="transparent" stop-opacity="0" />
                         </linearGradient>
                         <linearGradient id="gradient-mid" x1="0%" y1="100%" x2="0%" y2="0%">
                             <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
                             <stop offset="45%" stop-color="var(--stage-color)" stop-opacity="0.75" />
-                            <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                            <stop offset="100%" stop-color="transparent" stop-opacity="0" />
                         </linearGradient>
                         <linearGradient id="gradient-front" x1="0%" y1="100%" x2="0%" y2="0%">
                             <stop offset="0%" stop-color="var(--stage-color)" stop-opacity="0.3" />
                             <stop offset="40%" stop-color="var(--stage-color)" stop-opacity="0.8" />
-                            <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                            <stop offset="100%" stop-color="transparent" stop-opacity="0" />
                         </linearGradient>
                     </defs>
                     <path d="M 0,120 L 0,85 L 40,15 L 45,15 L 80,95 L 100,70 L 105,70 L 130,95 L 170,5 L 175,5 L 210,100 L 235,50 L 240,50 L 275,95 L 320,30 L 325,30 L 370,102 L 400,75 L 405,75 L 440,90 L 490,10 L 495,10 L 535,95 L 570,45 L 575,45 L 600,85 L 600,85 L 640,15 L 645,15 L 680,95 L 700,70 L 705,70 L 730,95 L 770,5 L 775,5 L 810,100 L 835,50 L 840,50 L 875,95 L 920,30 L 925,30 L 970,102 L 1000,75 L 1005,75 L 1040,90 L 1090,10 L 1095,10 L 1135,95 L 1170,45 L 1175,45 L 1200,85 L 1200,120 L 0,120 Z" />
@@ -1145,13 +1126,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
     <!-- TARGET RADAR STRIP -->
     <div class="target-wrapper">
         <div class="shine-card" style="padding: 24px;">
-            <!-- Real-time Dates instead of hardcoded stage text (Point a) -->
             <div style="font-family: 'Orbitron', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; color: var(--header-accent); margin-bottom: 6px; text-transform: uppercase;" id="radar-day-label">LOADING SESSION...</div>
-            
-            <!-- Standard dynamic reps display, morphs into smaller reps + Conquered text (Point b) -->
             <div class="target-massive" id="radar-target"><span>0</span> REPS</div>
-            
-            <!-- Dynamic Rank and Scroll Lore aligned directly underneath rank (Point d) -->
             <div style="display: flex; flex-direction: column; margin-top: 10px; gap: 4px;">
                 <div class="delta-subtext" id="radar-stats" style="color: var(--header-accent); font-weight: 900; font-size: 0.75rem;">STREAK: 0 DAYS 🔥 | RANK: RECRUIT</div>
                 <div class="delta-subtext" id="radar-delta" style="color: #a1a1aa; font-size: 0.65rem;">📜 Loading ancient scrolls...</div>
@@ -1373,18 +1349,18 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         <div class="nav-item" id="nav-arch" onclick="switchTab('saga', this)">SAGA</div>
         <div class="nav-item" id="nav-set" onclick="switchTab('forge', this)">FORGE</div>
     </nav>
+<!-- END OF PART 4 OF 7 -->
 
-<!-- CONNECTOR: PASTE PART 5 DIRECTLY BELOW THIS LINE -->
-<!-- END OF PART 4 -->
-<!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW THE END OF PART 4 -->
-<!-- START OF PART 5: THE CORE JAVASCRIPT CONFIGURATION & STORAGE LOGIC -->
+<!-- BREADCRUMB CONNECTOR [Part 4 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 4 -->
+<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 5 DIRECTLY AFTER THIS CONNECTOR -->
+<!-- PART 5 WILL DEFINE THE CORE GLOBAL STATES, CONSTRUCTORS, CONFIGS, AND INITIALIZERS -->
+<!-- CONNECTOR PART 4 -> PART 5 -->
+<!-- START OF PART 5 OF 7: CORE GLOBAL STATES, CONSTRUCTORS, CONFIGS, AND INITIALIZERS -->
     <script>
         // =========================================================================
         // 🛡️ SUBSECTION 1: THEME & COPY CONFIGURATION ZONE (MODULAR DIRECTIVES)
         // =========================================================================
         const CONFIG_THEME_AND_COPY = {
-            enableAudioChime: false,
-
             // 1. WARRIOR RANKS & STREAKS
             warriorRanks: [
                 { max: 0, title: "Thrall (Outcast) ❄️", status: "Unproven on the battleground." },
@@ -1398,7 +1374,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 { max: Infinity, title: "Legend of Valhalla! 👑", status: "Your saga is sung eternally in Valhalla." }
             ],
 
-            // 2. WEEKDAY STAGES
+            // 2. WEEKDAY STAGES (Dynamic stage layouts)
             stages: {
                 'Monday':    { name: "STAGE 1: FJORD'S EMBARKATION 🌊", color: '#06B6D4', flash: 'rgba(6, 182, 212, 0.45)' },
                 'Tuesday':   { name: "STAGE 2: RAVEN'S FLIGHT 🦅", color: '#0D9488', flash: 'rgba(13, 148, 136, 0.45)' },
@@ -1444,43 +1420,17 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 systemRolloverTitle: "🛰️ SYSTEM ROLLOVER BRIEFING"
             },
 
-            // 6. NODE STATES
+            // 6. NODE STATES (Dynamic calendar node configurations)
             nodeStates: {
                 weekday: {
-                    locked: {
-                        textColor: '#4b5563', 
-                        borderColor: 'transparent',
-                        backgroundColor: '#000000'
-                    },
-                    completed: {
-                        textColor: '#10B981', 
-                        borderColor: 'rgba(16, 185, 129, 0.25)',
-                        backgroundColor: 'rgba(16, 185, 129, 0.03)',
-                        glowStyle: '0 0 10px rgba(16, 185, 129, 0.6)'
-                    },
-                    skipped: {
-                        textColor: '#EF4444', 
-                        borderColor: 'rgba(239, 68, 68, 0.25)',
-                        backgroundColor: 'rgba(239, 68, 68, 0.03)'
-                    }
+                    locked: { textColor: '#4b5563', borderColor: 'transparent', backgroundColor: '#000000' },
+                    completed: { textColor: '#10B981', borderColor: 'rgba(16, 185, 129, 0.25)', backgroundColor: 'rgba(16, 185, 129, 0.03)', glowStyle: '0 0 10px rgba(16, 185, 129, 0.6)' },
+                    skipped: { textColor: '#EF4444', borderColor: 'rgba(239, 68, 68, 0.25)', backgroundColor: 'rgba(239, 68, 68, 0.03)' }
                 },
                 sunday: {
-                    locked: {
-                        textColor: '#06B6D4', 
-                        borderColor: '#083344', 
-                        backgroundColor: '#020617'
-                    },
-                    completed: {
-                        textColor: '#BC6CFF', 
-                        borderColor: '#BC6CFF', 
-                        backgroundColor: '#12072b',
-                        glowStyle: '0 0 14px #BC6CFF'
-                    },
-                    skipped: {
-                        textColor: '#fda4af', 
-                        borderColor: '#e11d48', 
-                        backgroundColor: '#3b0712' 
-                    }
+                    locked: { textColor: '#06B6D4', borderColor: '#083344', backgroundColor: '#020617' },
+                    completed: { textColor: '#BC6CFF', borderColor: '#BC6CFF', backgroundColor: '#12072b', glowStyle: '0 0 14px #BC6CFF' },
+                    skipped: { textColor: '#fda4af', borderColor: '#e11d48', backgroundColor: '#3b0712' }
                 }
             },
 
@@ -1508,7 +1458,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         const PLANNED_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-        // Programmatic Element References
         const emberField = document.getElementById('ember-field');
 
         let testTimeOffsetDays = 0; 
@@ -1522,18 +1471,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         let timerOriginalSecs = 0;
         let wakeLock = null;
 
-        // Sound System lazy initializer variable
-        let globalAudioCtx = null;
-
         // Long press handling constants
         let timerTriggerPressTimer = null;
         let timerResetTriggered = false;
         
-        // Unified Long-Press Persistent Gesture Globals
         let isTooltipPersistent = false;
         let emberInterval = null;
         let currentProgressValue = 0;
 
+        // Unified appState structure with defaults
         let appState = {
             mondayRepBase: 20,
             mondayPlankBase: 100,
@@ -1570,6 +1516,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
         }
 
+        // Defensive Schema Importer & Data Migration Engine
         function safeguardAndMigrateDatabase() {
             if (!appState.currentWeekData) appState.currentWeekData = {};
             if (!appState.monthlyArchive) appState.monthlyArchive = {};
@@ -1601,11 +1548,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             } else {
                 appState.workoutRegistry.forEach(w => {
                     if (w.logToLedger === undefined) {
-                        w.logToLedger = (w.id !== 'catcow');
-                    }
-                    if (w.id === 'catcow') {
-                        w.fixedVal = "";
-                        w.multiplier = 0;
+                        w.logToLedger = true;
                     }
                 });
             }
@@ -1648,10 +1591,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 location.reload();
             }
         }
-<!-- CONNECTOR: PASTE PART 6 DIRECTLY BELOW THIS LINE -->
-<!-- END OF PART 5 -->
-<!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW THE END OF PART 5 -->
-<!-- START OF PART 6: JAVASCRIPT VISUAL & PARTICLE ENGINES -->
+    </script>
+<!-- END OF PART 5 OF 7 -->
+
+<!-- BREADCRUMB CONNECTOR [Part 5 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 5 -->
+<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 6 DIRECTLY AFTER THIS CONNECTOR -->
+<!-- PART 6 WILL DEFINE CORE JS VISUAL RENDERS, DOUBLE-DENSITY EMBERS & PWA INTERACTION HOOKS -->
+<!-- CONNECTOR PART 5 -> PART 6 -->
+<!-- START OF PART 6 OF 7: CORE JS VISUAL RENDERS, DOUBLE-DENSITY EMBERS & PWA INTERACTION HOOKS -->
+    <script>
         // =========================================================================
         // 🛡️ SUBSECTION 4: SIMULATION DATE, COLOR & BACKDROP CALCULATORS
         // =========================================================================
@@ -1675,7 +1623,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             const isCompleted = (appState.monthlyArchive[todayStr] === 'done');
             
-            // Get configuration parameters
             const vignetteVal = appState.backgroundSettings ? appState.backgroundSettings.vignette : 96;
             const washVal = appState.backgroundSettings ? appState.backgroundSettings.wash : 20;
             
@@ -1703,11 +1650,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 progressHeight = `${Math.round(progressFloat * 100)}%`;
             }
             
-            // Get today's Stage Color
             const stage = CONFIG_THEME_AND_COPY.stages[dayName] || { color: '#BC6CFF' };
             const rgb = hexToRgb(stage.color) || { r: 188, g: 108, b: 255 };
             
-            // Write styles dynamically to root DOM variables
             document.body.style.setProperty('--vignette-opacity', vignetteOpacity);
             document.body.style.setProperty('--wash-opacity', washOpacity);
             document.body.style.setProperty('--wash-color-r', rgb.r);
@@ -1715,11 +1660,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             document.body.style.setProperty('--wash-color-b', rgb.b);
             document.body.style.setProperty('--fire-progress', progressFloat);
             
-            // Dynamic Stage Translucent Color
             document.body.style.setProperty('--stage-color-translucent', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`);
             document.body.style.setProperty('--stage-color', stage.color);
 
-            // Toggle visual theme classes on body
             document.body.classList.remove('theme-water', 'theme-fire');
             document.body.classList.add(`theme-${appState.activeVisualTheme || 'water'}`);
 
@@ -1729,7 +1672,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 document.body.classList.remove('conquered-state');
             }
 
-            // Sync the procedural particle density
             currentProgressValue = progressFloat;
             adjustEmberSpawnerCycle();
         }
@@ -1742,18 +1684,28 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const theme = appState.activeVisualTheme || 'water';
             const isCompleted = document.body.classList.contains('conquered-state');
 
-            // Prevent progress particles in Water Active state
-            if (theme === 'water' && !isCompleted) return;
+            // Enforce a strict ceiling of 32 active particle nodes to prevent memory leaks
+            if (emberField) {
+                const activeParticles = emberField.getElementsByClassName('ember-particle');
+                if (activeParticles.length >= 32) {
+                    activeParticles[0].remove(); // FIFO purge oldest
+                }
+            }
 
             const particle = document.createElement('div');
             particle.classList.add('ember-particle');
 
+            // Dynamic Tinting: Bind ember color/glow strictly to the live CSS Stage variable
+            particle.style.backgroundColor = 'var(--stage-color)';
+            particle.style.boxShadow = '0 0 8px var(--stage-color)';
+
+            let duration = 5.5;
+
             if (theme === 'water') {
-                // Ocean completed bioluminescent glints (calm 1/3rd screen)
                 const size = Math.random() * 5 + 3; 
                 const leftPosition = Math.random() * 100;
-                const duration = Math.random() * 4 + 10; // Slow 10s to 14s lifespan
-                const ascendDistance = Math.random() * 20 + 80; // Travel directly to top of screen (100vh)
+                duration = Math.random() * 4 + 10; 
+                const ascendDistance = Math.random() * 20 + 80; 
                 const driftOffset = (Math.random() * 40 - 20);
 
                 particle.style.width = `${size}px`;
@@ -1767,14 +1719,11 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 particle.style.setProperty('--ember-target-opacity', Math.random() * 0.3 + 0.3);
                 particle.style.animationDuration = `${duration}s`;
             } else {
-                // Fire campfire embers
                 const size = Math.random() * 4.5 + 1.5; 
                 const leftPosition = Math.random() * 100; 
-                
                 const baseDuration = 5.5 - (currentProgressValue * 3.0); 
-                const duration = Math.random() * 1.5 + baseDuration;
-                
-                const ascendDistance = Math.random() * 20 + 80; // Travel directly to top of screen (100vh)
+                duration = Math.random() * 1.5 + baseDuration;
+                const ascendDistance = Math.random() * 20 + 80; 
                 const driftOffset = (Math.random() * 60 - 30); 
 
                 particle.style.width = `${size}px`;
@@ -1790,8 +1739,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 emberField.appendChild(particle);
             }
 
-            // Native animationend cleanup to resolve leaks
+            // Fallback safe absolute cleanup timer backup
+            const safetyTimeoutId = setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, duration * 1000 + 200);
+
             particle.addEventListener('animationend', () => {
+                clearTimeout(safetyTimeoutId);
                 particle.remove();
             }, { once: true });
         }
@@ -1805,26 +1761,26 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const theme = appState.activeVisualTheme || 'water';
             const isCompleted = document.body.classList.contains('conquered-state');
 
+            // Embers float globally across all tabs
             if (theme === 'water') {
                 if (!isCompleted) return;
-                // Extremely calm, elegant ocean bubble cycle spawning EXACTLY 2 particles
                 emberInterval = setInterval(() => {
-                    spawnIndividualEmber();
-                    spawnIndividualEmber();
+                    // Double density: Spawn 4 embers per cycle
+                    for (let i = 0; i < 4; i++) {
+                        spawnIndividualEmber();
+                    }
                 }, 1800); 
             } else {
                 let spawnRate;
                 if (isCompleted) {
-                    // Throttled hearth fire embers to preserve mobile scrolling (exactly 2 particles)
                     spawnRate = 1500; 
                 } else {
-                    // Active progression campfire ember scales based on workout progress
-                    spawnRate = 2000 - (currentProgressValue * 1500); // 2.0s down to 500ms
+                    spawnRate = 2000 - (currentProgressValue * 1500); 
                 }
 
                 emberInterval = setInterval(() => {
-                    const spawnCount = 2; // EXACTLY 2 particles (User Correction)
-                    for (let i = 0; i < spawnCount; i++) {
+                    // Double density: Spawn 4 embers per cycle
+                    for (let i = 0; i < 4; i++) {
                         spawnIndividualEmber();
                     }
                 }, spawnRate);
@@ -1917,10 +1873,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 return workoutObj.fixedVal || "";
             }
         }
-<!-- CONNECTOR: PASTE PART 7 DIRECTLY BELOW THIS LINE -->
-<!-- END OF PART 6 -->
-<!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW THE END OF PART 6 -->
-<!-- START OF PART 7: JAVASCRIPT RENDERS, TIMERS & CLOSURES -->
+    </script>
+<!-- END OF PART 6 OF 7 -->
+
+<!-- BREADCRUMB CONNECTOR [Part 6 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 6 -->
+<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 7 DIRECTLY AFTER THIS CONNECTOR -->
+<!-- PART 7 WILL DEFINE JS RENDERS, MULTI-ACTIVE ACCURACY TIMERS, WAKE LOCK, AND ACCORDIONS -->
+<!-- CONNECTOR PART 6 -> PART 7 -->
+<!-- START OF PART 7 OF 9: INITAPP, STREAKS, TAB SWITCHERS, AND DASHBOARD RENDERS -->
+    <script>
         // =========================================================================
         // 🛡️ SUBSECTION 5: SYSTEM INITIALIZATION & CORE SETUP
         // =========================================================================
@@ -1935,7 +1896,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             document.getElementById('lbl-custom-saga-quotes').innerText = CONFIG_THEME_AND_COPY.interfaceHeaders.customSagaQuotes;
             document.getElementById('lbl-system-intel').innerText = CONFIG_THEME_AND_COPY.interfaceHeaders.systemIntelStorage;
             document.getElementById('lbl-dev-console-title').innerText = CONFIG_THEME_AND_COPY.interfaceHeaders.devConsoleTitle;
-            document.getElementById('briefing-card-title').innerText = CONFIG_THEME_AND_COPY.interfaceHeaders.systemRolloverTitle || "🛰️ SYSTEM ROLLOVER BRIEFING";
+            document.getElementById('briefing-card-title').innerText = CONFIG_THEME_AND_COPY.interfaceHeaders.systemRolloverTitle;
 
             const saved = localStorage.getItem('viking_conquest_v11');
             if (saved) {
@@ -1967,7 +1928,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             document.getElementById('vignette-val-display').innerText = appState.backgroundSettings.vignette;
             document.getElementById('wash-val-display').innerText = appState.backgroundSettings.wash;
 
-            // Render environment active theme dynamically from state storage
             document.getElementById('aura-water-btn').classList.remove('active');
             document.getElementById('aura-fire-btn').classList.remove('active');
             if (appState.activeVisualTheme === 'water') {
@@ -1989,9 +1949,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 btn.classList.remove('active');
             }
 
-            // Warm Web Audio API Context
-            window.addEventListener('pointerdown', initializeAudioContextLazily, { once: true });
-
             checkForValkyrieRescue();
             processBackgroundSkips();
             verifyWeeklyRolloverGate();
@@ -2002,16 +1959,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             renderForgeWorkoutRegistry();
             renderForgeCooldownRegistry();
             updateBodyBackground();
-        }
-
-        function initializeAudioContextLazily() {
-            try {
-                if (!globalAudioCtx) {
-                    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-            } catch (err) {
-                console.warn("Failed to warm AudioContext: ", err);
-            }
+            registerServiceWorker(); // Offline PWA Caching Hook
         }
 
         // =========================================================================
@@ -2033,6 +1981,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 visited.add(dateStr);
                 
                 let stateVal = appState.monthlyArchive[dateStr];
+                // Rest day Shield Wall evaluation bypasses breaking logic cleanly
                 if (stateVal === 'done' || stateVal === 'rest') {
                     if (stateVal === 'done') streak++;
                     checkDate.setDate(checkDate.getDate() - 1);
@@ -2047,10 +1996,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             const today = getSimulatedDateObject();
             const todayStr = today.toDateString();
             const dayName = DAYS_OF_WEEK[today.getDay()];
-            const stage = CONFIG_THEME_AND_COPY.stages[dayName] || { name: "ACTIVE ROUTINE", color: "#BC6CFF" };
             const isCompleted = (appState.monthlyArchive[todayStr] === 'done');
 
-            // 1. Display date and day on dashboard, styled as a muted gray (Point 5)
             const labelEl = document.getElementById('radar-day-label');
             if (labelEl) {
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -2058,7 +2005,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 labelEl.style.color = '#4b5563'; // Muted Gray across all states
             }
             
-            // 2. Calculate current streak & rank mapping
             const streak = calculateCurrentStreak();
             let matchingRank = CONFIG_THEME_AND_COPY.warriorRanks[0];
             for (const r of CONFIG_THEME_AND_COPY.warriorRanks) {
@@ -2068,7 +2014,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             }
             
-            // 3. Update target display reps with conquered layouts (Point b)
             const targetEl = document.getElementById('radar-target');
             if (targetEl) {
                 const targets = getComputedTargets();
@@ -2085,7 +2030,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             }
             
-            // 4. Update dynamic stats panel (Muted labels "STREAK:" and "RANK:" to highlight values - Point 5)
             const statsEl = document.getElementById('radar-stats');
             if (statsEl) {
                 statsEl.innerHTML = `
@@ -2096,7 +2040,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     <span style="color:var(--header-accent); text-shadow: var(--header-glow-intensity); font-weight:900;">${matchingRank.title}</span>`;
             }
             
-            // Aligned scroll lore directly below rank (no "LORE:" text, Scroll Emoji prepended - Point d)
             const deltaEl = document.getElementById('radar-delta');
             if (deltaEl) {
                 deltaEl.innerHTML = `📜 ${matchingRank.status}`;
@@ -2136,7 +2079,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
         }
 
-        // Self-Collapsing Accordions
         function toggleForgeAccordion(sectionId) {
             triggerHapticPulse();
             const el = document.getElementById(sectionId);
@@ -2183,7 +2125,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         // 🛡️ SUBSECTION 8: BATTLEGROUND LOADOUT GENERATION
         // =========================================================================
         function getProgressiveGlowColor(index, total) {
-            const colors = CONFIG_THEME_AND_COPY.progressColors || ['#4b5563', '#00F0FF', '#4F46E5', '#BC6CFF', '#10B981'];
+            const colors = CONFIG_THEME_AND_COPY.progressColors;
             if (total <= 1) return colors[colors.length - 1];
             
             let ratio = index / total;
@@ -2199,7 +2141,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             
             const maintDone = (appState.completedExercisesToday['maint'] === true);
 
-            // Sync Shield Wall toggle status
             const shieldBtn = document.getElementById('shield-wall-toggle-btn');
             if (appState.monthlyArchive[todayStr] === 'rest') {
                 shieldBtn.innerText = "ACTIVE";
@@ -2254,7 +2195,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             let completedItemIndices = [];
             let activeHtml = '';
             let completedHtml = '';
-            let activeCount = 0;
             let completedCount = 0;
 
             visibleWorkouts.forEach(ex => {
@@ -2266,7 +2206,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 completedItemIndices.push('maint');
             }
 
-            // Find immediate next focus task
             let activeFocusTargetId = null;
             const firstIncomplete = visibleWorkouts.find(w => !appState.completedExercisesToday[w.id]);
             if (firstIncomplete) {
@@ -2339,7 +2278,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     completedCount++;
                 } else {
                     activeHtml += cardHtml;
-                    activeCount++;
                 }
             });
 
@@ -2452,6 +2390,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     activeTimerId = null;
                     timerPaused = false;
                     document.title = "V_Forge";
+                    releaseScreenWakeLock();
                 }
                 saveToStorage();
                 renderDashboard();
@@ -2524,7 +2463,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             refreshRadarHeader();
             renderDashboard();
         }
+    </script>
+<!-- END OF PART 7 OF 9 -->
 
+<!-- BREADCRUMB CONNECTOR [Part 7 of 9]: PASTE THIS BLOCK DIRECTLY BELOW PART 7 -->
+<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 8 DIRECTLY AFTER THIS CONNECTOR -->
+<!-- PART 8 WILL DEFINE SAGA ACCORDIONS, COLLISION-PROOF TOOLTIPS, AND HISTORICAL GRIDS -->
+<!-- CONNECTOR PART 7 -> PART 8 -->
+<!-- START OF PART 8 OF 9: SAGA ACCORDIONS, COLLISION-PROOF TOOLTIPS, AND HISTORICAL GRIDS -->
+    <script>
         // =========================================================================
         // 🛡️ SUBSECTION 10: SAGA PROGRESSION & STAGING ACCORDIONS
         // =========================================================================
@@ -2588,6 +2535,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 let loggedMetrics = appState.historicalVolumeLogs[loopStr];
                 let metricsHtml = '';
                 
+                // Ledger Integrity: Reads strictly from saved historical JSON volume snapshots
                 if (loggedMetrics) {
                     metricsHtml = '<div style="margin-top: 8px; font-size: 0.8rem; line-height: 1.5; color: #a1a1aa;">';
                     appState.workoutRegistry.forEach(w => {
@@ -2595,8 +2543,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                         let val = loggedMetrics[w.id];
                         let label = w.title;
                         if (val !== undefined && val !== null) {
-                            let displayVal = isNaN(val) ? val : `${val}`;
-                            metricsHtml += `<div>• ${label}: <span style="color:#ffffff; font-weight:700;">${displayVal}</span></div>`;
+                            metricsHtml += `<div>• ${label}: <span style="color:#ffffff; font-weight:700;">${val}</span></div>`;
                         }
                     });
                     metricsHtml += '</div>';
@@ -2768,7 +2715,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             return `<div class="day-dot" style="${styleStr}" data-date="${lookupStr}">${displayNum}</div>`;
         }
 
-        // UNIFIED POINTER INTERACTION & LONG-PRESS PERSISTENCE
+        // UNIFIED POINTER INTERACTION & LONG-PRESS PERSISTENCE WITH ZERO-SNAP SCROLL LOCKS
         function attachTouchInteractions() {
             const container = document.getElementById('monthly-scroll-container');
             if (!container) return;
@@ -2798,7 +2745,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     dot.setPointerCapture(e.pointerId);
                 } catch (err) {}
 
-                document.body.style.overflow = "hidden";
+                // Non-jittery hardware-friendly Touch Lock
+                dot.style.touchAction = "none";
 
                 if (pressTimer) clearTimeout(pressTimer);
                 
@@ -2821,9 +2769,9 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     if (activeTargetDot) {
                         try {
                             activeTargetDot.releasePointerCapture(e.pointerId);
+                            activeTargetDot.style.touchAction = "";
                         } catch (err) {}
                     }
-                    document.body.style.overflow = "";
                 }
             };
 
@@ -2833,11 +2781,10 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                     pressTimer = null;
                 }
                 
-                document.body.style.overflow = "";
-
                 if (activeTargetDot) {
                     try {
                         activeTargetDot.releasePointerCapture(e.pointerId);
+                        activeTargetDot.style.touchAction = "";
                     } catch (err) {}
                 }
 
@@ -2890,14 +2837,12 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 let loggedMetrics = appState.historicalVolumeLogs[loopStr];
                 if (loggedMetrics) {
                     for (let key in loggedMetrics) {
-                        if (key === 'catcow') continue; 
                         totalsObj[key] = (totalsObj[key] || 0) + (parseFloat(loggedMetrics[key]) || 0);
                     }
                     daysEvaluated++;
                 } else if (appState.monthlyArchive[loopStr] === 'done') {
                     let estTargets = getTargetBoundsForDay(DAYS_OF_WEEK[loopDate.getDay()]);
                     appState.workoutRegistry.forEach(w => {
-                        if (w.id === 'catcow') return;
                         let baseVal = getTargetValueForWorkout(w, estTargets);
                         let val = w.id === 'push' ? baseVal * 2 : baseVal; 
                         totalsObj[w.id] = (totalsObj[w.id] || 0) + val;
@@ -2906,14 +2851,12 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
                 }
             }
 
-            // Secure full lifetime logs
             for (let logDateStr in appState.historicalVolumeLogs) {
                 let parsedLogDate = new Date(logDateStr);
                 if (parsedLogDate <= targetDate) {
                     let loggedMetrics = appState.historicalVolumeLogs[logDateStr];
                     if (loggedMetrics) {
                         for (let key in loggedMetrics) {
-                            if (key === 'catcow') continue;
                             allTimeTotalsObj[key] = (allTimeTotalsObj[key] || 0) + (parseFloat(loggedMetrics[key]) || 0);
                         }
                     }
@@ -2982,6 +2925,19 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             let topPos = rect.top - ttHeight - 12;
             let leftPos = rect.left + (rect.width / 2) - (ttWidth / 2);
             
+            // Viewport Boundary Collision Engine: Flip down if clipped off top
+            let isFlipped = false;
+            if (topPos < 16) {
+                topPos = rect.bottom + 12;
+                isFlipped = true;
+            }
+
+            if (isFlipped) {
+                tt.classList.add('flipped');
+            } else {
+                tt.classList.remove('flipped');
+            }
+            
             const screenPadding = 16;
             if (leftPos < screenPadding) {
                 leftPos = screenPadding;
@@ -2995,7 +2951,15 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             tt.style.right = 'auto';
             tt.classList.add('visible');
         }
+    </script>
+<!-- END OF PART 8 OF 9 -->
 
+<!-- BREADCRUMB CONNECTOR [Part 8 of 9]: PASTE THIS BLOCK DIRECTLY BELOW PART 8 -->
+<!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 9 DIRECTLY AFTER THIS CONNECTOR -->
+<!-- PART 9 WILL DEFINE JS COMPRESSED COUNTDOWNS, WAKE LOCK BINDINGS, FORGE ACTIONS, AND ENGINE INITIALIZERS -->
+<!-- CONNECTOR PART 8 -> PART 9 -->
+<!-- START OF PART 9 OF 9: TIMERS, WAKE LOCKS, SYSTEM DIRECTIVES, AND DEV CONTROLLERS -->
+    <script>
         // =========================================================================
         // 🛡️ SUBSECTION 12: CHRONOLOGICAL AUTO-SKIP BACKFILLER
         // =========================================================================
@@ -3155,7 +3119,8 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             appState.monthlyArchive[todayStr] = 'done';
             appState.historicalVolumeLogs[todayStr] = todayMetrics; 
             
-            appState.lastWorkoutTimestamp = Date.now();
+            // Warp Clock Sync: Syncs complete times to the simulated clock
+            appState.lastWorkoutTimestamp = getSimulatedDateObject().getTime();
             appState.lastActiveDateString = todayStr;
             appState.completedExercisesToday = {}; 
 
@@ -3186,7 +3151,177 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
 
         // =========================================================================
-        // 🛡️ SUBSECTION 15: AUDIO, TOUCH, AND CHRONO UTILITIES
+        // 🛡️ SUBSECTION 15: HARDWARE KEEP-AWAKE & HIGH-ACCURACY TIMER SYSTEMS
+        // =========================================================================
+        async function requestScreenWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) {
+                console.warn("WakeLock request blocked or failed silently: ", err);
+            }
+        }
+
+        function releaseScreenWakeLock() {
+            try {
+                if (wakeLock !== null) {
+                    wakeLock.release();
+                    wakeLock = null;
+                }
+            } catch (err) {}
+        }
+
+        document.addEventListener('visibilitychange', async () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                await requestScreenWakeLock();
+            }
+        });
+
+        function executeTimerSequence(event, id, originalSecs) {
+            event.stopPropagation();
+            triggerHapticPulse();
+
+            // Single-Active Timer Guard
+            if (activeTimerId !== null && activeTimerId !== id) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                const prevTrigger = document.querySelector(`#card-${activeTimerId} .timer-interactive-trigger`);
+                if (prevTrigger) {
+                    prevTrigger.classList.remove('timer-running');
+                    prevTrigger.querySelector('.timer-status-icon').innerHTML = TIMER_PLAY_SVG;
+                }
+                activeTimerId = null;
+                timerPaused = false;
+                releaseScreenWakeLock();
+            }
+
+            const trigger = event.currentTarget;
+
+            if (activeTimerId === id) {
+                if (!timerPaused) {
+                    // Pause active countdown
+                    timerPaused = true;
+                    trigger.classList.remove('timer-running');
+                    trigger.querySelector('.timer-status-icon').innerHTML = TIMER_PLAY_SVG;
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    document.title = "V_Forge";
+                    releaseScreenWakeLock();
+                } else {
+                    // Resume countdown
+                    timerPaused = false;
+                    trigger.classList.add('timer-running');
+                    trigger.querySelector('.timer-status-icon').innerHTML = TIMER_PAUSE_SVG;
+                    requestScreenWakeLock();
+                    
+                    let startTime = Date.now();
+                    let startRemaining = timerRemainingSecs;
+
+                    timerInterval = setInterval(() => {
+                        let elapsed = Math.round((Date.now() - startTime) / 1000);
+                        timerRemainingSecs = startRemaining - elapsed;
+                        
+                        if (timerRemainingSecs <= 0) {
+                            timerRemainingSecs = 0;
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            activeTimerId = null;
+                            document.title = "V_Forge";
+                            releaseScreenWakeLock();
+                            
+                            trigger.classList.remove('timer-running');
+                            trigger.querySelector('.timer-status-icon').innerHTML = TIMER_PLAY_SVG;
+                            
+                            appState.completedExercisesToday[id] = true;
+                            saveToStorage();
+                            triggerHammerHaptic();
+                            renderDashboard();
+                        } else {
+                            trigger.querySelector('.timer-display').innerText = `${timerRemainingSecs}s`;
+                            document.title = `[${timerRemainingSecs}s] V_Forge`;
+                        }
+                    }, 250); // High-frequency polling prevent gaps
+                }
+            } else {
+                // Initialize clean countdown ticker
+                activeTimerId = id;
+                timerPaused = false;
+                timerOriginalSecs = originalSecs;
+                timerRemainingSecs = originalSecs;
+
+                trigger.classList.add('timer-running');
+                trigger.querySelector('.timer-status-icon').innerHTML = TIMER_PAUSE_SVG;
+                requestScreenWakeLock();
+
+                let startTime = Date.now();
+
+                timerInterval = setInterval(() => {
+                    let elapsed = Math.round((Date.now() - startTime) / 1000);
+                    timerRemainingSecs = timerOriginalSecs - elapsed;
+                    
+                    if (timerRemainingSecs <= 0) {
+                        timerRemainingSecs = 0;
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        activeTimerId = null;
+                        document.title = "V_Forge";
+                        releaseScreenWakeLock();
+                        
+                        trigger.classList.remove('timer-running');
+                        trigger.querySelector('.timer-status-icon').innerHTML = TIMER_PLAY_SVG;
+                        
+                        appState.completedExercisesToday[id] = true;
+                        saveToStorage();
+                        triggerHammerHaptic();
+                        renderDashboard();
+                    } else {
+                        trigger.querySelector('.timer-display').innerText = `${timerRemainingSecs}s`;
+                        document.title = `[${timerRemainingSecs}s] V_Forge`;
+                    }
+                }, 250);
+            }
+        }
+
+        // Safe 600ms Gesture-based Reset Handler
+        function handleTimerTouchStart(event, id, originalSecs) {
+            timerResetTriggered = false;
+            if (timerTriggerPressTimer) clearTimeout(timerTriggerPressTimer);
+            
+            timerTriggerPressTimer = setTimeout(() => {
+                triggerHapticPulse();
+                timerResetTriggered = true;
+                
+                if (activeTimerId === id) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    activeTimerId = null;
+                    timerPaused = false;
+                    document.title = "V_Forge";
+                    releaseScreenWakeLock();
+                }
+                
+                const trigger = event.currentTarget;
+                trigger.classList.remove('timer-running');
+                trigger.querySelector('.timer-status-icon').innerHTML = TIMER_PLAY_SVG;
+                trigger.querySelector('.timer-display').innerText = `${originalSecs}s`;
+            }, 600); // Strict holding threshold
+        }
+
+        function handleTimerTouchEnd() {
+            if (timerTriggerPressTimer) {
+                clearTimeout(timerTriggerPressTimer);
+                timerTriggerPressTimer = null;
+            }
+        }
+
+        function triggerFutureSilentChimeHook() {
+            // Sits completely silent with zero CPU initialization lag.
+            // Modular layout hook ready for future synthetic frequencies if required.
+        }
+
+        // =========================================================================
+        // 🛡| SUBSECTION 16: AUDIO, TOUCH, AND CHRONO UTILITIES
         // =========================================================================
         function startLiveDeltas() {
             setInterval(updateLiveClockDisplay, 60000);
@@ -3261,7 +3396,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
 
         // =========================================================================
-        // 🛡️ SUBSECTION 16: FORGE CONFIGURATION RENDERERS
+        // 🛡️ SUBSECTION 17: FORGE CONFIGURATION RENDERERS
         // =========================================================================
         function renderSkaldConfigInterface() {
             const container = document.getElementById('skald-quotes-container');
@@ -3300,7 +3435,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
 
         function saveCurrentQuoteData() {
-            let selectedDay = sessionStorage.getItem('viking_selected_quote_day', day);
+            let selectedDay = sessionStorage.getItem('viking_selected_quote_day');
             const headVal = document.getElementById('quote-head-field').value;
             const subVal = document.getElementById('quote-sub-field').value;
             appState.customQuotes[selectedDay] = { head: headVal, sub: subVal };
@@ -3391,7 +3526,6 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             alert("Workout forged successfully.");
         }
 
-        // Programmatic registry index movements
         function forgeMoveWorkoutUp(index) {
             triggerHapticPulse();
             if (index === 0) return;
@@ -3497,7 +3631,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
         }
 
         // =========================================================================
-        // 🛡️ SUBSECTION 17: SANDBOX DEVELOPMENT DIRECTIVES (SANDBOX)
+        // 🛡️ SUBSECTION 18: SANDBOX DEVELOPMENT DIRECTIVES (SANDBOX)
         // =========================================================================
         function testInjectSkipDay() {
             let yesterday = getSimulatedDateObject();
@@ -3551,6 +3685,7 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             activeTimerId = null;
             timerPaused = false;
             document.title = "V_Forge";
+            releaseScreenWakeLock();
             
             delete appState.monthlyArchive[todayStr];
             delete appState.currentWeekData[dayName];
@@ -3583,6 +3718,14 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
             }
         }
 
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js').catch(() => {});
+                });
+            }
+        }
+
         window.onload = initApp;
     </script>
 </body>
@@ -3590,18 +3733,14 @@ CORE APP CAPABILITIES (COMPREHENSIVE SPECIFICATION):
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. EVENT DRIVEN RE-RENDERING:
-   This logic executes calculations and state commits synchronously on user click, 
-   instantly saving metrics and updating layouts. 
+1. EVENT-DRIVEN COMPOSITION:
+   This final script initializes page-rendering setups, tracks accurate delta countdowns, 
+   secures wake locks to keep your phone display alive, and cleanly flushes history 
+   records directly to LocalStorage upon completion.
 
-2. MEMORY AND CONTEXT MANAGEMENT:
-   By using standard storage structures and hardware properties, 
-   complex computations for streak patterns and active loadouts run within 
-   a memory-efficient thread.
-
-3. HARDWARE-ALIGNMENT:
-   The particle spawner executes native DOM operations, leveraging hardware layers 
-   for fluid animations on mobile screens.
+2. LEAK-FREE COMPUTATIONAL DESIGN:
+   By coupling particles, tooltips, and timers directly to GPU-composited layers and 
+   hardware event bindings, visual transitions remain perfectly responsive.
 ================================================================================
 -->
-<!-- END OF PART 7 -->
+<!-- END OF PART 9 OF 9 -->
