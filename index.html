@@ -1,7 +1,7 @@
 <!-- START OF PART 1: HTML SHELL & STYLESHEET CORE -->
 <!--
-TITLE: V_Forge - Master Unified Edition (Build v3.9.5 - Preloaded Bootstrap & Trochoidal Wave Physics)
-DATE/TIME (IST): July 17, 2026 - 05:37 PM IST
+TITLE: V_Forge - Master Unified Edition (Build v3.9.8 - Calibrated Fluid Waves & Subtext Legibility)
+DATE/TIME (IST): July 17, 2026 - 06:45 PM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES:
@@ -54,6 +54,8 @@ CORE APP CAPABILITIES:
             /* Dynamic Theme Variables */
             --header-accent: #BC6CFF;
             --header-glow-intensity: 0 0 10px rgba(188, 108, 255, 0.4);
+            /* Fine glow shadow protects small body fonts from blur bleed */
+            --subtext-glow-intensity: 0 0 3px var(--stage-color);
         }
 
         * {
@@ -166,9 +168,9 @@ CORE APP CAPABILITIES:
             overflow: visible;
         }
         
-        /* Water Theme Completed State Wave Height Clamped to 28% elegant baseline */
+        /* Water Theme Completed State: Height nudged up to 34vh to rise cleanly above the navbar */
         body.theme-water #conquered-wash-overlay {
-            height: 28vh !important;
+            height: 34vh !important;
             bottom: 0;
             top: auto;
             transform: translate3d(0, 0, 0) !important;
@@ -486,6 +488,12 @@ CORE APP CAPABILITIES:
             transition: text-shadow 0.6s ease-in-out, color 0.6s ease-in-out;
         }
 
+        /* Fine subtext glow prevents small fonts from bleeding on AMOLED */
+        body.conquered-state .delta-subtext {
+            color: var(--stage-color) !important;
+            text-shadow: var(--subtext-glow-intensity) !important;
+        }
+
         /* Upgraded Progress Bar Design */
         .progress-container {
             height: 6px;
@@ -656,7 +664,7 @@ CORE APP CAPABILITIES:
             margin-bottom: 16px; 
             text-transform: uppercase;
             transition: text-shadow 0.6s ease-in-out, color 0.6s ease-in-out;
-            /* 1.5-second breathing victory pulsing animation mapped globally */
+            /* 1.8-second breathing victory pulsing animation mapped globally */
             animation: conquer-message-pulse 1.8s infinite alternate ease-in-out;
             will-change: transform, text-shadow, opacity;
         }
@@ -683,7 +691,8 @@ CORE APP CAPABILITIES:
             margin: 0 auto; 
             text-align: center; 
             font-style: italic; 
-            text-shadow: 0 0 4px rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0.15);
+            /* Suppressed shadows on small paragraph fonts ensures maximum contrast */
+            text-shadow: none !important;
         }
 
         .week-container-box { background-color: var(--bg-card); border: 1px solid #0f0b14; border-radius: 16px; padding: 14px; margin-bottom: 20px; }
@@ -3291,7 +3300,7 @@ CORE APP CAPABILITIES:
         function executeTimerSequence(event, id, originalSecs) {
             event.stopPropagation();
             
-            // Decouple click from long-press resets: Exit immediately if reset just occurred
+            // Decouple Click from Long-Press Reset: Exit immediately if reset just occurred
             if (timerResetTriggered) {
                 event.preventDefault();
                 timerResetTriggered = false;
