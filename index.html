@@ -1,20 +1,20 @@
 <!-- START OF PART 1: HTML SHELL & STYLESHEET CORE -->
 <!--
-TITLE: V_Forge - Master Unified Edition (Build v3.9.9 - Smooth Loop Easing & Performance Isolation)
-DATE/TIME (IST): July 17, 2026 - 07:15 PM IST
+TITLE: V_Forge - Master Unified Edition (Build v3.9.10 - Calibrated Fluid Waves & Subtext Legibility)
+DATE/TIME (IST): July 20, 2026 - 12:12 PM IST
 AUTHOR: VKT & Oracle
 
 CORE APP CAPABILITIES:
-1. PERSISTENT SYSTEM THEME SELECTION:
+1. RENDERING PERFORMANCE LAYER ISOLATION:
+   - Uses strict "display: none" and "display: block" toggles on progressive/completed layers to prevent background graphics calculations.
+2. DYNAMIC WARRIOR RADAR STATS CORE:
+   - Live date display, streak metrics, and warrior ranks mapped to the active Stage color.
+3. INLINE SVG MULTI-LAYERED WAVE SYSTEM:
+   - Trochoidal wave generation paths ensure perfectly seamless horizontal transitions without loop snapping.
+4. VOLUMETRIC GLOW COMPOSITING:
    - Dynamic, persistent visual environments (Water vs. Fire) saved directly in local storage.
-2. RENDERING HARDWARE PERFORMANCE ISOLATION:
-   - Uses absolute 'display: none' switches on inactive wave/flame layers to stop background CPU leaks.
-3. SMOOTH ANIMATION PHYSICS:
-   - Employs fluid CSS transform easing to slide wave heights and speeds instead of structural animation snaps.
-4. COUPLING SLIDERS TO DUAL THEMES:
-   - Links ambient brightness slider purely to opacity and visual color density across both Water and Fire environments.
-5. MANUAL AND AUTOMATIC CHECKLIST OVERRIDES:
-   - Preserves dual-pathway completion mechanics for testing flexibility.
+5. UNIFIED POINTER TIMER SEQUENCE:
+   - Implements a unified pointer event system to handle short taps and long-press holds without touchscreen double-firing.
 ================================================================================
 -->
 <!DOCTYPE html>
@@ -56,7 +56,7 @@ CORE APP CAPABILITIES:
             --header-glow-intensity: 0 0 10px rgba(188, 108, 255, 0.4);
             /* Fine glow shadow protects small body fonts from blur bleed */
             --subtext-glow-intensity: 0 0 3px var(--stage-color);
-            --target-color: #BC6CFF; /* Safety Fallback Color to prevent blank loads */
+            --target-color: #BC6CFF; /* Default safety fallback color */
         }
 
         * {
@@ -140,13 +140,12 @@ CORE APP CAPABILITIES:
             overflow: visible;
             transform-origin: bottom;
             contain: paint layout; /* Isolates the layer entirely from scroll repaints to eliminate stutters */
-            /* Start height calibrated to crest cleanly 30px above app's 75px navigation bar at 0% */
+            /* Calibrated so progressive wave crests float visibly above the app's bottom nav-bar at 0% */
             transform: translate3d(0, calc(100vh - (105px + var(--fire-progress) * 80vh)), 0);
             background: linear-gradient(to top, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), var(--wash-opacity)) 0%, rgba(var(--wash-color-r), var(--wash-color-g), var(--wash-color-b), 0) 50%);
             mix-blend-mode: screen; 
-            /* Eased transition properties smooth out progress increments */
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-            display: block; /* Visible by default during progressive workout state */
+            display: block; /* Active state default */
         }
         
         body.theme-water #bifrost-wash-layer {
@@ -154,9 +153,8 @@ CORE APP CAPABILITIES:
             opacity: 1.0;
         }
 
-        /* Full Performance Isolation: Freeze drawing ticks when session is finished */
         body.conquered-state #bifrost-wash-layer {
-            display: none !important;
+            display: none !important; /* Full performance isolation - disables invisible timeline math */
         }
 
         /* ------------------------------------------------------------- */
@@ -175,12 +173,12 @@ CORE APP CAPABILITIES:
             transform: translate3d(0, 0, 0);
             transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             overflow: visible;
-            display: none !important; /* Performance Isolation: completely frozen unless day is finished */
+            display: none !important; /* Performance isolation: default hidden */
         }
         
         body.conquered-state #conquered-wash-overlay {
             display: block !important; /* Un-freezes rendering loops on victory screen */
-            opacity: 0.90;
+            opacity: 0.90; 
         }
         
         /* Water Theme Completed State: Height adjusted upwards to show tall roaring waves */
@@ -193,7 +191,7 @@ CORE APP CAPABILITIES:
             transition: opacity 0.4s ease;
         }
 
-        /* Fire Theme Completed State Cozy Campfire Proportions */
+        /* Fire Theme Completed State: Tall, Organic Flame proportions preserved as per your original design */
         body.theme-fire #conquered-wash-overlay {
             height: 40vh !important;
             bottom: 0;
@@ -203,9 +201,8 @@ CORE APP CAPABILITIES:
             transition: opacity 0.4s ease;
         }
 
-        /* Flame Sizing Reduction: Scaled down by 30% to 160px for clean completed screens */
+        /* Sizing Constraints removed completely to restore previous natural, realistic, non-stove flame scales */
         body.theme-fire #conquered-wash-overlay .flame-svg {
-            height: 160px !important;
             bottom: 0;
         }
 <!-- END OF PART 1 -->
@@ -235,7 +232,7 @@ CORE APP CAPABILITIES:
 }
 
 @keyframes slow-hearth-breath {
-    0%, 100% { opacity: 0.92; transform: scaleY(1.0) translate3d(0,0,0); }
+    0%, 100 { opacity: 0.92; transform: scaleY(1.0) translate3d(0,0,0); }
     50% { opacity: 0.84; transform: scaleY(0.97) translate3d(0, 1px, 0); }
 }
 
@@ -249,7 +246,7 @@ CORE APP CAPABILITIES:
     50% { transform: scaleY(0.96) skewX(-0.8deg) translate3d(0, 1px, 0); }
 }
 
-/* DECOUPLED MULTI-DIRECTIONAL SWAY CONTAINERS */
+/* DECOUPLED MULTI-DIRECTIONAL SWAY CONTAINERS (Restored Natural Completed Flame Sways) */
 .sway-container {
     position: absolute;
     bottom: 0;
@@ -313,25 +310,25 @@ body.theme-water .wave-svg {
     mix-blend-mode: screen; 
 }
 
-/* UPGRADED GPU WAVE MATH: Compiles horizontal drifting with vertical heaving, rotating, and scaling */
+/* UPGRADED GPU WAVE MATH: Slipped and de-synchronized wave loop durations surgically removes repetition */
 .wave-back {
     fill: url(#gradient-back);
     filter: brightness(0.7) contrast(1.2);
-    animation: wave-drift-back 16s linear infinite;
+    animation: wave-drift-back 24s linear infinite; /* Slipped from 16s to 24s */
     mix-blend-mode: normal;
 }
 
 .wave-mid {
     fill: url(#gradient-mid);
     filter: brightness(0.95) saturate(1.1);
-    animation: wave-drift-mid 11s linear infinite;
+    animation: wave-drift-mid 17s linear infinite; /* Slipped from 11s to 17s */
     mix-blend-mode: screen;
 }
 
 .wave-front {
     fill: url(#gradient-front);
     filter: brightness(1.4) saturate(1.25);
-    animation: wave-drift-front 7.5s linear infinite;
+    animation: wave-drift-front 11s linear infinite; /* Slipped from 7.5s to 11s */
     mix-blend-mode: screen;
 }
 
@@ -418,12 +415,12 @@ body.theme-water .flame-svg {
         opacity: 0;
     }
 }
-<!--/* END OF PART 2 */-->
+/* END OF PART 2 */
 <!-- BREADCRUMB CONNECTOR: PASTE THIS BLOCK DIRECTLY BELOW PART 2 -->
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 3 DIRECTLY AFTER THIS CONNECTOR -->
 <!-- PART 3 WILL DEFINE CARDS, PORTAL UI ELEMENTS, TOOLTIPS, AND WORKOUT GRID ACTIONS -->
 <!-- CONNECTOR PART 2 -> PART 3 -->
-<!--/* START OF PART 3 OF 9: UI STYLES, LAYOUT DECK & DIALOGS */-->
+/* START OF PART 3 OF 9: UI STYLES, LAYOUT DECK & DIALOGS */
 .target-wrapper { 
     padding: calc(25px + env(safe-area-inset-top, 0px)) 20px 5px 20px; 
 }
@@ -973,6 +970,13 @@ body.conquered-state .delta-subtext {
     transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.5s ease;
 }
 
+/* HIGH-VISIBILITY EXPANSION LENS KEYFRAMES (Brings back perfect victory flash function) */
+@keyframes lens-flare-bloom {
+    0% { transform: scale(0.5); opacity: 0; }
+    30% { transform: scale(1.6); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
 .flash-active-cinematic {
     animation: lens-flare-bloom 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
@@ -1091,12 +1095,11 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
     100% { border-color: var(--target-color, #BC6CFF); box-shadow: 0 0 4px var(--target-color, #BC6CFF); }
 }
 .immediate-focus-card {
-        animation: immediate-target-pulse 2s infinite ease-in-out !important;
-        border: 1.5px solid var(--target-color, #BC6CFF) !important;
-    }
+    animation: immediate-target-pulse 2s infinite ease-in-out !important;
+    border: 1.5px solid var(--target-color, #BC6CFF) !important;
+}
 </style>
 </head>
-<!-- START OF PART 4 OF 9: STRUCTURAL HTML DOM STRUCTURE -->
 <!-- END OF PART 3 OF 9 -->
 <!-- BREADCRUMB CONNECTOR [Part 3 of 7]: PASTE THIS BLOCK DIRECTLY BELOW PART 3 -->
 <!-- WARNING: DO NOT MERGE WITHOUT COPYING PART 4 DIRECTLY AFTER THIS CONNECTOR -->
@@ -1692,9 +1695,10 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
             } : null;
         }
 
-        // Trochoidal SVG Path Generator (Recalibrated with mathematical periodicity to eliminate loop snapping)
+        // Trochoidal SVG Path Generator (Left-to-Right edge coordinates matched for 100% loop seamlessness)
         function drawTrochoidalPath(amp, freq, baseHeight) {
-            let path = `M 0 120 L 0 ${baseHeight} `;
+            // Precision alignment: Starts exactly at trough height to align with end of 200% scroll loop
+            let path = `M 0 120 L 0 ${baseHeight + amp * 0.2} `;
             let totalWidth = 2400; // 200% width for horizontal translation loop continuity
             let totalSteps = freq * 4;
             let step = totalWidth / totalSteps;
@@ -1703,7 +1707,6 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
                 let x = (i + 1) * step;
                 let isPeak = (i % 2 === 0);
                 
-                // Balances control curves exactly to ensure right edge aligns perfectly with left edge
                 let targetY = isPeak ? (baseHeight - amp) : (baseHeight + amp * 0.2);
                 
                 let controlX1 = x - step * 0.5;
@@ -1765,7 +1768,7 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
             document.body.classList.remove('theme-water', 'theme-fire');
             document.body.classList.add(`theme-${appState.activeVisualTheme || 'water'}`);
 
-            // Performance Isolation and Dynamic Opacity Linking to settings wash slider
+            // Performance Layer Isolation and Slider Opacity Coupling
             const bLayer = document.getElementById('bifrost-wash-layer');
             const cLayer = document.getElementById('conquered-wash-overlay');
 
@@ -1792,16 +1795,17 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
             let speed = 8; 
 
             if (!isCompleted) {
-                // Bifrost Rise: Eased scaling parameters
+                // Square Root Easing curve forces wave to crest instantly above nav-bar on first checked task
+                let easedProgress = Math.sqrt(progressFloat);
                 speed = 12 - (progressFloat * 9);
-                freq = Math.round(1 + (progressFloat * 9));
-                // Starts cresting beautifully 30px above the 75px app bottom nav-bar at 0%
-                baseHeight = 120 - (progressFloat * 80); 
+                // Lower frequency divider during active progressive state makes waves wider and calmer
+                freq = Math.round(1 + (progressFloat * 4)); 
+                baseHeight = 120 - (easedProgress * 80); 
                 amp = 3 + (progressFloat * 5.4); 
             } else {
-                // Elevated baseHeight locally by ~15% (rises 120px to 42% height instead of 28%)
+                // Completed state height baseline raised 15% locally (rises from 120px to 42% height instead of 28%)
                 baseHeight = 120 - (0.42 * 120); 
-                amp = 10.5; // Roaring completed wave peaks
+                amp = 10.5; // Majestic victory waves peaks
                 freq = 4;
             }
 
@@ -1923,7 +1927,9 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
                 }
 
                 emberInterval = setInterval(() => {
-                    for (let i = 0; i < 4; i++) {
+                    // Spawns double the embers (8 instead of 4) exclusively during Completed Campfire Mode
+                    const count = isCompleted ? 8 : 4;
+                    for (let i = 0; i < count; i++) {
                         spawnIndividualEmber();
                     }
                 }, spawnRate);
@@ -3172,7 +3178,6 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
             briefing.style.display = 'block';
         }
 
-        // Progression acceptors
         function acceptProgression() {
             triggerHapticPulse();
             if (pendingRolloverWeekIdx !== null) {
@@ -3268,7 +3273,7 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
             appState.lastActiveDateString = todayStr;
             appState.completedExercisesToday = {}; 
 
-            // INSTANT LENS FLARE MASK TRIGGER (Zero Timing Delays)
+            // INSTANT VICTORY FLASH LAYER (Zero Timing Delays)
             const flash = document.getElementById('conquest-flash-layer');
             if (flash) {
                 const stage = CONFIG_THEME_AND_COPY.stages[dayName];
@@ -3326,12 +3331,16 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
             }
         });
 
+        // SMART POINTER EVENT COORDINATION SYSTEM (Tracks press timings to decouple hold-resets from start-clicks)
+        let longPressTriggered = false;
+        let touchStartTimestamp = 0;
+
         function executeTimerSequence(event, id, originalSecs) {
             event.stopPropagation();
             
-            if (timerResetTriggered) {
-                event.preventDefault();
-                timerResetTriggered = false;
+            // Decouple short tap from long hold: exit immediately if hold just occurred
+            if (longPressTriggered) {
+                longPressTriggered = false;
                 return;
             }
 
@@ -3435,12 +3444,19 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
         }
 
         function handleTimerTouchStart(event, id, originalSecs) {
-            timerResetTriggered = false;
+            // Prevent simulated double clicks on mobile touch devices
+            if (event.type === 'mousedown' && ('ontouchstart' in window)) {
+                return;
+            }
+
+            longPressTriggered = false;
+            touchStartTimestamp = Date.now();
+
             if (timerTriggerPressTimer) clearTimeout(timerTriggerPressTimer);
             
             timerTriggerPressTimer = setTimeout(() => {
                 triggerHapticPulse();
-                timerResetTriggered = true;
+                longPressTriggered = true;
                 
                 if (activeTimerId === id) {
                     clearInterval(timerInterval);
@@ -3451,10 +3467,13 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
                     releaseScreenWakeLock();
                 }
                 
-                const trigger = event.currentTarget;
-                trigger.classList.remove('timer-running');
-                trigger.querySelector('.timer-status-icon').innerHTML = TIMER_PLAY_SVG;
-                trigger.querySelector('.timer-display').innerText = `${originalSecs}s`;
+                // Queries DOM element directly (safe execution boundary outside the timer thread)
+                const trigger = document.querySelector(`#card-${id} .timer-interactive-trigger`);
+                if (trigger) {
+                    trigger.classList.remove('timer-running');
+                    trigger.querySelector('.timer-status-icon').innerHTML = TIMER_PLAY_SVG;
+                    trigger.querySelector('.timer-display').innerText = `${originalSecs}s`;
+                }
             }, 600); 
         }
 
@@ -3466,7 +3485,7 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
         }
 
         function triggerFutureSilentChimeHook() {
-            // Placeholder modular hook
+            // Standby silent chime hook
         }
 
         // =========================================================================
@@ -3882,13 +3901,13 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
 <!--
 ================================================================================
 NON-CODER ACCESSIBILITY & ARCHITECTURAL SUMMARY:
-1. HARDWARE FORCE-REPAINT MASKING:
-   Using 'offsetWidth' force repainting guarantees that your high-priority lens flare 
-   draws immediately on mobile, concealing the layout panels swap perfectly with zero lag.
+1. SOLID EVENT COORDINATION MASK:
+   Using 'longPressTriggered' as a haptic-locked tracking flag safely isolates 
+   the simulated click event from firing upon touchscreen finger release.
 
-2. DEV OVERRIDE LAYER SYNCHRONIZATION:
-   Testing commands trigger 'updateBodyBackground()' directly, ensuring that simulated 
-   shifts accurately recalculate and toggle display state isolation on-the-fly.
+2. FORCE REPAINT OVERLAY DRAW:
+   Accessing 'flash.offsetWidth' dynamically triggers a DOM reflow, guaranteeing 
+   instant layout rendering of the victory lens flare with zero browser timing skips.
 ================================================================================
 -->
 <!-- END OF PART 9 OF 9 -->
