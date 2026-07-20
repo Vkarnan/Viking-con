@@ -2404,7 +2404,22 @@ V_Forge.Maths.adjustEmberSpawnerCycle = function() {
 // REPAIR PROTOCOL: Swap this block to calibrate layout background sliders. //
 // ====================================================================== //
 V_Forge.UI = V_Forge.UI || {};
+// Add these haptic controls directly below: V_Forge.UI = V_Forge.UI || {};
+V_Forge.UI.triggerHapticPulse = function() {
+    try {
+        if (window.navigator && window.navigator.vibrate) {
+            window.navigator.vibrate(25);
+        }
+    } catch (err) {}
+};
 
+V_Forge.UI.triggerHammerHaptic = function() {
+    try {
+        if (window.navigator && window.navigator.vibrate) {
+            window.navigator.vibrate([100, 80, 100, 80, 350]);
+        }
+    } catch (err) {}
+};
 V_Forge.UI.updateLiveBackgroundSliders = function() {
     const vignetteVal = parseInt(document.getElementById('vignette-range').value);
     const washVal = parseInt(document.getElementById('wash-range').value);
