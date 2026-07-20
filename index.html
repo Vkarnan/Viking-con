@@ -2449,18 +2449,168 @@ document.addEventListener('pointerdown', (e) => {
 
 // ====================================================================== //
 // BLOCK-ID: [JS-UI-INITAPP-REBUILT]                                      //
-// DESCRIPTION: Fail-safe lifecycle initialization and state loaders.     //
+// DESCRIPTION: Restored fail-safe lifecycle and namespaced UI controls.  //
 // DEPENDENCIES: All core modules                                         //
-// REPAIR PROTOCOL: Handles startup and resolves window event timing lags. //
+// REPAIR PROTOCOL: Contains complete definitions for startup & radar views.//
 // ====================================================================== //
+V_Forge.UI = V_Forge.UI || {};
+
+V_Forge.UI.calculateCurrentStreak = function() {
+    let streak = 0;
+    let checkDate = V_Forge.Maths.getSimulatedDateObject();
+    let visited = new Set();
+    
+    let todayStr = checkDate.toDateString();
+    if (V_Forge.State.appState.monthlyArchive[todayStr] !== 'done' && V_Forge.State.appState.monthlyArchive[todayStr] !== 'rest') {
+        checkDate.setDate(checkDate.getDate() - 1);
+    }
+    
+    while (true) {
+        let dateStr = checkDate.toDateString();
+        if (visited.has(dateStr)) break;
+        visited.add(dateStr);
+        
+        let stateVal = V_Forge.State.appState.monthlyArchive[dateStr];
+        if (stateVal === 'done' || stateVal === 'rest') {
+            if (stateVal === 'done') streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+            break;
+        }
+    }
+    return streak;
+};
+
+V_Forge.UI.refreshRadarHeader = function() {
+    const today = V_Forge.Maths.getSimulatedDateObject();
+    const todayStr = today.toDateString();
+    const dayName = V_Forge.State.DAYS_OF_WEEK[today.getDay()];
+    const isCompleted = (V_Forge.State.appState.monthlyArchive[todayStr] === 'done');
+
+    const labelEl = document.getElementById('radar-day-label');
+    if (labelEl) {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        labelEl.innerText = today.toLocaleDateString(undefined, options).toUpperCase();
+        labelEl.style.color = '#4b5563'; 
+    }
+    
+    const streak = V_Forge.UI.calculateCurrentStreak();
+    let matchingRank = V_Forge.Config.warriorRanks[0];
+    for (const r of V_Forge.Config.warriorRanks) {
+        if (streak <= r.max) {
+            matchingRank = r;
+            break;
+        }
+    }
+    
+    const targetEl = document.getElementById('radar-target');
+    if (targetEl) {
+        const targets = V_Forge.Maths.getComputedTargets();
+        if (isCompleted) {
+            targetEl.innerHTML = `
+                <div style="font-size: 0.75rem; font-family: 'Orbitron'; font-weight: 900; letter-spacing: 0.1em; color: #4b5563; opacity: 0.6; margin-bottom: 2px;">
+                    ${targets.reps} REPS TARGET
+                </div>
+                <div style="font-size: 1.85rem; font-family: 'Orbitron'; font-weight: 900; color: var(--header-accent); text-shadow: var(--header-glow-intensity); line-height: 1;">
+                    CONQUERED
+                </div>`;
+        } else {
+            targetEl.innerHTML = `<span>${targets.reps}</span> REPS`;
+        }
+    }
+    
+    const statsEl = document.getElementById('radar-stats');
+    if (statsEl) {
+        statsEl.innerHTML = `
+            <span style="color:#4b5563; font-weight:700;">STREAK:</span> 
+            <span style="color:var(--header-accent); text-shadow: var(--header-glow-intensity); font-weight:900;">${streak} 🔥</span> 
+            <span style="color:#4b5563; font-weight:700; margin: 0 4px;">|</span> 
+            <span style="color:#4b5563; font-weight:700;">RANK:</span> 
+            <span style="color:var(--header-accent); text-shadow: var(--header-glow-intensity); font-weight:900;">${matchingRank.title}</span>`;
+    }
+    
+    const deltaEl = document.getElementById('radar-delta');
+    if (deltaEl) {
+        deltaEl.innerHTML = `📜 ${matchingRank.status}`;
+    }
+};
+
+V_Forge.UI.switchTab = function(tabName, el) {
+    const tt = document.getElementById('touch-tooltip');
+    if (tt) tt.classList.remove('visible');
+
+    const target = document.getElementById(`panel-${tabName}`);
+    document.querySelectorAll('.view-panel').forEach(p => {
+        p.classList.remove('active');
+        p.classList.remove('visible');
+        p.style.display = 'none';
+    });
+    document.querySelectorAll('.nav-bar .nav-item').forEach(n => n.classList.remove('active'));
+    
+    target.style.display = 'block';
+    target.offsetHeight; 
+    target.classList.add('visible');
+    target.classList.add('active');
+    
+    el.classList.add('active');
+    if(tabName === 'saga') {
+        V_Forge.UI.renderWeeklyAccordionPanel();
+        V_Forge.UI.renderMonthlyCalendarStack();
+    } else if (tabName === 'forge') {
+        V_Forge.Forge.renderSkaldConfigInterface();
+        V_Forge.Forge.renderForgeWorkoutRegistry();
+        V_Forge.Forge.renderForgeCooldownRegistry();
+    } else if (tabName === 'battleground') {
+        V_Forge.UI.renderDashboard();
+    }
+};
+
+V_Forge.UI.toggleForgeAccordion = function(sectionId) {
+    V_Forge.UI.triggerHapticPulse();
+    const el = document.getElementById(sectionId);
+    const chev = document.getElementById(`chevron-${sectionId}`);
+    
+    const isOpen = el.classList.contains('open-dropdown');
+    
+    document.querySelectorAll('#panel-forge .shine-card').forEach(card => {
+        if (card.id && card.id.startsWith('forge-') && card.id !== sectionId) {
+            card.classList.remove('open-dropdown');
+            const otherChev = document.getElementById(`chevron-${card.id}`);
+            if (otherChev) otherChev.innerText = "▼";
+        }
+    });
+
+    if (!isOpen) {
+        el.classList.add('open-dropdown');
+        if (chev) chev.innerText = "▲";
+    } else {
+        el.classList.remove('open-dropdown');
+        if (chev) chev.innerText = "▼";
+    }
+};
+
+V_Forge.UI.toggleDevPanel = function() {
+    V_Forge.UI.triggerHapticPulse();
+    const panel = document.getElementById('dev-sandbox-deck');
+    const btn = document.getElementById('dev-toggle-btn');
+    const isVisible = panel.style.display === 'block';
+    if (isVisible) {
+        panel.style.display = 'none';
+        btn.innerText = "OFF";
+        btn.classList.remove('active');
+        localStorage.setItem('viking_dev_panel', 'false');
+    } else {
+        panel.style.display = 'block';
+        btn.innerText = "ON";
+        btn.classList.add('active');
+        localStorage.setItem('viking_dev_panel', 'true');
+    }
+};
+
 V_Forge.UI.initApp = function() {
     try {
-        // Safe DOM bindings checking
         const activeLoadoutEl = document.getElementById('lbl-active-loadout');
-        if (!activeLoadoutEl) {
-            console.error("DOM nodes missing. Postponing V_Forge start.");
-            return;
-        }
+        if (!activeLoadoutEl) return;
 
         activeLoadoutEl.innerText = V_Forge.Config.interfaceHeaders.activeLoadout;
         document.getElementById('lbl-secured-items').innerText = V_Forge.Config.interfaceHeaders.securedItems;
@@ -2473,7 +2623,6 @@ V_Forge.UI.initApp = function() {
         document.getElementById('lbl-dev-console-title').innerText = V_Forge.Config.interfaceHeaders.devConsoleTitle;
         document.getElementById('briefing-card-title').innerText = V_Forge.Config.interfaceHeaders.systemRolloverTitle;
 
-        // Try-Catch secure parsing
         const saved = localStorage.getItem('viking_conquest_v11');
         if (saved) {
             try {
@@ -2482,7 +2631,7 @@ V_Forge.UI.initApp = function() {
                     V_Forge.State.appState = parsed;
                 }
             } catch (e) {
-                console.warn("Storage parse failed. Auto-building baseline directory state.");
+                console.warn("Storage parse failed.");
             }
         }
 
