@@ -1984,41 +1984,51 @@ V_Forge.State = {
 // BREADCRUMB CONNECTOR: START OF PART 3.2
 
 // ====================================================================== //
-// BLOCK-ID: [JS-VALKYRIE-STORAGE]                                        //
-// DESCRIPTION: Namespaced storage synchronizers and rescue recoveries.   //
+// BLOCK-ID: [JS-VALKYRIE-STORAGE-REBUILT]                               //
+// DESCRIPTION: Resilient local storage parse & auto-correct safeguards.  //
 // DEPENDENCIES: [JS-STATE-CONSTRUCTOR]                                   //
-// REPAIR PROTOCOL: Swap this block to edit custom persistence keys.      //
+// REPAIR PROTOCOL: Replaces older storage parsers to prevent boot loops. //
 // ====================================================================== //
 V_Forge.Storage = {
     saveToStorage: function() {
         try {
             localStorage.setItem('viking_conquest_v11', JSON.stringify(V_Forge.State.appState));
-            
-            // Dual-Layer Valkyrie Rolling Cache Backup
-            let valk1 = localStorage.getItem('viking_valk_cache_1');
-            let valk2 = localStorage.getItem('viking_valk_cache_2');
-            if (valk1) localStorage.setItem('viking_valk_cache_2', valk1);
-            if (valk2) localStorage.setItem('viking_valk_cache_3', valk2);
             localStorage.setItem('viking_valk_cache_1', JSON.stringify(V_Forge.State.appState));
         } catch (err) {
-            console.error("Storage write error: ", err);
+            console.error("V_Forge Storage Save Error: ", err);
         }
     },
 
     safeguardAndMigrateDatabase: function() {
         let state = V_Forge.State.appState;
+        if (!state || typeof state !== 'object') {
+            V_Forge.State.appState = {
+                mondayRepBase: 20,
+                mondayPlankBase: 100,
+                appInitTimestamp: Date.now(),
+                lastWorkoutTimestamp: null,
+                completedExercisesToday: {},
+                lastRolloverCheck: null,
+                lastActiveDateString: null,
+                currentWeekData: {},
+                monthlyArchive: {},
+                historicalVolumeLogs: {},
+                customQuotes: {},
+                workoutRegistry: [],
+                cooldownRegistry: [],
+                activeVisualTheme: 'water',
+                backgroundSettings: { vignette: 96, wash: 20 }
+            };
+            state = V_Forge.State.appState;
+        }
+
         if (!state.currentWeekData) state.currentWeekData = {};
         if (!state.monthlyArchive) state.monthlyArchive = {};
         if (!state.historicalVolumeLogs) state.historicalVolumeLogs = {};
         if (!state.completedExercisesToday) state.completedExercisesToday = {};
-        if (!state.appInitTimestamp) state.appInitTimestamp = Date.now();
         if (!state.backgroundSettings) state.backgroundSettings = { vignette: 96, wash: 20 };
         if (state.backgroundSettings.wash === undefined) state.backgroundSettings.wash = 20;
         if (!state.activeVisualTheme) state.activeVisualTheme = 'water';
-
-        if (state.backgroundSettings.tint !== undefined) {
-            delete state.backgroundSettings.tint; 
-        }
 
         if (!state.customQuotes || Object.keys(state.customQuotes).length === 0) {
             state.customQuotes = JSON.parse(JSON.stringify(V_Forge.Config.victoryQuotes));
@@ -2034,12 +2044,6 @@ V_Forge.Storage = {
                 { id: 'rows', title: "Three-point Rows", type: 'reps', multiplier: 1, logToLedger: true, addedTimestamp: 0 },
                 { id: 'curls', title: "Bicep Curls", type: 'reps', multiplier: 1, logToLedger: true, addedTimestamp: 0 }
             ];
-        } else {
-            state.workoutRegistry.forEach(w => {
-                if (w.logToLedger === undefined) {
-                    w.logToLedger = true;
-                }
-            });
         }
 
         if (!state.cooldownRegistry || state.cooldownRegistry.length === 0) {
@@ -2059,13 +2063,11 @@ V_Forge.Storage = {
                 rescueContainer.style.marginBottom = "20px";
                 rescueContainer.innerHTML = `
                     <div style="font-family:'Orbitron'; font-size:0.85rem; color:#bc6cff; font-weight:900; margin-bottom:6px;">⚡ VALKYRIE RESCUE RETRIEVAL</div>
-                    <p style="font-size:0.8rem; color:#a1a1aa; margin-bottom:12px;">Detecting memory wipe. A rolling storage block containing your history is available for instant restoration.</p>
+                    <p style="font-size:0.8rem; color:#a1a1aa; margin-bottom:12px;">Detecting memory wipe. Restore last session archive instantly.</p>
                     <button class="action-btn-secondary" style="border-color:#bc6cff; color:#bc6cff; background: transparent;" onclick="V_Forge.Storage.executeValkyrieRestore()">Restore Last Session Cache</button>
                 `;
                 const battleground = document.getElementById('panel-battleground');
-                if (battleground) {
-                    battleground.insertBefore(rescueContainer, battleground.firstChild);
-                }
+                if (battleground) battleground.insertBefore(rescueContainer, battleground.firstChild);
             }
         }
     },
@@ -2074,14 +2076,18 @@ V_Forge.Storage = {
         V_Forge.UI.triggerHapticPulse();
         const valk1 = localStorage.getItem('viking_valk_cache_1');
         if (valk1) {
-            V_Forge.State.appState = JSON.parse(valk1);
-            V_Forge.Storage.saveToStorage();
-            alert("Valkyrie storage sync active. Database restored.");
-            location.reload();
+            try {
+                V_Forge.State.appState = JSON.parse(valk1);
+                V_Forge.Storage.saveToStorage();
+                alert("Rescue synced. Reloading system.");
+                location.reload();
+            } catch (e) {
+                console.error("Restore failed:", e);
+            }
         }
     }
 };
-// ==================== END OF BLOCK: [JS-VALKYRIE-STORAGE] ================ //
+// ==================== END OF BLOCK: [JS-VALKYRIE-STORAGE-REBUILT] ======== //
 
 // ====================================================================== //
 // BLOCK-ID: [JS-TROCHOIDAL-WAVE-PATHS]                                   //
@@ -2442,242 +2448,112 @@ document.addEventListener('pointerdown', (e) => {
 // BREADCRUMB CONNECTOR: START OF PART 4.1
 
 // ====================================================================== //
-// BLOCK-ID: [JS-UI-PANEL-SWITCHES]                                       //
-// DESCRIPTION: Dynamic active tabs transitions and streak computations.  //
-// DEPENDENCIES: [JS-STATE-CONSTRUCTOR], [JS-SIMULATION-DATES]            //
-// REPAIR PROTOCOL: Swap this block to edit custom rank calculation caps. //
+// BLOCK-ID: [JS-UI-INITAPP-REBUILT]                                      //
+// DESCRIPTION: Fail-safe lifecycle initialization and state loaders.     //
+// DEPENDENCIES: All core modules                                         //
+// REPAIR PROTOCOL: Handles startup and resolves window event timing lags. //
 // ====================================================================== //
 V_Forge.UI.initApp = function() {
-    // Apply Customizable headers from CONFIG
-    document.getElementById('lbl-active-loadout').innerText = V_Forge.Config.interfaceHeaders.activeLoadout;
-    document.getElementById('lbl-secured-items').innerText = V_Forge.Config.interfaceHeaders.securedItems;
-    document.getElementById('lbl-distribution-staging').innerText = V_Forge.Config.interfaceHeaders.distributionStaging;
-    document.getElementById('lbl-historical-ledger').innerText = V_Forge.Config.interfaceHeaders.historicalLedger;
-    document.getElementById('lbl-baseline-directives').innerText = V_Forge.Config.interfaceHeaders.baselineDirectives;
-    document.getElementById('lbl-workouts-register').innerText = V_Forge.Config.interfaceHeaders.workoutsRegister;
-    document.getElementById('lbl-custom-saga-quotes').innerText = V_Forge.Config.interfaceHeaders.customSagaQuotes;
-    document.getElementById('lbl-system-intel').innerText = V_Forge.Config.interfaceHeaders.systemIntelStorage;
-    document.getElementById('lbl-dev-console-title').innerText = V_Forge.Config.interfaceHeaders.devConsoleTitle;
-    document.getElementById('briefing-card-title').innerText = V_Forge.Config.interfaceHeaders.systemRolloverTitle;
+    try {
+        // Safe DOM bindings checking
+        const activeLoadoutEl = document.getElementById('lbl-active-loadout');
+        if (!activeLoadoutEl) {
+            console.error("DOM nodes missing. Postponing V_Forge start.");
+            return;
+        }
 
-    const saved = localStorage.getItem('viking_conquest_v11');
-    if (saved) {
-        V_Forge.State.appState = JSON.parse(saved);
-    } else {
-        V_Forge.State.appState.appInitTimestamp = Date.now();
-    }
+        activeLoadoutEl.innerText = V_Forge.Config.interfaceHeaders.activeLoadout;
+        document.getElementById('lbl-secured-items').innerText = V_Forge.Config.interfaceHeaders.securedItems;
+        document.getElementById('lbl-distribution-staging').innerText = V_Forge.Config.interfaceHeaders.distributionStaging;
+        document.getElementById('lbl-historical-ledger').innerText = V_Forge.Config.interfaceHeaders.historicalLedger;
+        document.getElementById('lbl-baseline-directives').innerText = V_Forge.Config.interfaceHeaders.baselineDirectives;
+        document.getElementById('lbl-workouts-register').innerText = V_Forge.Config.interfaceHeaders.workoutsRegister;
+        document.getElementById('lbl-custom-saga-quotes').innerText = V_Forge.Config.interfaceHeaders.customSagaQuotes;
+        document.getElementById('lbl-system-intel').innerText = V_Forge.Config.interfaceHeaders.systemIntelStorage;
+        document.getElementById('lbl-dev-console-title').innerText = V_Forge.Config.interfaceHeaders.devConsoleTitle;
+        document.getElementById('briefing-card-title').innerText = V_Forge.Config.interfaceHeaders.systemRolloverTitle;
 
-    V_Forge.Storage.safeguardAndMigrateDatabase();
+        // Try-Catch secure parsing
+        const saved = localStorage.getItem('viking_conquest_v11');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed && typeof parsed === 'object') {
+                    V_Forge.State.appState = parsed;
+                }
+            } catch (e) {
+                console.warn("Storage parse failed. Auto-building baseline directory state.");
+            }
+        }
 
-    const todayStr = V_Forge.Maths.getSimulatedDateObject().toDateString();
-    if (V_Forge.State.appState.lastActiveDateString && V_Forge.State.appState.lastActiveDateString !== todayStr) {
-        V_Forge.State.appState.completedExercisesToday = {};
-        V_Forge.State.appState.lastActiveDateString = todayStr;
-    } else if (!V_Forge.State.appState.lastActiveDateString) {
-        V_Forge.State.appState.lastActiveDateString = todayStr;
-    }
+        V_Forge.Storage.safeguardAndMigrateDatabase();
 
-    V_Forge.Storage.saveToStorage();
+        const todayStr = V_Forge.Maths.getSimulatedDateObject().toDateString();
+        if (V_Forge.State.appState.lastActiveDateString && V_Forge.State.appState.lastActiveDateString !== todayStr) {
+            V_Forge.State.appState.completedExercisesToday = {};
+            V_Forge.State.appState.lastActiveDateString = todayStr;
+        } else if (!V_Forge.State.appState.lastActiveDateString) {
+            V_Forge.State.appState.lastActiveDateString = todayStr;
+        }
 
-    document.getElementById('base-reps').value = V_Forge.State.appState.mondayRepBase;
-    document.getElementById('base-plank').value = V_Forge.State.appState.mondayPlankBase;
-    
-    document.getElementById('vignette-range').value = V_Forge.State.appState.backgroundSettings.vignette;
-    document.getElementById('wash-range').value = V_Forge.State.appState.backgroundSettings.wash;
-    
-    document.getElementById('vignette-val-display').innerText = V_Forge.State.appState.backgroundSettings.vignette;
-    document.getElementById('wash-val-display').innerText = V_Forge.State.appState.backgroundSettings.wash;
+        V_Forge.Storage.saveToStorage();
 
-    document.getElementById('aura-water-btn').classList.remove('active');
-    document.getElementById('aura-fire-btn').classList.remove('active');
-    if (V_Forge.State.appState.activeVisualTheme === 'water') {
-        document.getElementById('aura-water-btn').classList.add('active');
-    } else {
-        document.getElementById('aura-fire-btn').classList.add('active');
-    }
-
-    let devPanelVal = localStorage.getItem('viking_dev_panel') || 'true';
-    const panel = document.getElementById('dev-sandbox-deck');
-    const btn = document.getElementById('dev-toggle-btn');
-    if (devPanelVal === 'true') {
-        panel.style.display = 'block';
-        btn.innerText = "ON";
-        btn.classList.add('active');
-    } else {
-        panel.style.display = 'none';
-        btn.innerText = "OFF";
-        btn.classList.remove('active');
-    }
-
-    V_Forge.Storage.checkForValkyrieRescue();
-    V_Forge.Dev.processBackgroundSkips();
-    V_Forge.Dev.verifyWeeklyRolloverGate();
-    V_Forge.UI.refreshRadarHeader();
-    V_Forge.UI.renderDashboard();
-    V_Forge.Forge.startLiveDeltas();
-    V_Forge.Forge.renderSkaldConfigInterface();
-    V_Forge.Forge.renderForgeWorkoutRegistry();
-    V_Forge.Forge.renderForgeCooldownRegistry();
-    V_Forge.Maths.updateBodyBackground();
-    V_Forge.Dev.registerServiceWorker(); 
-
-    setTimeout(() => {
-        document.body.classList.remove('preload-no-transition');
-    }, 50);
-};
-
-V_Forge.UI.calculateCurrentStreak = function() {
-    let streak = 0;
-    let checkDate = V_Forge.Maths.getSimulatedDateObject();
-    let visited = new Set();
-    
-    let todayStr = checkDate.toDateString();
-    if (V_Forge.State.appState.monthlyArchive[todayStr] !== 'done' && V_Forge.State.appState.monthlyArchive[todayStr] !== 'rest') {
-        checkDate.setDate(checkDate.getDate() - 1);
-    }
-    
-    while (true) {
-        let dateStr = checkDate.toDateString();
-        if (visited.has(dateStr)) break;
-        visited.add(dateStr);
+        document.getElementById('base-reps').value = V_Forge.State.appState.mondayRepBase;
+        document.getElementById('base-plank').value = V_Forge.State.appState.mondayPlankBase;
         
-        let stateVal = V_Forge.State.appState.monthlyArchive[dateStr];
-        if (stateVal === 'done' || stateVal === 'rest') {
-            if (stateVal === 'done') streak++;
-            checkDate.setDate(checkDate.getDate() - 1);
+        document.getElementById('vignette-range').value = V_Forge.State.appState.backgroundSettings.vignette;
+        document.getElementById('wash-range').value = V_Forge.State.appState.backgroundSettings.wash;
+        document.getElementById('vignette-val-display').innerText = V_Forge.State.appState.backgroundSettings.vignette;
+        document.getElementById('wash-val-display').innerText = V_Forge.State.appState.backgroundSettings.wash;
+
+        document.getElementById('aura-water-btn').classList.remove('active');
+        document.getElementById('aura-fire-btn').classList.remove('active');
+        if (V_Forge.State.appState.activeVisualTheme === 'water') {
+            document.getElementById('aura-water-btn').classList.add('active');
         } else {
-            break;
+            document.getElementById('aura-fire-btn').classList.add('active');
         }
-    }
-    return streak;
-};
 
-V_Forge.UI.refreshRadarHeader = function() {
-    const today = V_Forge.Maths.getSimulatedDateObject();
-    const todayStr = today.toDateString();
-    const dayName = V_Forge.State.DAYS_OF_WEEK[today.getDay()];
-    const isCompleted = (V_Forge.State.appState.monthlyArchive[todayStr] === 'done');
-
-    const labelEl = document.getElementById('radar-day-label');
-    if (labelEl) {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        labelEl.innerText = today.toLocaleDateString(undefined, options).toUpperCase();
-        labelEl.style.color = '#4b5563'; 
-    }
-    
-    const streak = V_Forge.UI.calculateCurrentStreak();
-    let matchingRank = V_Forge.Config.warriorRanks[0];
-    for (const r of V_Forge.Config.warriorRanks) {
-        if (streak <= r.max) {
-            matchingRank = r;
-            break;
-        }
-    }
-    
-    const targetEl = document.getElementById('radar-target');
-    if (targetEl) {
-        const targets = V_Forge.Maths.getComputedTargets();
-        if (isCompleted) {
-            targetEl.innerHTML = `
-                <div style="font-size: 0.75rem; font-family: 'Orbitron'; font-weight: 900; letter-spacing: 0.1em; color: #4b5563; opacity: 0.6; margin-bottom: 2px;">
-                    ${targets.reps} REPS TARGET
-                </div>
-                <div style="font-size: 1.85rem; font-family: 'Orbitron'; font-weight: 900; color: var(--header-accent); text-shadow: var(--header-glow-intensity); line-height: 1;">
-                    CONQUERED
-                </div>`;
+        let devPanelVal = localStorage.getItem('viking_dev_panel') || 'true';
+        const panel = document.getElementById('dev-sandbox-deck');
+        const btn = document.getElementById('dev-toggle-btn');
+        if (devPanelVal === 'true') {
+            panel.style.display = 'block';
+            btn.innerText = "ON";
+            btn.classList.add('active');
         } else {
-            targetEl.innerHTML = `<span>${targets.reps}</span> REPS`;
+            panel.style.display = 'none';
+            btn.innerText = "OFF";
+            btn.classList.remove('active');
         }
-    }
-    
-    const statsEl = document.getElementById('radar-stats');
-    if (statsEl) {
-        statsEl.innerHTML = `
-            <span style="color:#4b5563; font-weight:700;">STREAK:</span> 
-            <span style="color:var(--header-accent); text-shadow: var(--header-glow-intensity); font-weight:900;">${streak} 🔥</span> 
-            <span style="color:#4b5563; font-weight:700; margin: 0 4px;">|</span> 
-            <span style="color:#4b5563; font-weight:700;">RANK:</span> 
-            <span style="color:var(--header-accent); text-shadow: var(--header-glow-intensity); font-weight:900;">${matchingRank.title}</span>`;
-    }
-    
-    const deltaEl = document.getElementById('radar-delta');
-    if (deltaEl) {
-        deltaEl.innerHTML = `📜 ${matchingRank.status}`;
-    }
-};
 
-V_Forge.UI.switchTab = function(tabName, el) {
-    const tt = document.getElementById('touch-tooltip');
-    if (tt) tt.classList.remove('visible');
-
-    const target = document.getElementById(`panel-${tabName}`);
-    document.querySelectorAll('.view-panel').forEach(p => {
-        p.classList.remove('active');
-        p.classList.remove('visible');
-        p.style.display = 'none';
-    });
-    document.querySelectorAll('.nav-bar .nav-item').forEach(n => n.classList.remove('active'));
-    
-    target.style.display = 'block';
-    target.offsetHeight; 
-    target.classList.add('visible');
-    target.classList.add('active');
-    
-    el.classList.add('active');
-    if(tabName === 'saga') {
-        V_Forge.UI.renderWeeklyAccordionPanel();
-        V_Forge.UI.renderMonthlyCalendarStack();
-    } else if (tabName === 'forge') {
+        V_Forge.Storage.checkForValkyrieRescue();
+        V_Forge.Dev.processBackgroundSkips();
+        V_Forge.Dev.verifyWeeklyRolloverGate();
+        V_Forge.UI.refreshRadarHeader();
+        V_Forge.UI.renderDashboard();
+        V_Forge.Forge.startLiveDeltas();
         V_Forge.Forge.renderSkaldConfigInterface();
         V_Forge.Forge.renderForgeWorkoutRegistry();
         V_Forge.Forge.renderForgeCooldownRegistry();
-    } else if (tabName === 'battleground') {
-        V_Forge.UI.renderDashboard();
+        V_Forge.Maths.updateBodyBackground();
+        V_Forge.Dev.registerServiceWorker();
+
+        setTimeout(() => {
+            document.body.classList.remove('preload-no-transition');
+        }, 50);
+    } catch (err) {
+        console.error("V_Forge Critical Lifecycle Failure: ", err);
     }
 };
 
-V_Forge.UI.toggleForgeAccordion = function(sectionId) {
-    V_Forge.UI.triggerHapticPulse();
-    const el = document.getElementById(sectionId);
-    const chev = document.getElementById(`chevron-${sectionId}`);
-    
-    const isOpen = el.classList.contains('open-dropdown');
-    
-    document.querySelectorAll('#panel-forge .shine-card').forEach(card => {
-        if (card.id && card.id.startsWith('forge-') && card.id !== sectionId) {
-            card.classList.remove('open-dropdown');
-            const otherChev = document.getElementById(`chevron-${card.id}`);
-            if (otherChev) otherChev.innerText = "▼";
-        }
-    });
-
-    if (!isOpen) {
-        el.classList.add('open-dropdown');
-        if (chev) chev.innerText = "▲";
-    } else {
-        el.classList.remove('open-dropdown');
-        if (chev) chev.innerText = "▼";
-    }
-};
-
-V_Forge.UI.toggleDevPanel = function() {
-    V_Forge.UI.triggerHapticPulse();
-    const panel = document.getElementById('dev-sandbox-deck');
-    const btn = document.getElementById('dev-toggle-btn');
-    const isVisible = panel.style.display === 'block';
-    if (isVisible) {
-        panel.style.display = 'none';
-        btn.innerText = "OFF";
-        btn.classList.remove('active');
-        localStorage.setItem('viking_dev_panel', 'false');
-    } else {
-        panel.style.display = 'block';
-        btn.innerText = "ON";
-        btn.classList.add('active');
-        localStorage.setItem('viking_dev_panel', 'true');
-    }
-};
-// ==================== END OF BLOCK: [JS-UI-PANEL-SWITCHES] =============== //
+// Fail-safe initialization loop (fixes window load timing bugs)
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    V_Forge.UI.initApp();
+} else {
+    window.addEventListener('DOMContentLoaded', V_Forge.UI.initApp);
+}
+// ==================== END OF BLOCK: [JS-UI-INITAPP-REBUILT] ============== //
 
 // BREADCRUMB CONNECTOR: APPEND PART 4.2 DIRECTLY BELOW THIS POINT
 // BREADCRUMB CONNECTOR: START OF PART 4.2
