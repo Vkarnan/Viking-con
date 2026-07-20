@@ -2546,13 +2546,6 @@ V_Forge.UI.initApp = function() {
         console.error("V_Forge Critical Lifecycle Failure: ", err);
     }
 };
-
-// Fail-safe initialization loop (fixes window load timing bugs)
-if (document.readyState === "complete" || document.readyState === "interactive") {
-    V_Forge.UI.initApp();
-} else {
-    window.addEventListener('DOMContentLoaded', V_Forge.UI.initApp);
-}
 // ==================== END OF BLOCK: [JS-UI-INITAPP-REBUILT] ============== //
 
 // BREADCRUMB CONNECTOR: APPEND PART 4.2 DIRECTLY BELOW THIS POINT
@@ -4215,6 +4208,13 @@ window.triggerPwaInstallPrompt = V_Forge.Dev.triggerPwaInstallPrompt;
 
 window.onload = V_Forge.UI.initApp;
 // ==================== END OF BLOCK: [JS-GLOBAL-SCOPE-PROXIES] ============ //
+
+// Fail-safe initialization loop (Fires only after the entire file is fully parsed)
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    V_Forge.UI.initApp();
+} else {
+    window.addEventListener('DOMContentLoaded', V_Forge.UI.initApp);
+}
 </script>
 </body>
 </html>
