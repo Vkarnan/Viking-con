@@ -2295,16 +2295,24 @@ V_Forge.Maths = {
 // DEPENDENCIES: [JS-STATE-CONSTRUCTOR], [JS-TROCHOIDAL-WAVE-PATHS]       //
 // REPAIR PROTOCOL: Swap this block to edit default particle flow limits. //
 // ====================================================================== //
+// ====================================================================== //
+// BLOCK-ID: [JS-EMBER-EMITTER-FIXED]                                     //
+// DESCRIPTION: Dynamic canvas fire particle emissions and sways.         //
+// DEPENDENCIES: [JS-STATE-CONSTRUCTOR], [JS-TROCHOIDAL-WAVE-PATHS]       //
+// REPAIR PROTOCOL: Dynamically fetches DOM node to prevent boot crashes. //
+// ====================================================================== //
 V_Forge.Maths.spawnIndividualEmber = function() {
     if (V_Forge.State.currentProgressValue < 0.05) return;
     const theme = V_Forge.State.appState.activeVisualTheme || 'water';
     const isCompleted = document.body.classList.contains('conquered-state');
+    
+    // Dynamically grab the element from the DOM on the spot
+    const activeField = document.getElementById('ember-field');
+    if (!activeField) return;
 
-    if (emberField) {
-        const activeParticles = emberField.getElementsByClassName('ember-particle');
-        if (activeParticles.length >= 32) {
-            activeParticles[0].remove(); 
-        }
+    const activeParticles = activeField.getElementsByClassName('ember-particle');
+    if (activeParticles.length >= 32) {
+        activeParticles[0].remove(); 
     }
 
     const particle = document.createElement('div');
@@ -2347,9 +2355,7 @@ V_Forge.Maths.spawnIndividualEmber = function() {
         particle.style.animationDuration = `${duration}s`;
     }
 
-    if (emberField) {
-        emberField.appendChild(particle);
-    }
+    activeField.appendChild(particle);
 
     const safetyTimeoutId = setTimeout(() => {
         if (particle.parentNode) {
@@ -2362,7 +2368,6 @@ V_Forge.Maths.spawnIndividualEmber = function() {
         particle.remove();
     }, { once: true });
 };
-
 V_Forge.Maths.adjustEmberSpawnerCycle = function() {
     if (V_Forge.State.emberInterval) {
         clearInterval(V_Forge.State.emberInterval);
