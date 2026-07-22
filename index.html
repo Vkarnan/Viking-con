@@ -235,9 +235,9 @@ body.theme-water #conquered-wash-overlay {
     transition: opacity 0.4s ease;
 }
 
-/* Fire Theme: Restrict to 30vh completed height, slower and cozy */
+/* Fire Theme: Restrict to 27vh completed height (10% reduction), slower and cozy */
 body.theme-fire #conquered-wash-overlay {
-    height: 30vh !important;
+    height: 27vh !important;
     bottom: 0;
     top: auto;
     transform: translate3d(0, 0, 0) !important;
@@ -1857,7 +1857,58 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
             </div>
         </div>
 
-        <!-- AMOLED OPTIMIZER DROPDOWN (ELEVATED THEME CYCLE BUTTON INSIDE) -->
+<!-- PERSISTENT ENVIRONMENT REALM CARD -->
+        <div class="section-label">REALM</div>
+        <div class="shine-card" onclick="triggerRealmAuraCycle(this)" style="padding:16px 20px; margin-bottom:20px; border-color:var(--accent-glow); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; cursor:pointer;">
+            <!-- Active Realm Title -->
+            <div id="theme-active-title" style="font-family:'Orbitron'; font-size:1.15rem; font-weight:900; color:#fff; letter-spacing:0.05em;">WATER 🌊</div>
+            <!-- Very low-visibility, blacked-out subtext -->
+            <div style="font-family:'Orbitron'; font-size:0.55rem; font-weight:900; color:#27272a; letter-spacing:0.12em; margin-top:5px;">CURRENTLY ACTIVE</div>
+        </div>
+
+        <script>
+            /* Self-contained Realm Aura controller & transition flasher */
+            function triggerRealmAuraCycle(card) {
+                // 1. Trigger haptic buzz & change background active theme in storage
+                V_Forge.UI.triggerHapticPulse();
+                setEnvironmentAura('toggle');
+
+                // 2. Perform local DOM text updates immediately
+                const activeTitle = card.querySelector('#theme-active-title');
+                const currentTheme = V_Forge.State.appState.activeVisualTheme || 'water';
+                activeTitle.innerText = currentTheme === 'water' ? "WATER 🌊" : "FIRE 🔥";
+
+                // 3. Trigger high-intensity cinematic lens flare to shield vector coordinates jitter
+                const flash = document.getElementById('conquest-flash-layer');
+                if (flash) {
+                    const colors = { 
+                        water: 'radial-gradient(circle, rgba(0, 240, 255, 0.95) 0%, rgba(0, 240, 255, 0.4) 40%, transparent 75%)', 
+                        fire: 'radial-gradient(circle, rgba(255, 122, 0, 0.95) 0%, rgba(255, 122, 0, 0.4) 40%, transparent 75%)' 
+                    };
+                    flash.style.background = colors[currentTheme];
+                    flash.classList.remove('flash-active-cinematic');
+                    void flash.offsetWidth; // Force paint reflow
+                    flash.classList.add('flash-active-cinematic');
+                    setTimeout(() => { flash.classList.remove('flash-active-cinematic'); }, 2000);
+                }
+            }
+
+            /* Self-contained startup initialization sync */
+            function syncThemeActiveLabelOnBoot() {
+                const activeTheme = V_Forge.State.appState.activeVisualTheme || 'water';
+                const activeTitle = document.getElementById('theme-active-title');
+                if (activeTitle) {
+                    activeTitle.innerText = activeTheme === 'water' ? "WATER 🌊" : "FIRE 🔥";
+                }
+            }
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                syncThemeActiveLabelOnBoot();
+            } else {
+                window.addEventListener('DOMContentLoaded', syncThemeActiveLabelOnBoot);
+            }
+        </script>
+
+        <!-- AMOLED OPTIMIZER DROPDOWN (ONLY SLIDERS INSIDE) -->
         <div class="section-label">👁️ VALKYRIE SIGHT</div>
         <div class="shine-card" style="padding:15px; margin-bottom:20px; border-color:#1e142b;" id="forge-amoled-panel">
             <div class="forge-accordion-header" onclick="toggleForgeAccordion('forge-amoled-panel')">
@@ -1872,14 +1923,6 @@ button:active, .nav-item:active, .manual-check-trigger:active, .toggle-opt:activ
                 <div class="config-grid-item" style="border:none; padding:0; margin-bottom:14px; background:none;">
                     <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem;">Bifrost Ambience & Wash Intensity: <span id="wash-val-display" style="color:var(--accent-glow);">20</span>%</label>
                     <input type="range" id="wash-range" min="0" max="100" value="20" style="width:100%; margin-top:8px; cursor:pointer;" oninput="updateLiveBackgroundSliders()">
-                </div>
-                
-                <!-- ELEVATED SINGLE STANDALONE ENVIRONMENT CYCLE BUTTON -->
-                <div style="margin-top:14px;">
-                    <label style="color:#a1a1aa; font-family:'Orbitron'; font-size:0.75rem; display:block; margin-bottom:6px;">ENVIRONMENT AURA</label>
-                    <button id="theme-cycle-btn" class="action-btn-secondary" style="border-color:var(--accent-glow); color:#fff;" onclick="setEnvironmentAura('toggle')">
-                        AURA: WATER 🌊
-                    </button>
                 </div>
             </div>
         </div>
@@ -2352,10 +2395,20 @@ V_Forge.Maths = {
         if (!isCompleted) {
             /* Power cubic-root curve applied dynamically for instant feedback */
             let easedProgress = Math.cbrt(progressFloat);
-            speed = 14 - (progressFloat * 11);
-            freq = Math.round(1 + (progressFloat * 4)); 
-            baseHeight = 120 - (20 + easedProgress * 60); 
-            amp = 3 + (progressFloat * 5.4); 
+            
+            /* DAMPENED FORMULAS: Limits maximum rate to a smooth majestic speed sweep */
+            speed = 16 - (progressFloat * 7.5);
+            
+            /* DAMPENED FORMULAS: Limits wave ripples to 3 broad, steady crests instead of 5 */
+            freq = Math.round(1 + (progressFloat * 2)); 
+            amp = 3.5 + (progressFloat * 4.0); 
+            
+            /* WATER RISE BASLELINE COMPENSATION: Offsets baseHeight upward to sync water with fire */
+            if (V_Forge.State.appState.activeVisualTheme === 'water') {
+                baseHeight = 120 - (35 + easedProgress * 75); 
+            } else {
+                baseHeight = 120 - (20 + easedProgress * 60); 
+            }
         } else {
             baseHeight = 120 - (0.42 * 120); 
             amp = 10.5; 
@@ -2589,7 +2642,7 @@ V_Forge.UI.initApp = function() {
         /* Render standalone theme cycle label cleanly */
         const themeBtn = document.getElementById('theme-cycle-btn');
         if (themeBtn) {
-            themeBtn.innerText = V_Forge.State.appState.activeVisualTheme === 'water' ? "AURA: WATER 🌊" : "AURA: FIRE 🔥";
+            themeBtn.innerText = V_Forge.State.appState.activeVisualTheme === 'water' ? "WATER 🌊" : "FIRE 🔥";
         }
 
         let devPanelVal = localStorage.getItem('viking_dev_panel') || 'true';
@@ -2754,7 +2807,7 @@ V_Forge.UI.setEnvironmentAura = function(theme) {
     
     const themeBtn = document.getElementById('theme-cycle-btn');
     if (themeBtn) {
-        themeBtn.innerText = theme === 'water' ? "AURA: WATER 🌊" : "AURA: FIRE 🔥";
+        themeBtn.innerText = theme === 'water' ? "🌊 WATER 🌊" : "🔥 FIRE 🔥";
     }
     V_Forge.Maths.updateBodyBackground();
 };
@@ -3165,10 +3218,10 @@ V_Forge.UI.toggleShieldWall = function() {
 
 <script>
 // ====================================================================== //
-// [BLOCK: JS-UI-SAGA-RENDER]                                             //
-// DEPENDENCIES: [JS-UI-DASHBOARD-RENDER-PART-B]                          //
-// WRITES TO: window.V_Forge.UI accordion methods, DOM matrix wrappers   //
-// DESCRIPTION: Weekly staging accordions, scroll calendars, & dot nodes.  //
+// [BLOCK: JS-UI-SAGA-RENDER]                                            //
+// DEPENDENCIES: [JS-UI-DASHBOARD-RENDER-PART-B-2]                        //
+// WRITES TO: DOM weekly matrices & monthly calendar ledger grids.        //
+// DESCRIPTION: Renders staging accordion rows & scrollable date cells.   //
 // ====================================================================== //
 V_Forge.UI.toggleDayAccordionElement = function(dayName) {
     const open = sessionStorage.getItem(`open_week_day_${dayName}`) === 'true';
@@ -3340,7 +3393,6 @@ V_Forge.UI.buildFullMonthGridHTML = function(year, monthIdx, customClass = "") {
     let firstDay = new Date(year, monthIdx, 1);
     let lastDay = new Date(year, monthIdx + 1, 0);
     let totalDays = lastDay.getDate();
-    
     let startOffset = firstDay.getDay() - 1;
     if (startOffset < 0) startOffset = 6;
 
@@ -3363,8 +3415,8 @@ V_Forge.UI.buildTileNodeHTML = function(dateObject, displayNum) {
     let archiveStatus = V_Forge.State.appState.monthlyArchive[lookupStr];
     let dayName = V_Forge.State.DAYS_OF_WEEK[dateObject.getDay()];
     let isSunday = (dayName === 'Sunday');
-
     let styleStr = "";
+
     if (isSunday) {
         let stateCfg;
         if (archiveStatus === 'done') {
@@ -3390,6 +3442,8 @@ V_Forge.UI.buildTileNodeHTML = function(dateObject, displayNum) {
         } else if (archiveStatus === 'rest') {
             styleStr = `background-color: #1e1b4b; border: 1.1px solid #818cf8; color: #818cf8;`;
         } else {
+            /* FIXED: Assigned standard locked configurations to prevent null-pointer crash on default weekday cell paints */
+            stateCfg = V_Forge.Config.nodeStates.weekday.locked;
             styleStr = `background-color: ${stateCfg.backgroundColor}; border: 1px solid ${stateCfg.borderColor}; color: ${stateCfg.textColor};`;
         }
     }
@@ -3501,6 +3555,22 @@ V_Forge.UI.attachTouchInteractions = function() {
     container.addEventListener('pointermove', handlePointerMove);
     container.addEventListener('pointerup', handlePointerUp);
     container.addEventListener('contextmenu', e => e.preventDefault()); 
+
+    /* FIXED: Register a global document-wide pointer listener once to handle click-outside dismissals */
+    if (!document.datasetDismissBound) {
+        document.datasetDismissBound = true;
+        document.addEventListener('pointerdown', (e) => {
+            const tt = document.getElementById('touch-tooltip');
+            if (tt && tt.classList.contains('visible')) {
+                const clickedDot = e.target.closest('.day-dot');
+                const clickedTooltip = e.target.closest('#touch-tooltip');
+                if (!clickedDot && !clickedTooltip) {
+                    tt.classList.remove('visible');
+                    V_Forge.State.isTooltipPersistent = false;
+                }
+            }
+        });
+    }
 };
 
 V_Forge.UI.triggerTooltipDisplay = function(dateStr, dot) {
@@ -3613,14 +3683,33 @@ V_Forge.UI.triggerTooltipDisplay = function(dateStr, dot) {
     const ttHeight = tt.offsetHeight;
     const ttWidth = tt.offsetWidth;
     
+    /* Viewport vertical edge limits (85px leaves comfortable space above the 75px bottom navigation bar) */
+    const navSafetyOffset = 85;
+    const maxBottomPos = window.innerHeight - navSafetyOffset;
+
+    // 1. Initial position setup: above the calendar cell dot
     let topPos = rect.top - ttHeight - 12;
     let leftPos = rect.left + (rect.width / 2) - (ttWidth / 2);
-    
     let isFlipped = false;
+    
+    // 2. Flip below the dot if it overflows the top edge
     if (topPos < 16) {
         topPos = rect.bottom + 12;
         isFlipped = true;
     }
+    
+    // 3. VERTICAL BOUNDARY CLAMP: If flipped down but extends behind bottom nav bar, adjust positioning
+    if (isFlipped && (topPos + ttHeight > maxBottomPos)) {
+        // If there is enough space above the dot, force it back above
+        if (rect.top - ttHeight - 12 > 16) {
+            topPos = rect.top - ttHeight - 12;
+            isFlipped = false;
+        } else {
+            // Otherwise, lock/clamp the vertical position so it sits cleanly inside the active screen
+            topPos = maxBottomPos - ttHeight;
+        }
+    }
+
     if (isFlipped) tt.classList.add('flipped');
     else tt.classList.remove('flipped');
     
