@@ -4680,7 +4680,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
     const card = document.getElementById('pwa-installer-card');
     if (card) card.style.display = 'block';
 });
-
+/* Safe function alias bridges - Fixes Forge cooldown button clicks */
+V_Forge.Forge.forgeMoveCooldownDown = V_Forge.Dev.forgeMoveCooldownDown;
+V_Forge.Forge.forgeRemoveCooldown = V_Forge.Dev.forgeRemoveCooldown;
 window.onload = V_Forge.UI.initApp;
 
 if (document.readyState === "complete" || document.readyState === "interactive") {
